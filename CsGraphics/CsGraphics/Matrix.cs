@@ -84,7 +84,7 @@ namespace CsGraphics
         /// </summary>
         /// <param name="a">１つ目の行列</param>
         /// <param name="b">２つ目の行列</param>
-        /// <returns>２つの行列の和</returns>
+        /// <returns>2つの行列の和</returns>
         /// <exception cref="InvalidOperationException">対象の行列の行数と列数はそれぞれ一致する必要があります</exception>
         public static Matrix operator +(Matrix a, Matrix b)
         {
@@ -103,6 +103,92 @@ namespace CsGraphics
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// 加算記号を利用して行列と整数の和を計算できるようにする設定
+        /// </summary>
+        /// <param name="matrix">行列</param>
+        /// <param name="value">整数</param>
+        /// <returns>行列と整数の和</returns>
+        public static Matrix operator +(Matrix matrix, int value)
+        {
+            Matrix result = new Matrix(matrix.Rows, matrix.Columns);
+            for (int i = 0; i < matrix.Rows; i++)
+            {
+                for (int j = 0; j < matrix.Columns; j++)
+                {
+                    result[i, j] = matrix[i, j] + value;
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// 加算記号を利用して整数と行列の和を計算できるようにする設定
+        /// </summary>
+        /// <param name="value">整数</param>
+        /// <param name="matrix">行列</param>
+        /// <returns>行列と整数の和</returns>
+        public static Matrix operator +(int value, Matrix matrix)
+        {
+            return matrix + value; // 順序を統一して処理
+        }
+
+        /// <summary>
+        /// 減算記号を利用して行列の差を計算できるようにする設定
+        /// </summary>
+        /// <param name="a">１つ目の行列</param>
+        /// <param name="b">２つ目の行列</param>
+        /// <returns>２つの行列の和</returns>
+        /// <exception cref="InvalidOperationException">対象の行列の行数と列数はそれぞれ一致する必要があります</exception>
+        public static Matrix operator -(Matrix a, Matrix b)
+        {
+            if (a.Rows != b.Rows || a.Columns != b.Columns)
+            {
+                throw new InvalidOperationException("Matrix dimensions must match for addition.");
+            }
+
+            Matrix result = new(a.Rows, a.Columns);
+            for (int i = 0; i < a.Rows; i++)
+            {
+                for (int j = 0; j < a.Columns; j++)
+                {
+                    result[i, j] = a[i, j] - b[i, j];
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// 減算記号を利用して行列と整数の差を計算できるようにする設定
+        /// </summary>
+        /// <param name="matrix">行列</param>
+        /// <param name="value">整数</param>
+        /// <returns>行列と整数の差</returns>
+        public static Matrix operator -(Matrix matrix, int value)
+        {
+            Matrix result = new Matrix(matrix.Rows, matrix.Columns);
+            for (int i = 0; i < matrix.Rows; i++)
+            {
+                for (int j = 0; j < matrix.Columns; j++)
+                {
+                    result[i, j] = matrix[i, j] - value;
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// 加算記号を利用して整数と行列の差を計算できるようにする設定
+        /// </summary>
+        /// <param name="value">整数</param>
+        /// <param name="matrix">行列</param>
+        /// <returns>行列と整数の差</returns>
+        public static Matrix operator -(int value, Matrix matrix)
+        {
+            return matrix - value; // 順序を統一して処理
         }
 
         /// <summary>
@@ -152,17 +238,22 @@ namespace CsGraphics
             }
         }
 
-        // 行列を表示
-        public void Print()
+        /// <summary>
+        /// 行列の中身を文字列に変換する
+        /// </summary>
+        /// <returns>行列(String)</returns>
+        public override string ToString()
         {
-            for (int i = 0; i < Rows; i++)
+            string result = string.Empty;
+            for (int i = 0; i < this.Rows; i++)
             {
-                for (int j = 0; j < Columns; j++)
+                for (int j = 0; j < this.Columns; j++)
                 {
-                    Console.Write($"{data[i, j]:0.##}\t");
+                    result += $"{data[i, j]:0.##}\t";
                 }
-                Console.WriteLine();
+                result += "\n";
             }
+            return result;
         }
     }
 
