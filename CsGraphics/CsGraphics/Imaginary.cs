@@ -25,10 +25,33 @@
         /// <param name="a">１つ目の虚数</param>
         /// <param name="b">２つ目の虚数</param>
         /// <returns>２つの虚数の和</returns>
-        public static double operator +(Imaginary a, Imaginary b)
+        public static Imaginary operator +(Imaginary a, Imaginary b)
         {
-            double result = a.value + b.value;
+            Imaginary result = a.value + b.value;
             return result;
+        }
+
+        /// <summary>
+        /// 加算記号を利用して虚数と実数の和を計算できるようにする設定
+        /// </summary>
+        /// <param name="a">虚数</param>
+        /// <param name="b">実数</param>
+        /// <returns>虚数と実数の和</returns>
+        public static Complex operator +(Imaginary a, double b)
+        {
+            Complex result = (b,a);
+            return result;
+        }
+
+        /// <summary>
+        /// 加算記号を利用して虚数と実数の和を計算できるようにする設定
+        /// </summary>
+        /// <param name="a">実数</param>
+        /// <param name="b">虚数</param>
+        /// <returns>実数と虚数の和</returns>
+        public static Complex operator +(double a, Imaginary b)
+        {
+            return b + a; // 順序を統一して処理
         }
 
         /// <summary>
@@ -37,10 +60,33 @@
         /// <param name="a">１つ目の虚数</param>
         /// <param name="b">２つ目の虚数</param>
         /// <returns>２つの虚数の差</returns>
-        public static double operator -(Imaginary a, Imaginary b)
+        public static Imaginary operator -(Imaginary a, Imaginary b)
         {
-            double result = a.value - b.value;
+            Imaginary result = a.value - b.value;
             return result;
+        }
+
+        /// <summary>
+        /// 減算記号を利用して虚数と実数の差を計算できるようにする設定
+        /// </summary>
+        /// <param name="a">虚数</param>
+        /// <param name="b">実数</param>
+        /// <returns>虚数と実数の差</returns>
+        public static Complex operator -(Imaginary a, double b)
+        {
+            Complex result = (-1 * b, a);
+            return result;
+        }
+
+        /// <summary>
+        /// 減算記号を利用して虚数と実数の差を計算できるようにする設定
+        /// </summary>
+        /// <param name="a">実数</param>
+        /// <param name="b">虚数</param>
+        /// <returns>虚数と実数の差</returns>
+        public static Complex operator -(double a, Imaginary b)
+        {
+            return b + a; // 順序を統一して処理
         }
 
         /// <summary>
