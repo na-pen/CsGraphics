@@ -111,7 +111,7 @@ namespace CsGraphics
         /// <param name="matrix">行列</param>
         /// <param name="value">整数</param>
         /// <returns>行列と整数の和</returns>
-        public static Matrix operator +(Matrix matrix, int value)
+        public static Matrix operator +(Matrix matrix, double value)
         {
             Matrix result = new Matrix(matrix.Rows, matrix.Columns);
             for (int i = 0; i < matrix.Rows; i++)
@@ -130,7 +130,7 @@ namespace CsGraphics
         /// <param name="value">整数</param>
         /// <param name="matrix">行列</param>
         /// <returns>行列と整数の和</returns>
-        public static Matrix operator +(int value, Matrix matrix)
+        public static Matrix operator +(double value, Matrix matrix)
         {
             return matrix + value; // 順序を統一して処理
         }
@@ -167,7 +167,7 @@ namespace CsGraphics
         /// <param name="matrix">行列</param>
         /// <param name="value">整数</param>
         /// <returns>行列と整数の差</returns>
-        public static Matrix operator -(Matrix matrix, int value)
+        public static Matrix operator -(Matrix matrix, double value)
         {
             Matrix result = new Matrix(matrix.Rows, matrix.Columns);
             for (int i = 0; i < matrix.Rows; i++)
@@ -186,7 +186,7 @@ namespace CsGraphics
         /// <param name="value">整数</param>
         /// <param name="matrix">行列</param>
         /// <returns>行列と整数の差</returns>
-        public static Matrix operator -(int value, Matrix matrix)
+        public static Matrix operator -(double value, Matrix matrix)
         {
             return matrix - value; // 順序を統一して処理
         }
