@@ -7,9 +7,11 @@
         public MainPage()
         {
             InitializeComponent();
+            OnCounterClicked();
         }
 
-        private void OnCounterClicked(object sender, EventArgs e)
+        
+        private void OnCounterClicked()
         {
             // 2x2の行列を作成
             Matrix matrixA = new Matrix(2, 6);
@@ -68,15 +70,7 @@
             this.TestLabel.Text += "Matrix A - 5:\n";
             this.TestLabel.Text += result5.ToString();
 
-            count++;
-
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
-            else
-                CounterBtn.Text = $"Clicked {count} times";
-
-            SemanticScreenReader.Announce(CounterBtn.Text);
-        }
+            count++;}
     }
 
 }

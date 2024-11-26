@@ -22,11 +22,17 @@ namespace CsGraphics
         /// <summary>
         /// Initializes a new instance of the <see cref="Matrix"/> class.
         /// 行列のサイズを指定して初期化.
+        /// 列数の指定がなかった場合は正方行列
         /// </summary>
         /// <param name="rows">行数</param>
         /// <param name="columns">列数</param>
-        public Matrix(int rows, int columns)
+        public Matrix(int rows, int columns = 0)
         {
+            if (columns == 0)
+            {
+                columns = rows;
+            }
+
             if (rows <= 0 || columns <= 0)
             {
                 throw new ArgumentException("Rows and columns must be positive integers.");
