@@ -22,8 +22,8 @@
             graphicsView.Drawable = _myDrawable;
             BindingContext = this;
             MyDrawable = _myDrawable;  // Drawable に設定
-        }
 
+        }
 
         // コマンドが入力された時の処理
         private async void OnCommandEntered(object sender, EventArgs e)
@@ -159,7 +159,8 @@
 
         private string Test()
         {
-            Vector vec = files.VerticesFromObj("E:/Projects/CsGraphics/CsGraphics/teapot.obj");
+            //Vector vec = files.VerticesFromObj("E:/Projects/CsGraphics/CsGraphics/teapot.obj");
+            Vector vec = files.VerticesFromObj("C:/Users/mail/Documents/CsGraphics/CsGraphics/teapot.obj");
 
             Matrix trans = new(3, 1);
             trans.Initialize(new double[] { 20, 10 ,0}); //移動量

@@ -35,7 +35,7 @@ namespace CsGraphics
 
             for (int i = 0; i < vertexCount; i++)
             {
-                vertexArray[0,i] = vertices[i][0];
+                vertexArray[0, i] = vertices[i][0];
                 vertexArray[1, i] = vertices[i][1];
                 vertexArray[2, i] = vertices[i][2];
             }

@@ -11,41 +11,53 @@
             <RowDefinition Height="0.1*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="70"/>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="70" />
         </Grid.ColumnDefinitions>
 
-        <ScrollView VerticalScrollBarVisibility="Always"
+        <GraphicsView
+            x:Name="graphicsView"
             Grid.Row="0"
             Grid.Column="0"
-            Grid.ColumnSpan="2">
-            <GraphicsView x:Name="graphicsView"
-                          HeightRequest="2160"
-                          WidthRequest="3840"
-                      VerticalOptions="FillAndExpand" />
+            Grid.ColumnSpan="2" />
+
+
+        <ScrollView
+            x:Name="OutputScrollView"
+            Grid.Row="1"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            VerticalScrollBarVisibility="Always">
+            <Editor
+                x:Name="OutputArea"
+                AutoSize="TextChanges"
+                FontFamily="Consolas"
+                FontSize="14"
+                HorizontalOptions="Fill"
+                IsReadOnly="True"
+                TextColor="White"
+                VerticalOptions="FillAndExpand" />
         </ScrollView>
-
-
-        <ScrollView VerticalScrollBarVisibility="Always"
-            x:Name="OutputScrollView" Grid.Row="1"
-Grid.Column="0" Grid.ColumnSpan="2">
-                    <Editor x:Name="OutputArea"
-                    IsReadOnly="True"
-                    TextColor="White"
-                    FontFamily="Consolas"
-                    FontSize="14" HorizontalOptions="Fill"
-                            AutoSize="TextChanges"
-                            VerticalOptions="FillAndExpand"/>
-                </ScrollView>
 
         <ScrollView Grid.Row="2" VerticalScrollBarVisibility="Always">
-            <Editor x:Name="InputField" 
-                    TextColor="White"
-                    FontFamily="Consolas"
-                    AutoSize="TextChanges"
-                    HorizontalOptions="FillAndExpand"/>
+            <Editor
+                x:Name="InputField"
+                AutoSize="TextChanges"
+                FontFamily="Consolas"
+                HorizontalOptions="FillAndExpand"
+                TextColor="White" />
         </ScrollView>
-        <ImageButton Source="send.png" BackgroundColor="#00000000" HorizontalOptions="Center" VerticalOptions="Center" Grid.Row="2" Grid.Column="1" Margin="5" HeightRequest="30" WidthRequest="30" Clicked="OnCommandEntered"/>
+        <ImageButton
+            Grid.Row="2"
+            Grid.Column="1"
+            Margin="5"
+            BackgroundColor="#00000000"
+            Clicked="OnCommandEntered"
+            HeightRequest="30"
+            HorizontalOptions="Center"
+            Source="send.png"
+            VerticalOptions="Center"
+            WidthRequest="30" />
 
     </Grid>
 </ContentPage>
