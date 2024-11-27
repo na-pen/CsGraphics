@@ -4,37 +4,48 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:CsGraphics">
-    <ContentPage.Resources>
-        <local:Drawable x:Key="drawable" />
-    </ContentPage.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="0.3*" />
+            <RowDefinition Height="0.1*" />
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="70"/>
+        </Grid.ColumnDefinitions>
 
-        <VerticalStackLayout
+        <ScrollView VerticalScrollBarVisibility="Always"
             Grid.Row="0"
             Grid.Column="0"
-            BackgroundColor="#F2F2F2"
-            Spacing="25">
-            <GraphicsView
-                Drawable="{StaticResource drawable}"
-                HeightRequest="300"
-                VerticalOptions="Fill" />
-        </VerticalStackLayout>
-
-
-
-        <ScrollView
-            Grid.Row="1"
-            Grid.Column="0"
-            Margin="15">
-
-
-            <Label x:Name="TestLabel" />
-
+            Grid.ColumnSpan="2">
+            <GraphicsView x:Name="graphicsView"
+                          HeightRequest="2160"
+                          WidthRequest="3840"
+                      VerticalOptions="FillAndExpand" />
         </ScrollView>
+
+
+        <ScrollView VerticalScrollBarVisibility="Always"
+            x:Name="OutputScrollView" Grid.Row="1"
+Grid.Column="0" Grid.ColumnSpan="2">
+                    <Editor x:Name="OutputArea"
+                    IsReadOnly="True"
+                    TextColor="White"
+                    FontFamily="Consolas"
+                    FontSize="14" HorizontalOptions="Fill"
+                            AutoSize="TextChanges"
+                            VerticalOptions="FillAndExpand"/>
+                </ScrollView>
+
+        <ScrollView Grid.Row="2" VerticalScrollBarVisibility="Always">
+            <Editor x:Name="InputField" 
+                    TextColor="White"
+                    FontFamily="Consolas"
+                    AutoSize="TextChanges"
+                    HorizontalOptions="FillAndExpand"/>
+        </ScrollView>
+        <ImageButton Source="send.png" BackgroundColor="#00000000" HorizontalOptions="Center" VerticalOptions="Center" Grid.Row="2" Grid.Column="1" Margin="5" HeightRequest="30" WidthRequest="30" Clicked="OnCommandEntered"/>
 
     </Grid>
 </ContentPage>

@@ -1,0 +1,12 @@
+!Vector test = new(2,4);
+test.Initialize(new double[,] {{1,3,3,1},{1,1,4,4}});
+test
+
+!Vector vec = new(2,4);
+vec.Initialize(new double[,] {{2,-1}});
+
+Matrix trans = new(2,1);
+trans.Initialize(new double[] {2,-1})
+
+vec.Translation(trans);
+vec

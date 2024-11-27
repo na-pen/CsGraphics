@@ -245,6 +245,139 @@ namespace CsGraphics
         }
 
         /// <summary>
+        /// 2次元配列によって初期化する
+        /// </summary>
+        /// <param name="array">二次元配列</param>
+        /// <exception cref="ArgumentException">行列と配列の行数と列数は、それぞれ一致する必要があります</exception>
+        public void Initialize(double[,] array)
+        {
+            if (array.GetLength(0) != this.Rows || array.GetLength(1) != this.Columns)
+            {
+                throw new ArgumentException("Array dimensions must match the matrix dimensions.");
+            }
+
+            for (int i = 0; i < this.Rows; i++)
+            {
+                for (int j = 0; j < this.Columns; j++)
+                {
+                    this.data[i, j] = array[i, j];
+                }
+            }
+        }
+
+        /// <summary>
+        /// 1次元配列によって初期化する
+        /// </summary>
+        /// <param name="array">一次元配列</param>
+        /// <exception cref="ArgumentException">行列と配列の行数と列数は、それぞれ一致する必要があります</exception>
+        public void Initialize(double[] array)
+        {
+            double[,] result = new double[array.Length, 1];
+
+            // 1次元配列の各要素を2次元配列にコピー
+            for (int i = 0; i < array.Length; i++)
+            {
+                result[i, 0] = array[i];
+            }
+            this.Initialize(result);
+        }
+
+        /// <summary>
+        /// 単位行列を生成する
+        /// </summary>
+        /// <exception cref="ArgumentException">行列の長さは1以上の整数である必要があります</exception>
+        public void Identity()
+        {
+            if (this.Rows != this.Columns)
+            {
+                throw new IndexOutOfRangeException("The identity matrix must have equal row and column sizes.");
+            }
+
+            this.Initialize((i, j) => 0);
+
+            for (int i = 0; i < this.Rows; i++)
+            {
+                this[i, i] = 1; // 対角成分を1に設定
+            }
+        }
+
+        /// <summary>
+        /// 行列を転置する
+        /// </summary>
+        /// <returns></returns>
+        public void Transpose()
+        {
+            Matrix transposed = new Matrix(Columns, Rows); // 行と列を入れ替えたサイズの行列を作成
+            for (int i = 0; i < Rows; i++)
+            {
+                for (int j = 0; j < Columns; j++)
+                {
+                    transposed[j, i] = this[i, j]; // 行と列を入れ替えてコピー
+                }
+            }
+            this.data = transposed.data;
+            int temp = this.Rows;
+            this.Rows = this.Columns;
+            this.Columns = temp;
+        }
+
+        public void Resize(int row, int column = 0)
+        {
+            if(column == 0)
+            {
+                column = this.Columns;
+            }
+            if(row < this.Rows ||  column < this.Columns)
+            {
+                throw new ArgumentException("The number of rows and columns in the resized matrix must be equal to or greater than before the resizing, respectively.");
+            }
+            Matrix result = new(row, column); 
+            // 行列のサイズを変更する（n行m列）
+            for (int i = 0; i < row; i++)
+            {
+                for (int j = 0; j < column; j++)
+                {
+                    if (i < this.Rows && j < this.Columns)
+                    {
+                        result[i, j] = this.data[i, j];
+                    }
+                    else
+                    {
+                        result[i, j] = 0;  // 拡張部分の値は0
+                    }
+                }
+            }
+
+            this.Columns = result.Columns;
+            this.Rows = result.Rows;
+            this.data = result.data;
+
+        }
+
+        public void ColumnCopy(int column)
+        {
+
+            if (1 != this.Columns)
+            {
+                throw new ArgumentException("The number of rows in the matrix after resizing must be the same as before resizing. The number of columns in the matrix before resizing must be 1.");
+            }
+
+            double[,] output = new double[this.Rows, column];
+
+            // 元の配列の値を新しい配列にコピー
+            for (int i = 0; i < this.Rows; i++)
+            {
+                for (int j = 0; j < column; j++)
+                {
+                    output[i, j] = this[i, 0]; // input[i, 0] はその行の値
+                }
+            }
+
+            this.Columns = column;
+            this.data = output;
+        }
+
+        /// <summary>
         /// 行列の中身を文字列に変換する
         /// </summary>
         /// <returns>行列(String)</returns>
