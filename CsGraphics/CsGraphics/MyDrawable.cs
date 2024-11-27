@@ -24,7 +24,7 @@ namespace CsGraphics
             foreach (var pointColor in _pointsWithColor)
             {
                 canvas.FillColor = pointColor.color;  // 点の色を設定
-                canvas.FillCircle(pointColor.vertex.X, pointColor.vertex.Y, 5);  // 半径5の円として点を描画
+                canvas.FillCircle(pointColor.vertex.X, pointColor.vertex.Y, 1);  // 半径5の円として点を描画
             }
         }
 

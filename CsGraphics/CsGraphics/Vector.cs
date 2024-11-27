@@ -87,7 +87,7 @@ namespace CsGraphics
             temp.Identity();
             temp.Resize(4, 4);
 
-            for (int i = 0; i < this.dimension + 1; i++)
+            for (int i = 0; i < this.dimension; i++)
             {
                 temp[i,i] = matrix[i,0];
             }
