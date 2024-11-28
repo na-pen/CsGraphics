@@ -26,6 +26,9 @@ namespace CsGraphics
                 canvas.FillColor = pointColor.color;  // 点の色を設定
                 canvas.FillCircle(pointColor.vertex.X, pointColor.vertex.Y, 1);  // 半径5の円として点を描画
             }
+
+            // 元の状態に戻す
+            canvas.RestoreState();
         }
 
         // 外部から点と色を追加するメソッド
