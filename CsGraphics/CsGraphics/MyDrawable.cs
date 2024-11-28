@@ -7,11 +7,11 @@ namespace CsGraphics
 
     public class MyDrawable : IDrawable
     {
-        private List<Vertex> _pointsWithColor;  // 点と色を保持するリスト
+        private List<Object.Vertex> _pointsWithColor;  // 点と色を保持するリスト
 
         public MyDrawable()
         {
-            _pointsWithColor = new List<Vertex>(); // 初期化
+            _pointsWithColor = new List<Object.Vertex>(); // 初期化
         }
 
         public void Draw(ICanvas canvas, RectF dirtyRect)
@@ -29,9 +29,9 @@ namespace CsGraphics
         }
 
         // 外部から点と色を追加するメソッド
-        public void AddPoints(IEnumerable<Vertex> pointsWithColor)
+        public void AddPoints(IEnumerable<Object.Vertex> pointsWithColor)
         {
-            _pointsWithColor.AddRange(pointsWithColor);
+            //_pointsWithColor.AddRange(pointsWithColor);
         }
 
         /*

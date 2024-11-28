@@ -328,6 +328,7 @@ namespace CsGraphics.Math
 
         public void Resize(int row, int column = 0, double[] value = null)
         {
+            int temp = -1;
             if(value == null)
             {
                 Array.Fill(value, 0,  0, row - this.Rows -1);
@@ -352,7 +353,11 @@ namespace CsGraphics.Math
                     }
                     else
                     {
-                        result[i, j] = value[i];  // 拡張部分の値は0
+                        if(temp == -1)
+                        {
+                            temp = i;
+                        }
+                        result[i, j] = value[i - temp];  // 拡張部分の値は0
                     }
                 }
             }

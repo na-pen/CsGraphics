@@ -1,4 +1,4 @@
-﻿namespace CsGraphics
+﻿namespace CsGraphics.Object
 {
     using Microsoft.Maui.Graphics;
 
@@ -10,7 +10,7 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="Vertex"/> class.
         /// </summary>
-        /// <param name="objectId">頂点ID.</param>
+        /// <param name="objectId">オブジェクトID.</param>
         /// <param name="coordinate">3次元空間上の座標(オブジェクト基準).</param>
         /// <param name="color">頂点の色.</param>
         /// <param name="visible">頂点の可視/不可視.</param>
@@ -20,6 +20,7 @@
             this.ObjectId = objectId;
             this.Coordinate = this.ConvertMatriix2Calcable( new Math.Matrix(coordinate));
             this.IsVisible = visible;
+            this.Dimension = coordinate.GetLength(0);
 
             this.Color = new Color[coordinate.GetLength(1)];
             if (color != null)
@@ -57,9 +58,27 @@
         /// </summary>
         public Color[] Color { get; set; }
 
+        /// <summary>
+        /// Gets オブジェクトの次元数.
+        /// </summary>
+        public int Dimension { get; }
+
         private Math.Matrix ConvertMatriix2Calcable(Math.Matrix matrix)
         {
-            matrix.Resize(4, value: new double[] { 0, 1 });
+            switch (matrix.GetLength(0))
+            {
+                case 2:
+                    matrix.Resize(4, value: new double[] { 0, 1 });
+                    break;
+
+                case 3:
+                    matrix.Resize(4, value: new double[] { 1 });
+                    break;
+
+                default:
+                    throw new ArgumentException("データの次元数が誤っています");
+            }
+
             return matrix;
         }
 
