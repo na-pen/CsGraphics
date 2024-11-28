@@ -32,7 +32,6 @@ namespace CsGraphics
                 canvas.FillCircle(pointColor.vertex.X, pointColor.vertex.Y, 1);  // 半径5の円として点を描画
             }
 
-
             // 元の状態に戻す
             canvas.RestoreState();
         }
