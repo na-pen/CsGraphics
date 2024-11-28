@@ -1,12 +1,14 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Maui.Controls.Shapes;
 using System;
-namespace CsGraphics
+namespace CsGraphics.Math
 {
     public class Vector
     {
         private double[] reference = { 0, 0, 0 };
-        internal int dimension;
+
+        private int dimension { get; set; }
+
         internal Matrix data;
         private int vertex;
 
@@ -55,6 +57,20 @@ namespace CsGraphics
 
                 this.data[row, column] = value;
             }
+        }
+
+        public static Vector operator +(Vector a, Vector b)
+        {
+            if(a.dimension != b.dimension || a.vertex != b.vertex)
+            {
+                throw new ArgumentException("The vectors to be added must have the same number of dimensions and the same number of data");
+            }
+            Vector result = new (a.dimension, a.vertex)
+            {
+                data = a.data + b.data,
+            };
+
+            return result;
         }
 
         /// <summary>
@@ -106,10 +122,10 @@ namespace CsGraphics
             temp.Identity();
             temp.Resize(4, 4);
 
-            temp[0,0] = Math.Cos(rad);
-            temp[0,1] = -1 * Math.Sin(rad);
-            temp[1, 0] = Math.Sin(rad);
-            temp[1, 1] = Math.Cos(rad);
+            temp[0,0] = System.Math.Cos(rad);
+            temp[0,1] = -1 * System.Math.Sin(rad);
+            temp[1, 0] = System.Math.Sin(rad);
+            temp[1, 1] = System.Math.Cos(rad);
             string t = temp.ToString();
             this.data = temp * this.data;
         }
