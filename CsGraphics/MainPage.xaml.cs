@@ -110,7 +110,7 @@
 
             //平行移動
             Math.Matrix trans = new(2, 1);
-            trans.Initialize(new double[] { 200, -100 }); //移動量
+            //trans.Initialize(new double[] { 200, -100 }); //移動量
             vec.Translation(trans); // 移動の適用
             //_myDrawable.AddPoints(vec, Colors.Red);
 
@@ -129,7 +129,7 @@
 
             //拡大縮小
             Math.Matrix scale = new(2, 1);
-            scale.Initialize(new double[] { 2, 0.5 }); //移動量
+            //scale.Initialize(new double[] { 2, 0.5 }); //移動量
             vec.Scale(scale); // 移動の適用
             //_myDrawable.AddPoints(vec, Colors.Black);
 
@@ -163,12 +163,12 @@
             Math.Vector vec = files.VerticesFromObj("C:/Users/mail/Documents/CsGraphics/CsGraphics/teapot.obj");
 
             Math.Matrix trans = new(3, 1);
-            trans.Initialize(new double[] { 20, 10 ,0}); //移動量
+            //trans.Initialize(new double[] { 20, 10 ,0}); //移動量
             vec.Translation(trans);
 
             //拡大縮小
             Math.Matrix scale = new(3, 1);
-            scale.Initialize(new double[] { 50, 50,50 }); //移動量
+            //scale.Initialize(new double[] { 50, 50,50 }); //移動量
             vec.Scale(scale); // 移動の適用
 
             //_myDrawable.AddPoints(vec, Colors.Black);

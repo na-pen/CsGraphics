@@ -55,7 +55,24 @@ namespace CsGraphics.Math
                 result[i, 0] = array[i];
             }
 
+            this.Rows = array.Length;
+            this.Columns = 1;
+            this.data = new double[this.Rows, this.Columns];
+
             this.Initialize(result);
+        }
+
+        public Matrix(double[,] array)
+        {
+            this.Rows = array.GetLength(0);
+            this.Columns = array.GetLength(1);
+            this.data = new double[this.Rows, this.Columns];
+
+            if (array.GetLength(0) != this.Rows || array.GetLength(1) != this.Columns)
+            {
+                throw new ArgumentException("Array dimensions must match the matrix dimensions.");
+            }
+            this.Initialize(array);
         }
 
         /// <summary>
@@ -259,18 +276,8 @@ namespace CsGraphics.Math
             }
         }
 
-        /// <summary>
-        /// 2次元配列によって初期化する
-        /// </summary>
-        /// <param name="array">二次元配列</param>
-        /// <exception cref="ArgumentException">行列と配列の行数と列数は、それぞれ一致する必要があります</exception>
         public void Initialize(double[,] array)
         {
-            if (array.GetLength(0) != this.Rows || array.GetLength(1) != this.Columns)
-            {
-                throw new ArgumentException("Array dimensions must match the matrix dimensions.");
-            }
-
             for (int i = 0; i < this.Rows; i++)
             {
                 for (int j = 0; j < this.Columns; j++)
@@ -278,23 +285,6 @@ namespace CsGraphics.Math
                     this.data[i, j] = array[i, j];
                 }
             }
-        }
-
-        /// <summary>
-        /// 1次元配列によって初期化する
-        /// </summary>
-        /// <param name="array">一次元配列</param>
-        /// <exception cref="ArgumentException">行列と配列の行数と列数は、それぞれ一致する必要があります</exception>
-        public void Initialize(double[] array)
-        {
-            double[,] result = new double[array.Length, 1];
-
-            // 1次元配列の各要素を2次元配列にコピー
-            for (int i = 0; i < array.Length; i++)
-            {
-                result[i, 0] = array[i];
-            }
-            this.Initialize(result);
         }
 
         /// <summary>
@@ -336,8 +326,12 @@ namespace CsGraphics.Math
             this.Columns = temp;
         }
 
-        public void Resize(int row, int column = 0)
+        public void Resize(int row, int column = 0, double[] value = null)
         {
+            if(value == null)
+            {
+                Array.Fill(value, 0,  0, row - this.Rows -1);
+            }
             if(column == 0)
             {
                 column = this.Columns;
@@ -358,7 +352,7 @@ namespace CsGraphics.Math
                     }
                     else
                     {
-                        result[i, j] = 0;  // 拡張部分の値は0
+                        result[i, j] = value[i];  // 拡張部分の値は0
                     }
                 }
             }
@@ -390,6 +384,11 @@ namespace CsGraphics.Math
 
             this.Columns = column;
             this.data = output;
+        }
+
+        public int GetLength(int dimension)
+        {
+            return this.data.GetLength(dimension);
         }
 
         /// <summary>
