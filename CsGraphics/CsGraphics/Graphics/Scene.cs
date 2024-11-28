@@ -36,6 +36,11 @@
             canvas.FillColor = Colors.White;
             canvas.FillRectangle(dirtyRect);
 
+            // 座標軸の補正
+            canvas.SaveState(); // 現在の状態を保存
+            canvas.Translate(0, dirtyRect.Height); // Y軸を下に移動
+            canvas.Scale(1, -1);
+
             // 各点を指定された色で描画
             foreach (Object.Object @object in this.Objects)
             {
@@ -50,6 +55,9 @@
                         }).ToList();
                 }
             }
+
+            // 元の状態に戻す
+            canvas.RestoreState();
         }
 
         /// <summary>
