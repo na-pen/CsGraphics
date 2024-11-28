@@ -16,14 +16,9 @@ namespace CsGraphics
 
         public void Draw(ICanvas canvas, RectF dirtyRect)
         {
-
             // 背景を白に設定
             canvas.FillColor = Colors.White;
             canvas.FillRectangle(dirtyRect);
-
-            canvas.SaveState(); // 現在の状態を保存
-            canvas.Translate(0, dirtyRect.Height); // Y軸を下に移動
-            canvas.Scale(1, -1);
 
             // 各点を指定された色で描画
             foreach (var pointColor in _pointsWithColor)
@@ -81,11 +76,6 @@ namespace CsGraphics
         private Vector ThreeD2TwoD(Vector vector)
         {
             return vector;
-        }
-
-        public List<Vertex> GetObjects()
-        {
-            return this._pointsWithColor;
         }
     }
 }
