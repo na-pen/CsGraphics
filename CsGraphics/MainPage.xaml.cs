@@ -104,15 +104,15 @@
         private string TranslationTest()
         {
             //テスト用、加工前データ
-            Vector vec = new(2, 4);
+            Math.Vector vec = new(2, 4);
             vec.Initialize(new double[,] { { 100, 300, 300, 100 }, { 100, 100, 400, 400 } }); // 四角形を描画
-            _myDrawable.AddPoints(vec,Colors.Aqua);
+            //_myDrawable.AddPoints(vec,Colors.Aqua);
 
             //平行移動
-            Matrix trans = new(2, 1);
+            Math.Matrix trans = new(2, 1);
             trans.Initialize(new double[] { 200, -100 }); //移動量
             vec.Translation(trans); // 移動の適用
-            _myDrawable.AddPoints(vec, Colors.Red);
+            //_myDrawable.AddPoints(vec, Colors.Red);
 
             // 描画を更新
             graphicsView.Invalidate();  // GraphicsView を再描画
@@ -123,15 +123,15 @@
         private string ScaleTest()
         {
             //テスト用、加工前データ
-            Vector vec = new(2, 4);
+            Math.Vector vec = new(2, 4);
             vec.Initialize(new double[,] { { 100, 300, 300, 100 }, { 100, 100, 400, 400 } }); // 四角形を描画
-            _myDrawable.AddPoints(vec, Colors.Aqua);
+            //_myDrawable.AddPoints(vec, Colors.Aqua);
 
             //拡大縮小
-            Matrix scale = new(2, 1);
+            Math.Matrix scale = new(2, 1);
             scale.Initialize(new double[] { 2, 0.5 }); //移動量
             vec.Scale(scale); // 移動の適用
-            _myDrawable.AddPoints(vec, Colors.Black);
+            //_myDrawable.AddPoints(vec, Colors.Black);
 
             // 描画を更新
             graphicsView.Invalidate();  // GraphicsView を再描画
@@ -142,14 +142,14 @@
         private string RotationZTest()
         {
             //テスト用、加工前データ
-            Vector vec = new(2, 4);
+            Math.Vector vec = new(2, 4);
             vec.Initialize(new double[,] { { 100, 300, 300, 100 }, { 100, 100, 400, 400 } }); // 四角形を描画
-            _myDrawable.AddPoints(vec, Colors.Aqua);
+            //_myDrawable.AddPoints(vec, Colors.Aqua);
 
             //拡大縮小
-            Matrix rotate = new(2, 1);
+            Math.Matrix rotate = new(2, 1);
             vec.RotationZdeg(30); // 回転の適用(回転量(θ))
-            _myDrawable.AddPoints(vec, Colors.Black);
+            //_myDrawable.AddPoints(vec, Colors.Black);
 
             // 描画を更新
             graphicsView.Invalidate();  // GraphicsView を再描画
@@ -160,18 +160,18 @@
         private string Test()
         {
             //Vector vec = files.VerticesFromObj("E:/Projects/CsGraphics/CsGraphics/teapot.obj");
-            Vector vec = files.VerticesFromObj("C:/Users/mail/Documents/CsGraphics/CsGraphics/teapot.obj");
+            Math.Vector vec = files.VerticesFromObj("C:/Users/mail/Documents/CsGraphics/CsGraphics/teapot.obj");
 
-            Matrix trans = new(3, 1);
+            Math.Matrix trans = new(3, 1);
             trans.Initialize(new double[] { 20, 10 ,0}); //移動量
             vec.Translation(trans);
 
             //拡大縮小
-            Matrix scale = new(3, 1);
+            Math.Matrix scale = new(3, 1);
             scale.Initialize(new double[] { 50, 50,50 }); //移動量
             vec.Scale(scale); // 移動の適用
 
-            _myDrawable.AddPoints(vec, Colors.Black);
+            //_myDrawable.AddPoints(vec, Colors.Black);
             graphicsView.Invalidate();
             return "Done!";
         }

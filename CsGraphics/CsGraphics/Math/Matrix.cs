@@ -4,13 +4,14 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace CsGraphics
+namespace CsGraphics.Math
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using static System.Runtime.InteropServices.JavaScript.JSType;
 
     /// <summary>
     /// 行列の定義.
@@ -41,6 +42,20 @@ namespace CsGraphics
             this.Rows = rows;
             this.Columns = columns;
             this.data = new double[rows, columns];
+        }
+
+        public Matrix(double[] array)
+        {
+
+            double[,] result = new double[array.Length, 1];
+
+            // 1次元配列の各要素を2次元配列にコピー
+            for (int i = 0; i < array.Length; i++)
+            {
+                result[i, 0] = array[i];
+            }
+
+            this.Initialize(result);
         }
 
         /// <summary>

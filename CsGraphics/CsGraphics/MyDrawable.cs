@@ -19,13 +19,13 @@ namespace CsGraphics
             // 背景を白に設定
             canvas.FillColor = Colors.White;
             canvas.FillRectangle(dirtyRect);
-
+            /*
             // 各点を指定された色で描画
             foreach (var pointColor in _pointsWithColor)
             {
                 canvas.FillColor = pointColor.color;  // 点の色を設定
                 canvas.FillCircle(pointColor.vertex.X, pointColor.vertex.Y, 1);  // 半径5の円として点を描画
-            }
+            }*/
         }
 
         // 外部から点と色を追加するメソッド
@@ -34,6 +34,7 @@ namespace CsGraphics
             _pointsWithColor.AddRange(pointsWithColor);
         }
 
+        /*
         public void AddPoints(Vector vector,Color color)
         {
             List<Vertex> vertices = new List<Vertex>();
@@ -53,7 +54,8 @@ namespace CsGraphics
             this.AddPoints(vertices);
         }
 
-        private List<Vertex> Vector2PointF(Vector vector, Color color)
+
+        private List<Vertex> Vector2PointF(Math.Vector vector, Color color)
         {
             var vertices = Enumerable.Range(0, vector.data.Columns) // n の列数分繰り返す
             .Select(i =>
@@ -70,9 +72,9 @@ namespace CsGraphics
             return vertices;
         }
 
-        private Vector ThreeD2TwoD(Vector vector)
+        private Math.Vector ThreeD2TwoD(Math.Vector vector)
         {
             return vector;
-        }
+        }*/
     }
 }

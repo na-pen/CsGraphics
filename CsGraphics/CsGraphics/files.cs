@@ -43,11 +43,11 @@ namespace CsGraphics
             return vertexArray;
         }
 
-        public static Vector VerticesFromObj(string filePath)
+        public static Math.Vector VerticesFromObj(string filePath)
         {
             double[,] vertices = ObjParseVertices(filePath);
             int vertexCount = vertices.GetLength(1);
-            Vector vector = new(3, vertexCount);
+            Math.Vector vector = new(3, vertexCount);
 
             vector.Initialize(vertices);
 
