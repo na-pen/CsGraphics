@@ -70,7 +70,6 @@
                 "scale" => ScaleTest(),
                 "rotationz" => RotationZTest(),
                 "test" => Test(),
-                "object" => _myDrawable.GetObjects().ToArray().ToString(),
                 _ => "Unknown command."
             };
         }
@@ -160,16 +159,16 @@
 
         private string Test()
         {
-            Vector vec = files.VerticesFromObj("E:/Projects/CsGraphics/CsGraphics/teapot.obj");
-            // Vector vec = files.VerticesFromObj("C:/Users/mail/Documents/CsGraphics/CsGraphics/teapot.obj");
+            //Vector vec = files.VerticesFromObj("E:/Projects/CsGraphics/CsGraphics/teapot.obj");
+            Vector vec = files.VerticesFromObj("C:/Users/mail/Documents/CsGraphics/CsGraphics/teapot.obj");
 
             Matrix trans = new(3, 1);
-            trans.Initialize(new double[] { 20, 10, 0 }); // 移動量
+            trans.Initialize(new double[] { 20, 10 ,0}); //移動量
             vec.Translation(trans);
 
-            // 拡大縮小
+            //拡大縮小
             Matrix scale = new(3, 1);
-            scale.Initialize(new double[] { 50, 50, 50 }); // 移動量
+            scale.Initialize(new double[] { 50, 50,50 }); //移動量
             vec.Scale(scale); // 移動の適用
 
             _myDrawable.AddPoints(vec, Colors.Black);
