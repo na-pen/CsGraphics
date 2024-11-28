@@ -1,5 +1,6 @@
 ﻿namespace CsGraphics.Object
 {
+    using CsGraphics.Math;
     using Microsoft.Maui.Graphics;
 
     /// <summary>
@@ -13,14 +14,11 @@
         /// <param name="objectId">オブジェクトID.</param>
         /// <param name="coordinate">3次元空間上の座標(オブジェクト基準).</param>
         /// <param name="color">頂点の色.</param>
-        /// <param name="visible">頂点の可視/不可視.</param>
-        public Vertex(int objectId, double[,] coordinate, Color[]? color = null, bool visible = true)
+        public Vertex(int objectId, double[,] coordinate, Color[]? color)
         {
             // 初期値の適用
             this.ObjectId = objectId;
             this.Coordinate = this.ConvertMatriix2Calcable( new Math.Matrix(coordinate));
-            this.IsVisible = visible;
-            this.Dimension = coordinate.GetLength(0);
 
             this.Color = new Color[coordinate.GetLength(1)];
             if (color != null)
@@ -44,11 +42,6 @@
         public int ObjectId { get; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether gets or sets a value indicating visible. 可視/不可視状態.
-        /// </summary>
-        public bool IsVisible { get; set; } = true;
-
-        /// <summary>
         /// Gets 3D空間上の3次元座標(オブジェクト基準).
         /// </summary>
         public Math.Matrix Coordinate { get; }
@@ -57,11 +50,6 @@
         /// Gets or sets 頂点の色.
         /// </summary>
         public Color[] Color { get; set; }
-
-        /// <summary>
-        /// Gets オブジェクトの次元数.
-        /// </summary>
-        public int Dimension { get; }
 
         private Math.Matrix ConvertMatriix2Calcable(Math.Matrix matrix)
         {
@@ -93,7 +81,6 @@
 
             result =
                 "ObjectID : " + this.ObjectId.ToString() + "\n" +
-                "Visible : " + this.IsVisible.ToString() + "\n" +
                 string.Join(
                     "\n\n",
                     Enumerable.Range(0, this.Coordinate.GetLength(1)) // 各列を対象にする
@@ -104,6 +91,16 @@
                         .ToArray());
 
             return result;
+        }
+
+        /// <summary>
+        /// 頂点の行列長を取得.
+        /// </summary>
+        /// <param name="dimension">取得する方向.</param>
+        /// <returns>長さ.</returns>
+        public int GetLength(int dimension)
+        {
+            return this.Coordinate.GetLength(dimension);
         }
 
         /*

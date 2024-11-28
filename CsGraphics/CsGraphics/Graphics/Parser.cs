@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace CsGraphics
 {
-    public class files
+    internal static class Parser
     {
-        private static double[,] ObjParseVertices(string filePath)
+        internal static double[,] ObjParseVertices(string filePath)
         {
             var vertices = new List<double[]>(); // 動的リストで頂点情報を一時的に格納
 
@@ -41,17 +41,6 @@ namespace CsGraphics
             }
 
             return vertexArray;
-        }
-
-        public static Math.Vector VerticesFromObj(string filePath)
-        {
-            double[,] vertices = ObjParseVertices(filePath);
-            int vertexCount = vertices.GetLength(1);
-            Math.Vector vector = new(3, vertexCount);
-
-            vector.Initialize(vertices);
-
-            return vector;
         }
     }
 }

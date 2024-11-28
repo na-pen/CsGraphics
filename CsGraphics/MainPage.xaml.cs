@@ -1,6 +1,7 @@
 ﻿namespace CsGraphics
 {
     using System;
+    using System.ComponentModel;
     using System.Diagnostics;
     using System.Linq;
     using System.Reflection;
@@ -10,19 +11,62 @@
 
     public partial class MainPage : ContentPage
     {
-        private MyDrawable _myDrawable;
+        private Scene scene;
 
-        public MyDrawable MyDrawable { get; set; }
+        public Scene Scene { get; set; }
+
+        private bool _isUpdating = false;
 
         public MainPage()
         {
             InitializeComponent();
 
-            _myDrawable = new MyDrawable();  // MyDrawable インスタンスを作成
-            graphicsView.Drawable = _myDrawable;
+            scene = new Scene();  // MyDrawable インスタンスを作成
+            graphicsView.Drawable = scene;
             BindingContext = this;
-            MyDrawable = _myDrawable;  // Drawable に設定
+            Scene = scene;  // Drawable に設定
 
+            this.UpdateLoop();
+
+        }
+
+        /// <summary>
+        /// 画面更新処理.
+        /// </summary>
+        private async void UpdateLoop()
+        {
+            if (this._isUpdating)
+            {
+                return;
+            }
+
+            this._isUpdating = true;
+            TimeSpan interval = TimeSpan.FromSeconds(1.0 / Scene.FrameRate);
+
+            while (this._isUpdating)
+            {
+                Stopwatch stopwatch = Stopwatch.StartNew();
+
+                // 画面を更新
+                this.graphicsView.Invalidate();
+
+                // 次のフレームまで待機
+                TimeSpan elapsed = stopwatch.Elapsed;
+                TimeSpan delay = interval - elapsed; // 待機の時間をラグを見て調整
+                if (delay > TimeSpan.Zero)
+                {
+                    await Task.Delay(delay);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 画面更新を止める処理.
+        /// </summary>
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            this._isUpdating = false; // 更新ループを停止
         }
 
         // コマンドが入力された時の処理
@@ -30,7 +74,7 @@
         {
             string command = InputField.Text?.Trim();
             if (string.IsNullOrEmpty(command))
-                return;
+                return ;
 
             // 出力領域にコマンドを追加
             AppendOutput($"> {command}");
@@ -70,6 +114,7 @@
                 "scale" => ScaleTest(),
                 "rotationz" => RotationZTest(),
                 "test" => Test(),
+                "teapot" => AddTeapot(),
                 _ => "Unknown command."
             };
         }
@@ -83,7 +128,7 @@
                 {
                     Assembly.GetAssembly(typeof(object)),  // System.Object
                     Assembly.GetAssembly(typeof(Enumerable)), // System.Linq
-                    Assembly.GetAssembly(typeof(System.Collections.Generic.List<>)) // System.Collections.Generic
+                    Assembly.GetAssembly(typeof(System.Collections.Generic.List<>)), // System.Collections.Generic
                 };
 
                 // コードをスクリプトとして実行
@@ -101,27 +146,25 @@
             }
         }
 
+        private string Test()
+        {
+            Object.Object quadrangle = new Object.Object("rectangle", new double[,] { { 100, 300, 300, 100 }, { 100, 100, 400, 400 } });
+            this.scene.AddObject(quadrangle);
+            return quadrangle.ToString() + "\nDone!";
+        }
+
         private string TranslationTest()
         {
-            //テスト用、加工前データ
-            Math.Vector vec = new(2, 4);
-            vec.Initialize(new double[,] { { 100, 300, 300, 100 }, { 100, 100, 400, 400 } }); // 四角形を描画
-            //_myDrawable.AddPoints(vec,Colors.Aqua);
+            // 平行移動
+            Math.Matrix trans = new (new double[] { 200, -100, 0 });
+            this.Scene.Objects[0].Translation(trans); // 移動の適用
 
-            //平行移動
-            Math.Matrix trans = new(2, 1);
-            //trans.Initialize(new double[] { 200, -100 }); //移動量
-            vec.Translation(trans); // 移動の適用
-            //_myDrawable.AddPoints(vec, Colors.Red);
-
-            // 描画を更新
-            graphicsView.Invalidate();  // GraphicsView を再描画
-
-            return vec.ToString()+"\nDone!";
+            return this.Scene.Objects[0].ToString() + "\nDone!";
         }
 
         private string ScaleTest()
         {
+            /*
             //テスト用、加工前データ
             Math.Vector vec = new(2, 4);
             vec.Initialize(new double[,] { { 100, 300, 300, 100 }, { 100, 100, 400, 400 } }); // 四角形を描画
@@ -134,13 +177,14 @@
             //_myDrawable.AddPoints(vec, Colors.Black);
 
             // 描画を更新
-            graphicsView.Invalidate();  // GraphicsView を再描画
+            graphicsView.Invalidate();  // GraphicsView を再描画*/
 
-            return vec.ToString() + "\nDone!";
+            return "\nDone!";
         }
 
         private string RotationZTest()
         {
+            /*
             //テスト用、加工前データ
             Math.Vector vec = new(2, 4);
             vec.Initialize(new double[,] { { 100, 300, 300, 100 }, { 100, 100, 400, 400 } }); // 四角形を描画
@@ -152,27 +196,16 @@
             //_myDrawable.AddPoints(vec, Colors.Black);
 
             // 描画を更新
-            graphicsView.Invalidate();  // GraphicsView を再描画
+            graphicsView.Invalidate();  // GraphicsView を再描画*/
 
-            return vec.ToString() + "\nDone!";
+            return "\nDone!";
         }
 
-        private string Test()
+        private string AddTeapot()
         {
-            //Vector vec = files.VerticesFromObj("E:/Projects/CsGraphics/CsGraphics/teapot.obj");
-            Math.Vector vec = files.VerticesFromObj("C:/Users/mail/Documents/CsGraphics/CsGraphics/teapot.obj");
+            this.Scene.AddObjectFromObj("teapot", "E:/Projects/CsGraphics/CsGraphics/teapot.obj");
 
-            Math.Matrix trans = new(3, 1);
-            //trans.Initialize(new double[] { 20, 10 ,0}); //移動量
-            vec.Translation(trans);
-
-            //拡大縮小
-            Math.Matrix scale = new(3, 1);
-            //scale.Initialize(new double[] { 50, 50,50 }); //移動量
-            vec.Scale(scale); // 移動の適用
-
-            //_myDrawable.AddPoints(vec, Colors.Black);
-            graphicsView.Invalidate();
+            // Math.Vector vec = files.VerticesFromObj("C:/Users/mail/Documents/CsGraphics/CsGraphics/teapot.obj");
             return "Done!";
         }
     }
