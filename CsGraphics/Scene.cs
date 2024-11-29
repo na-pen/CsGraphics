@@ -92,10 +92,13 @@
         /// </summary>
         /// <param name="name">オブジェクト名.</param>
         /// <param name="filePath">.objのパス.</param>
-        public void AddObjectFromObj(string name, string filePath)
+        /// <returns>ID.</returns>
+        public int AddObjectFromObj(string name, string filePath)
         {
             double[,] vertices = Parser.ObjParseVertices(filePath);
-            this.AddObject(name, vertices);
+            int id = this.AddObject(name, vertices);
+
+            return id;
         }
 
         /// <summary>

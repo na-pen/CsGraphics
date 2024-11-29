@@ -5,6 +5,7 @@
     using System.Diagnostics;
     using System.Linq;
     using System.Reflection;
+    using System.Text.RegularExpressions;
     using CsGraphics;
     using Microsoft.CodeAnalysis.CSharp.Scripting;
     using Microsoft.CodeAnalysis.Scripting;
@@ -81,7 +82,7 @@
         }
 
         // コマンドが入力された時の処理
-        private async void OnCommandEntered(object sender, EventArgs e)
+        private void OnCommandEntered(object sender, EventArgs e)
         {
             string? command = this.InputField.Text?.Trim();
             if (string.IsNullOrEmpty(command))
@@ -94,7 +95,7 @@
 
             // コマンドに応じた結果を出力
             string result = string.Empty;
-            result = await this.ProcessCommand(command) + "\n";
+            result = this.ProcessCommand(command) + "\n";
 
             this.AppendOutput(result);
 
@@ -115,48 +116,19 @@
         }
 
         // コマンド処理ロジック
-        private async Task<string?> ProcessCommand(string command)
+        private string ProcessCommand(string command)
         {
+            string pattern = @"\((.*?)\)";
+            string[] args = Regex.Match(command, pattern).Groups[1].Value.Split(',');
             return command.ToLower() switch
             {
-                _ when command.StartsWith("!") => await this.ExecuteCodeAsync(command.Substring(1)),
-                "hello" => "Hello, user!",
-                "time" => DateTime.Now.ToString(),
-                "exit" => "Goodbye!",
-                "translation" => this.TranslationTest(),
-                "scale" => this.ScaleTest(),
-                "rotationz" => this.RotationTest(),
+                _ when command.StartsWith("translation") => this.TranslationTest(int.Parse(args[0]), double.Parse(args[1]), double.Parse(args[2]), double.Parse(args[3])),
+                _ when command.StartsWith("scale") => this.ScaleTest(int.Parse(args[0]), double.Parse(args[1]), double.Parse(args[2]), double.Parse(args[3])),
+                _ when command.StartsWith("rotation") => this.RotationTest(int.Parse(args[0]), double.Parse(args[1]), double.Parse(args[2]), double.Parse(args[3])),
                 "test" => this.Test(),
                 "teapot" => this.AddTeapot(),
                 _ => "Unknown command."
             };
-        }
-
-        private async Task<string?> ExecuteCodeAsync(string code)
-        {
-            try
-            {
-                // 必要なアセンブリを手動で指定
-                var assemblies = new[]
-                {
-                    Assembly.GetAssembly(typeof(object)),  // System.Object
-                    Assembly.GetAssembly(typeof(Enumerable)), // System.Linq
-                    Assembly.GetAssembly(typeof(System.Collections.Generic.List<>)), // System.Collections.Generic
-                };
-
-                // コードをスクリプトとして実行
-                var result = await CSharpScript.EvaluateAsync<object>(
-                    code,
-                    ScriptOptions.Default
-                        .WithReferences(Assembly.GetExecutingAssembly()) // 現在のアセンブリを参照
-                        .WithImports("System", "System.Linq", "System.Collections.Generic", "CsGraphics"));
-
-                return result != null ? result.ToString() : "Execution completed.";
-            }
-            catch (Exception ex)
-            {
-                return $"Error: {ex.Message}";
-            }
         }
 
         private string Test()
@@ -168,33 +140,33 @@
             return this.Scene.GetObjectInfo(idRectangle);
         }
 
-        private string TranslationTest()
+        private string TranslationTest(int id, double x, double y, double z)
         {
             // 平行移動
-            this.Scene.TranslationObject(0, 200, 100, 0);
+            this.Scene.TranslationObject(id, x, y, z);
 
-            return "\nDone!";
+            return "Done!";
         }
 
-        private string ScaleTest()
+        private string ScaleTest(int id, double x, double y, double z)
         {
             // 拡大
-            this.Scene.ScaleObject(0, 2, 0.5, 0);
+            this.Scene.ScaleObject(id, x, y, z);
 
-            return this.Scene.GetObjectInfo(0) + "\nDone!";
+            return "Done!";
         }
 
-        private string RotationTest()
+        private string RotationTest(int id, double x, double y, double z)
         {
             // 回転
-            this.Scene.RotationObject(0, 0, 0, 0.5);
+            this.Scene.RotationObject(id, x, y, z);
 
-            return "\nDone!";
+            return "Done!";
         }
 
         private string AddTeapot()
         {
-            this.Scene.AddObjectFromObj("teapot", "E:/Projects/CsGraphics/CsGraphics/teapot.obj");
+            int idTeapot = this.Scene.AddObjectFromObj("teapot", "E:\\Projects\\CsGraphics\\Main\\teapot.obj");
 
             // Math.Vector vec = files.VerticesFromObj("C:/Users/mail/Documents/CsGraphics/CsGraphics/teapot.obj");
             return "Done!";
