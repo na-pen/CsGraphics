@@ -6,7 +6,7 @@
     /// <summary>
     /// オブジェクトのすべての頂点の情報の保持や管理を行う.
     /// </summary>
-    public class Vertex : ICloneable
+    internal struct Vertex : ICloneable
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Vertex"/> class.
@@ -14,13 +14,13 @@
         /// <param name="objectId">オブジェクトID.</param>
         /// <param name="coordinate">3次元空間上の座標(オブジェクト基準).</param>
         /// <param name="color">頂点の色.</param>
-        public Vertex(int objectId, double[,] coordinate, Color[]? color)
+        internal Vertex(int objectId, double[,] coordinate, Color[]? color)
         {
             // 初期値の適用
-            this.ObjectId = objectId;
-            this.Coordinate = this.ConvertMatriix2Calcable( new Math.Matrix(coordinate));
+            ObjectId = objectId;
+            Coordinate = ConvertMatriix2Calcable(new Math.Matrix(coordinate));
 
-            this.Color = new Color[coordinate.GetLength(1)];
+            Color = new Color[coordinate.GetLength(1)];
             if (color != null)
             {
                 if (coordinate.GetLength(1) != color.Length) // すべての頂点に対して色指定がされているか
@@ -28,11 +28,11 @@
                     throw new ArgumentException("頂点の色を指定する場合は、すべての頂点に対して指定する必要があります。");
                 }
 
-                this.Color = color;
+                Color = color;
             }
             else
             {
-                Array.Fill(this.Color, Colors.Black);
+                Array.Fill(Color, Colors.Black);
             }
         }
 
@@ -48,17 +48,17 @@
         /// <summary>
         /// Gets オブジェクトID.
         /// </summary>
-        public int ObjectId { get; }
+        internal int ObjectId { get; }
 
         /// <summary>
         /// Gets or Sets 3D空間上の3次元座標(オブジェクト基準).
         /// </summary>
-        public Math.Matrix Coordinate { get; set; }
+        internal Math.Matrix Coordinate { get; set; }
 
         /// <summary>
         /// Gets or sets 頂点の色.
         /// </summary>
-        public Color[] Color { get; set; }
+        internal Color[] Color { get; set; }
 
         private Math.Matrix ConvertMatriix2Calcable(Math.Matrix matrix)
         {
@@ -86,17 +86,18 @@
         public override string ToString() // Vertex test = new(0, new double[] { 0, 0, 0 });
         {
             string result = string.Empty;
-
+            Math.Matrix coordinate = this.Coordinate;
+            Color[] color = this.Color;
 
             result =
-                "ObjectID : " + this.ObjectId.ToString() + "\n" +
+                "ObjectID : " + ObjectId.ToString() + "\n" +
                 string.Join(
                     "\n\n",
-                    Enumerable.Range(0, this.Coordinate.GetLength(1)) // 各列を対象にする
+                    Enumerable.Range(0, coordinate.GetLength(1)) // 各列を対象にする
                         .Select(i =>
                             $"ID : {i}\n" +
-                            $"XYZ : ({this.Coordinate[0, i]}, {this.Coordinate[1, i]}, {this.Coordinate[2, i]})\n" +
-                            $"Color : ({this.Color[i].Red}, {this.Color[i].Green}, {this.Color[i].Blue}, {this.Color[i].Alpha})")
+                            $"XYZ : ({coordinate[0, i]}, {coordinate[1, i]}, {coordinate[2, i]})\n" +
+                            $"Color : ({color[i].Red}, {color[i].Green}, {color[i].Blue}, {color[i].Alpha})")
                         .ToArray());
 
             return result;
@@ -107,17 +108,17 @@
         /// </summary>
         /// <param name="dimension">取得する方向.</param>
         /// <returns>長さ.</returns>
-        public int GetLength(int dimension)
+        internal int GetLength(int dimension)
         {
-            return this.Coordinate.GetLength(dimension);
+            return Coordinate.GetLength(dimension);
         }
 
         public object Clone()
         {
             return new Vertex(
-                this.ObjectId,
-                (Matrix)this.Coordinate.Clone(),
-                (Color[])this.Color.Clone()
+                ObjectId,
+                (Matrix)Coordinate.Clone(),
+                (Color[])Color.Clone()
                 );
         }
 

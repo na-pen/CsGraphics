@@ -1,6 +1,6 @@
 ﻿using Foundation;
 
-namespace CsGraphics
+namespace Main.Platforms.MacCatalyst
 {
     [Register("AppDelegate")]
     public class AppDelegate : MauiUIApplicationDelegate

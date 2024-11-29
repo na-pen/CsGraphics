@@ -17,7 +17,7 @@ namespace CsGraphics.Math
     /// <summary>
     /// 行列の定義.
     /// </summary>
-    public class Matrix : ICloneable
+    internal class Matrix : ICloneable
     {
         private double[,] data; // 行列データ
 
@@ -28,7 +28,7 @@ namespace CsGraphics.Math
         /// </summary>
         /// <param name="rows">行数</param>
         /// <param name="columns">列数</param>
-        public Matrix(int rows, int columns = 0)
+        internal Matrix(int rows, int columns = 0)
         {
             if (columns == 0)
             {
@@ -40,12 +40,12 @@ namespace CsGraphics.Math
                 throw new ArgumentException("Rows and columns must be positive integers.");
             }
 
-            this.Rows = rows;
-            this.Columns = columns;
-            this.data = new double[rows, columns];
+            Rows = rows;
+            Columns = columns;
+            data = new double[rows, columns];
         }
 
-        public Matrix(double[] array)
+        internal Matrix(double[] array)
         {
 
             double[,] result = new double[array.Length, 1];
@@ -56,44 +56,44 @@ namespace CsGraphics.Math
                 result[i, 0] = array[i];
             }
 
-            this.Rows = array.Length;
-            this.Columns = 1;
-            this.data = new double[this.Rows, this.Columns];
+            Rows = array.Length;
+            Columns = 1;
+            data = new double[Rows, Columns];
 
-            this.Initialize(result);
+            Initialize(result);
         }
 
-        public Matrix(double[,] array)
+        internal Matrix(double[,] array)
         {
-            this.Rows = array.GetLength(0);
-            this.Columns = array.GetLength(1);
-            this.data = new double[this.Rows, this.Columns];
+            Rows = array.GetLength(0);
+            Columns = array.GetLength(1);
+            data = new double[Rows, Columns];
 
-            if (array.GetLength(0) != this.Rows || array.GetLength(1) != this.Columns)
+            if (array.GetLength(0) != Rows || array.GetLength(1) != Columns)
             {
                 throw new ArgumentException("Array dimensions must match the matrix dimensions.");
             }
-            this.Initialize(array);
+            Initialize(array);
         }
 
-        private Matrix(double[,] data,int rows,int columns)
+        private Matrix(double[,] data, int rows, int columns)
         {
             this.data = data;
-            this.Rows = rows;
-            this.Columns = columns;
+            Rows = rows;
+            Columns = columns;
         }
 
         /// <summary>
         /// Gets the number of rows in the matrix.
         /// 行列の行数.
         /// </summary>
-        public int Rows { get; private set; }
+        internal int Rows { get; private set; }
 
         /// <summary>
         /// Gets the number of columns in the matrix.
         /// 行列の列数.
         /// </summary>
-        public int Columns { get; private set; }
+        internal int Columns { get; private set; }
 
         /// <summary>
         /// 要素をインデックスで取得するための設定
@@ -102,26 +102,26 @@ namespace CsGraphics.Math
         /// <param name="column">列</param>
         /// <returns>値</returns>
         /// <exception cref="IndexOutOfRangeException">インデックスがアクセス範囲外の場合</exception>
-        public double this[int row, int column]
+        internal double this[int row, int column]
         {
             get
             {
-                if (row < 0 || row >= Rows || column < 0 || column >= this.Columns)
+                if (row < 0 || row >= Rows || column < 0 || column >= Columns)
                 {
                     throw new IndexOutOfRangeException("Invalid index.");
                 }
 
-                return this.data[row, column];
+                return data[row, column];
             }
 
             set
             {
-                if (row < 0 || row >= Rows || column < 0 || column >= this.Columns)
+                if (row < 0 || row >= Rows || column < 0 || column >= Columns)
                 {
                     throw new IndexOutOfRangeException("Invalid index.");
                 }
 
-                this.data[row, column] = value;
+                data[row, column] = value;
             }
         }
 
@@ -139,7 +139,7 @@ namespace CsGraphics.Math
                 throw new InvalidOperationException("Matrix dimensions must match for addition.");
             }
 
-            Matrix result = new (a.Rows, a.Columns);
+            Matrix result = new(a.Rows, a.Columns);
             for (int i = 0; i < a.Rows; i++)
             {
                 for (int j = 0; j < a.Columns; j++)
@@ -273,24 +273,24 @@ namespace CsGraphics.Math
         /// 行列を初期値で埋める.
         /// </summary>
         /// <param name="initializer">initializer</param>
-        public void Initialize(Func<int, int, double> initializer)
+        internal void Initialize(Func<int, int, double> initializer)
         {
-            for (int i = 0; i < this.Rows; i++)
+            for (int i = 0; i < Rows; i++)
             {
-                for (int j = 0; j < this.Columns; j++)
+                for (int j = 0; j < Columns; j++)
                 {
-                    this.data[i, j] = initializer(i, j);
+                    data[i, j] = initializer(i, j);
                 }
             }
         }
 
-        public void Initialize(double[,] array)
+        internal void Initialize(double[,] array)
         {
-            for (int i = 0; i < this.Rows; i++)
+            for (int i = 0; i < Rows; i++)
             {
-                for (int j = 0; j < this.Columns; j++)
+                for (int j = 0; j < Columns; j++)
                 {
-                    this.data[i, j] = array[i, j];
+                    data[i, j] = array[i, j];
                 }
             }
         }
@@ -299,16 +299,16 @@ namespace CsGraphics.Math
         /// 単位行列を生成する
         /// </summary>
         /// <exception cref="ArgumentException">行列の長さは1以上の整数である必要があります</exception>
-        public void Identity()
+        internal void Identity()
         {
-            if (this.Rows != this.Columns)
+            if (Rows != Columns)
             {
                 throw new IndexOutOfRangeException("The identity matrix must have equal row and column sizes.");
             }
 
-            this.Initialize((i, j) => 0);
+            Initialize((i, j) => 0);
 
-            for (int i = 0; i < this.Rows; i++)
+            for (int i = 0; i < Rows; i++)
             {
                 this[i, i] = 1; // 対角成分を1に設定
             }
@@ -318,7 +318,7 @@ namespace CsGraphics.Math
         /// 行列を転置する
         /// </summary>
         /// <returns></returns>
-        public void Transpose()
+        internal void Transpose()
         {
             Matrix transposed = new Matrix(Columns, Rows); // 行と列を入れ替えたサイズの行列を作成
             for (int i = 0; i < Rows; i++)
@@ -328,40 +328,40 @@ namespace CsGraphics.Math
                     transposed[j, i] = this[i, j]; // 行と列を入れ替えてコピー
                 }
             }
-            this.data = transposed.data;
-            int temp = this.Rows;
-            this.Rows = this.Columns;
-            this.Columns = temp;
+            data = transposed.data;
+            int temp = Rows;
+            Rows = Columns;
+            Columns = temp;
         }
 
-        public void Resize(int row, int column = 0, double[] value = null)
+        internal void Resize(int row, int column = 0, double[] value = null)
         {
             int temp = -1;
-            if(value == null)
+            if (value == null)
             {
-                Array.Fill(value, 0,  0, row - this.Rows -1);
+                Array.Fill(value, 0, 0, row - Rows - 1);
             }
-            if(column == 0)
+            if (column == 0)
             {
-                column = this.Columns;
+                column = Columns;
             }
-            if(row < this.Rows ||  column < this.Columns)
+            if (row < Rows || column < Columns)
             {
                 throw new ArgumentException("The number of rows and columns in the resized matrix must be equal to or greater than before the resizing, respectively.");
             }
-            Matrix result = new(row, column); 
+            Matrix result = new(row, column);
             // 行列のサイズを変更する（n行m列）
             for (int i = 0; i < row; i++)
             {
                 for (int j = 0; j < column; j++)
                 {
-                    if (i < this.Rows && j < this.Columns)
+                    if (i < Rows && j < Columns)
                     {
-                        result[i, j] = this.data[i, j];
+                        result[i, j] = data[i, j];
                     }
                     else
                     {
-                        if(temp == -1)
+                        if (temp == -1)
                         {
                             temp = i;
                         }
@@ -370,24 +370,24 @@ namespace CsGraphics.Math
                 }
             }
 
-            this.Columns = result.Columns;
-            this.Rows = result.Rows;
-            this.data = result.data;
+            Columns = result.Columns;
+            Rows = result.Rows;
+            data = result.data;
 
         }
 
-        public void ColumnCopy(int column)
+        internal void ColumnCopy(int column)
         {
 
-            if (1 != this.Columns)
+            if (1 != Columns)
             {
                 throw new ArgumentException("The number of rows in the matrix after resizing must be the same as before resizing. The number of columns in the matrix before resizing must be 1.");
             }
 
-            double[,] output = new double[this.Rows, column];
+            double[,] output = new double[Rows, column];
 
             // 元の配列の値を新しい配列にコピー
-            for (int i = 0; i < this.Rows; i++)
+            for (int i = 0; i < Rows; i++)
             {
                 for (int j = 0; j < column; j++)
                 {
@@ -395,13 +395,13 @@ namespace CsGraphics.Math
                 }
             }
 
-            this.Columns = column;
-            this.data = output;
+            Columns = column;
+            data = output;
         }
 
-        public int GetLength(int dimension)
+        internal int GetLength(int dimension)
         {
-            return this.data.GetLength(dimension);
+            return data.GetLength(dimension);
         }
 
         /// <summary>
@@ -411,9 +411,9 @@ namespace CsGraphics.Math
         public override string ToString()
         {
             string result = string.Empty;
-            for (int i = 0; i < this.Rows; i++)
+            for (int i = 0; i < Rows; i++)
             {
-                for (int j = 0; j < this.Columns; j++)
+                for (int j = 0; j < Columns; j++)
                 {
                     result += $"{data[i, j]:0.##}\t";
                 }
@@ -425,9 +425,9 @@ namespace CsGraphics.Math
         public object Clone()
         {
             return new Matrix(
-                (double[,])this.data.Clone(),
-                this.Rows,
-                this.Columns
+                (double[,])data.Clone(),
+                Rows,
+                Columns
                 );
         }
     }
