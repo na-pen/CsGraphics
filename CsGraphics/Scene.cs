@@ -20,6 +20,10 @@
         /// </summary>
         internal List<Object.Object> Objects;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Scene"/> class.
+        /// </summary>
+        /// <param name="frameRate">フレームレート.</param>
         public Scene(int frameRate)
         {
             this.FrameRate = frameRate;
