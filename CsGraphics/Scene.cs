@@ -56,7 +56,23 @@
             {
                 if (@object.IsVisible == true)
                 {
-                    (Point[] points, Color[] color, bool[] isVisiblePolygon) = Calculation.Calc((Object.Object)@object.Clone()); // 点や面の計算
+                    Point[] points = Array.Empty<Point>();
+                    Color[] color = Array.Empty<Color>();
+                    bool[] isVisiblePolygon = Array.Empty<bool>();
+
+                    if (@object.IsUpdated == true)
+                    {
+                        (points, color, isVisiblePolygon) = Calculation.Calc((Object.Object)@object.Clone()); // 点や面の計算
+
+                        @object.Points = points;
+                        @object.PointsColor = color;
+                        @object.IsVisiblePolygon = isVisiblePolygon;
+                        @object.IsUpdated = false;
+                    }
+                    else
+                    {
+                        (points, color, isVisiblePolygon) = (@object.Points, @object.PointsColor, @object.IsVisiblePolygon);
+                    }
 
                     // 点を描画
                     points.Zip(color, (point, c) =>
@@ -77,7 +93,7 @@
                         int j = 0;
                         foreach (int[] indices in (Polygon)@object.Polygon)
                         {
-                            if (isVisiblePolygon[j])
+                            if (isVisiblePolygon[j]) // カメラに対して向いている面のみ描画
                             {
                                 PathF path = new ();
                                 path.MoveTo((float)points[indices[0] - 1].X, (float)points[indices[0] - 1].Y); // 初期点

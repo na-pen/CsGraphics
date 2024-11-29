@@ -38,11 +38,15 @@
                 result.Add(new Point(vertex[0, 0], vertex[1, 0]));
             }
 
+            // ポリゴンの法線がz=0の面とどの向きで交差するかどうか確認する
             if (@object.Polygon != null)
             {
                 isVisiblePolygon = new bool[((Object.Polygon)@object.Polygon).Length()];
                 for (int i = 0; i < ((Object.Polygon)@object.Polygon).Length(); i++)
                 {
+                    // 各ポリゴンの法線ベクトルに対して、オブジェクトの移動を反映する
+                    // 法線ベクトル.z > 0 ならば正の向きで交差する.
+                    // 交差するときのみ、描画フラグを立てる
                     if ((matrix * ((Object.Polygon)@object.Polygon).Normal[i])[2, 0] > 0)
                     {
                         isVisiblePolygon[i] = true;

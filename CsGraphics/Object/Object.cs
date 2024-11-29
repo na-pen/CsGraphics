@@ -103,6 +103,28 @@
         internal Polygon? Polygon { get; set; } = null;
 
         /// <summary>
+        /// Gets or sets a value indicating whether gets or sets オブジェクトが更新されたかどうか.
+        /// </summary>
+        internal bool IsUpdated { get; set; } = true;
+
+        //------------------------------------------------------ ここから 計算済み情報の保持 ------------------------------------------------------/
+
+        /// <summary>
+        /// Gets or sets 計算後の画面上の描画座標を保持.
+        /// </summary>
+        internal Point[] Points { get; set; } = Array.Empty<Point>();
+
+        /// <summary>
+        /// Gets or sets 計算後の画面上の頂点色を保持.
+        /// </summary>
+        internal Color[] PointsColor { get; set; } = Array.Empty<Color>();
+
+        /// <summary>
+        /// Gets or sets 計算後の画面上の面の表示状態の保持.
+        /// </summary>
+        internal bool[] IsVisiblePolygon { get; set; } = Array.Empty<bool>();
+
+        /// <summary>
         /// 自身をシャドーコピーする.
         /// </summary>
         /// <returns>Clone.</returns>
@@ -129,6 +151,8 @@
         /// <param name="z">z軸の移動量.</param>
         internal void SetTranslation(double x, double y, double z)
         {
+            this.IsUpdated = true;
+
             Math.Matrix temp = new (3, 1);
 
             temp[0, 0] = x;
@@ -146,6 +170,7 @@
         /// <param name="z">z軸の拡大率.</param>
         internal void SetScale(double x, double y, double z)
         {
+            this.IsUpdated = true;
             this.Magnification = new double[] { this.Magnification[0] * x, this.Magnification[1] * y, this.Magnification[2] * z };
         }
 
@@ -157,6 +182,7 @@
         /// <param name="z">z軸の回転角度.</param>
         internal void SetRotation(double x, double y, double z)
         {
+            this.IsUpdated = true;
             this.Angle = new double[] { this.Angle[0] + x, this.Angle[1] + y, this.Angle[2] + z };
         }
     }
