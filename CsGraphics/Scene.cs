@@ -1,6 +1,7 @@
 ﻿namespace CsGraphics
 {
     using System.Collections;
+    using CsGraphics.Object;
     using Microsoft.Maui.Graphics;
 
     /// <summary>
@@ -54,13 +55,37 @@
             {
                 if (@object.IsVisible == true)
                 {
+                    // 点を描画
                     (Point[] points, Color[] color) = CalcScreenCoord.Calc((Object.Object)@object.Clone());
                     points.Zip(color, (point, c) =>
                         {
                             canvas.FillColor = c;  // 点の色を設定
-                            canvas.FillCircle((float)point.X, (float)point.Y, 5);  // 点を描画
+                            canvas.FillCircle((float)point.X, (float)point.Y, 1);  // 点を描画
+
                             return 0; // 必要に応じて適切な値を返す
                         }).ToList();
+
+                    // 面を描画
+                    canvas.FillColor = Colors.LightBlue; // 塗りつぶしの色
+                    canvas.StrokeColor = Colors.Blue; // 線の色
+                    canvas.StrokeSize = 1;
+
+                    if (@object.Polygon != null)
+                    {
+                        foreach (int[] indices in (Polygon)@object.Polygon)
+                        {
+                            PathF path = new ();
+                            path.MoveTo((float)points[indices[0] - 1].X, (float)points[indices[0] - 1].Y); // 初期点
+                            for (int i = 1; i < indices.Length; i++)
+                            {
+                                path.LineTo((float)points[indices[i] - 1].X, (float)points[indices[i] - 1].Y); // 次の頂点
+                            }
+
+                            path.Close();
+                            canvas.FillPath(path);
+                            canvas.DrawPath(path);
+                        }
+                    }
                 }
             }
 
@@ -77,11 +102,12 @@
         /// <param name="origin">オブジェクトの原点.</param>
         /// <param name="visible">オブジェクトの可視状態.</param>
         /// <param name="scale">拡大率.</param>
+        /// <param name="polygon">面を構成する点の情報.</param>
         /// <returns>id.</returns>
-        public int AddObject(string name, double[,] vertexCoord, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null)
+        public int AddObject(string name, double[,] vertexCoord, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null, int[][]? polygon = null)
         {
             int id = this.Objects.Count;
-            Object.Object @object = new (name, vertexCoord, id, vertexColor, origin, visible, scale);
+            Object.Object @object = new (name, vertexCoord, id, vertexColor, origin, visible, scale, polygon);
             this.Objects.Add(@object);
 
             return id;
@@ -95,8 +121,8 @@
         /// <returns>ID.</returns>
         public int AddObjectFromObj(string name, string filePath)
         {
-            double[,] vertices = Parser.ObjParseVertices(filePath);
-            int id = this.AddObject(name, vertices);
+            (double[,] vertices, int[][] polygon) = Parser.ObjParseVertices(filePath);
+            int id = this.AddObject(name, vertices, polygon: polygon);
 
             return id;
         }

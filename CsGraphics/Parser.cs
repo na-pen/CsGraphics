@@ -16,9 +16,10 @@
         /// </summary>
         /// <param name="filePath">ファイルパス.</param>
         /// <returns>オブジェクトの頂点座標.</returns>
-        internal static double[,] ObjParseVertices(string filePath)
+        internal static (double[,],int[][]) ObjParseVertices(string filePath)
         {
             var vertices = new List<double[]>(); // 動的リストで頂点情報を一時的に格納
+            List<List<int>> polygon = new List<List<int>>(); // 動的リストで面を構成する頂点のIDを一時的に格納
 
             // ファイルを1行ずつ読み取る
             foreach (var line in File.ReadLines(filePath))
@@ -35,6 +36,21 @@
                         vertices.Add(new[] { x, y, z });
                     }
                 }
+                else if (line.StartsWith("f ")) // 面情報のとき
+                {
+                    List<int> p = new List<int>();
+                    var parts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (parts.Length >= 4) // 面の情報が存在する場合
+                    {
+                        foreach (var part in parts.Skip(1))
+                        {
+                            string[] _part = part.Split("/");
+                            p.Add(int.Parse(_part[0]));
+                        }
+                    }
+
+                    polygon.Add(p);
+                }
             }
 
             // List<double[]> を double[,] に変換
@@ -48,7 +64,7 @@
                 vertexArray[2, i] = vertices[i][2];
             }
 
-            return vertexArray;
+            return (vertexArray, polygon.Select(innerList => innerList.ToArray()).ToArray());
         }
     }
 }

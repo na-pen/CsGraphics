@@ -17,7 +17,7 @@
         /// <param name="origin">オブジェクトの原点.</param>
         /// <param name="visible">オブジェクトの表示状態.</param>
         /// <param name="scale">オブジェクトの拡大倍率.</param>
-        internal Object(string name, double[,] vertexCoord, int id = -1, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null)
+        internal Object(string name, double[,] vertexCoord, int id = -1, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null, int[][]? polygon = null)
         {
             this.ID = id;
             this.Name = name;
@@ -42,9 +42,14 @@
             }
 
             this.Vertex = new (id, vertexCoord, vertexColor);
+
+            if (polygon != null)
+            {
+                this.Polygon = new Polygon(this.ID, polygon);
+            }
         }
 
-        private Object(string name, Vertex vertex, int id, Math.Matrix origin, double[] magnification, bool visible, double[] angle)
+        private Object(string name, Vertex vertex, int id, Math.Matrix origin, double[] magnification, bool visible, double[] angle, Polygon? polygon)
         {
             this.Name = name;
             this.IsVisible = visible;
@@ -53,6 +58,7 @@
             this.Vertex = vertex;
             this.Magnification = magnification;
             this.Angle = angle;
+            this.Polygon = polygon;
         }
 
         /// <summary>
@@ -91,6 +97,11 @@
         internal double[] Angle { get; set; } = { 0, 0, 0 };
 
         /// <summary>
+        /// Gets or sets 多角形面の情報.
+        /// </summary>
+        internal Polygon? Polygon { get; set; } = null;
+
+        /// <summary>
         /// 自身をシャドーコピーする.
         /// </summary>
         /// <returns>Clone.</returns>
@@ -103,7 +114,8 @@
                 (Math.Matrix)this.Origin.Clone(),
                 (double[])this.Magnification.Clone(),
                 this.IsVisible,
-                this.Angle)
+                this.Angle,
+                this.Polygon)
             {
             };
         }
