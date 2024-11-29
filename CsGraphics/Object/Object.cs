@@ -1,5 +1,6 @@
 ﻿namespace CsGraphics.Object
 {
+    using CsGraphics.Math;
     using Microsoft.Maui.Primitives;
 
     /// <summary>
@@ -17,7 +18,7 @@
         /// <param name="origin">オブジェクトの原点.</param>
         /// <param name="visible">オブジェクトの表示状態.</param>
         /// <param name="scale">オブジェクトの拡大倍率.</param>
-        internal Object(string name, double[,] vertexCoord, int id = -1, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null, int[][]? polygon = null)
+        internal Object(string name, double[,] vertexCoord, int id = -1, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null, int[][]? polygon = null, Matrix[] normal = null)
         {
             this.ID = id;
             this.Name = name;
@@ -45,7 +46,7 @@
 
             if (polygon != null)
             {
-                this.Polygon = new Polygon(this.ID, polygon);
+                this.Polygon = new Polygon(this.ID, polygon, normal);
             }
         }
 

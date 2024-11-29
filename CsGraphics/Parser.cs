@@ -1,5 +1,6 @@
 ﻿namespace CsGraphics
 {
+    using CsGraphics.Math;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -16,10 +17,11 @@
         /// </summary>
         /// <param name="filePath">ファイルパス.</param>
         /// <returns>オブジェクトの頂点座標.</returns>
-        internal static (double[,],int[][]) ObjParseVertices(string filePath)
+        internal static (double[,],int[][], Matrix[]) ObjParseVertices(string filePath)
         {
             var vertices = new List<double[]>(); // 動的リストで頂点情報を一時的に格納
             List<List<int>> polygon = new List<List<int>>(); // 動的リストで面を構成する頂点のIDを一時的に格納
+            List<Matrix> normal = new List<Matrix>(); // 動的リストで面の法線ベクトルを一時的に格納
 
             // ファイルを1行ずつ読み取る
             foreach (var line in File.ReadLines(filePath))
@@ -64,7 +66,27 @@
                 vertexArray[2, i] = vertices[i][2];
             }
 
-            return (vertexArray, polygon.Select(innerList => innerList.ToArray()).ToArray());
+            // 面の法線ベクトルを計算
+            foreach (List<int> indices in polygon)
+            {
+                Matrix ab = new (new double[]
+                {
+                    (vertices[indices[1] - 1][0] - vertices[indices[0] - 1][0]),
+                    (vertices[indices[1] - 1][1] - vertices[indices[0] - 1][1]),
+                    (vertices[indices[1] - 1][2] - vertices[indices[0] - 1][2]),
+                });
+                Matrix bc = new (new double[]
+                {
+                    (vertices[indices[2] - 1][0] - vertices[indices[1] - 1][0]),
+                    (vertices[indices[2] - 1][1] - vertices[indices[1] - 1][1]),
+                    (vertices[indices[2] - 1][2] - vertices[indices[1] - 1][2]),
+                });
+                Matrix temp = Matrix.CrossProduct(ab, bc);
+                temp.Resize(4, value: new double[] { 0 });
+                normal.Add(temp);
+            }
+
+            return (vertexArray, polygon.Select(innerList => innerList.ToArray()).ToArray(), normal.ToArray());
         }
     }
 }

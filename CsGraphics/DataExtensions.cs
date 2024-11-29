@@ -42,7 +42,7 @@
         /// <returns>System.Collections.IEnumerator.</returns>
         public static System.Collections.IEnumerator GetEnumerator(this Object.Polygon polygon)
             =>
-            Enumerable.Range(0, polygon.GetLength(0))
+            Enumerable.Range(0, polygon.Length())
             .Select(i =>
                 polygon.VertexID[i])
             .GetEnumerator();

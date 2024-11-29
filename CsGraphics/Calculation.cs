@@ -5,14 +5,14 @@
     /// <summary>
     /// オブジェクトの情報から画面上の座標を計算する.
     /// </summary>
-    internal static class CalcScreenCoord
+    internal static class Calculation
     {
         /// <summary>
         /// オブジェクトの情報から画面上の座標を計算する.
         /// </summary>
         /// <param name="object">オブジェクト.</param>
         /// <returns>スクリーン座標のリスト.</returns>
-        internal static (Point[], Color[]) Calc(Object.Object @object)
+        internal static (Point[], Color[], bool[]) Calc(Object.Object @object)
         {
             return DrawFromOrigin(@object);
         }
@@ -22,21 +22,39 @@
         /// </summary>
         /// <param name="object">オブジェクト.</param>
         /// <returns>スクリーン座標のリスト.</returns>
-        private static (Point[], Color[]) DrawFromOrigin(Object.Object @object)
+        private static (Point[], Color[], bool[]) DrawFromOrigin(Object.Object @object)
         {
             List<Point> result = new ();
+            bool[] isVisiblePolygon = Array.Empty<bool>();
+
             Math.Matrix scale = CalcScale(@object);
             Math.Matrix rotate = CalcRotation(@object);
             Math.Matrix translate = CalcTranslation(@object);
 
             Matrix matrix = translate * rotate * scale; // 拡大縮小 → 回転 → 平行移動 をした変換行列を計算
 
-            foreach (Math.Matrix vertex in matrix * @object.Vertex.Coordinate) // 変換行列 * 頂点行列を行い、画面にプロットする
+            foreach (Math.Matrix vertex in matrix * @object.Vertex.Coordinate) // 変換行列 * 頂点行列を行い、移動後の3D空間上の頂点座標を計算する
             {
                 result.Add(new Point(vertex[0, 0], vertex[1, 0]));
             }
 
-            return (result.ToArray(), @object.Vertex.Color);
+            if (@object.Polygon != null)
+            {
+                isVisiblePolygon = new bool[((Object.Polygon)@object.Polygon).Length()];
+                for (int i = 0; i < ((Object.Polygon)@object.Polygon).Length(); i++)
+                {
+                    if ((matrix * ((Object.Polygon)@object.Polygon).Normal[i])[2, 0] > 0)
+                    {
+                        isVisiblePolygon[i] = true;
+                    }
+                    else
+                    {
+                        isVisiblePolygon[i] = false;
+                    }
+                }
+            }
+
+            return (result.ToArray(), @object.Vertex.Color, isVisiblePolygon);
         }
 
         private static Math.Matrix CalcTranslation(Object.Object @object)
@@ -88,5 +106,7 @@
 
             return yAxis * xAxis * zAxis;
         }
+
+
     }
 }

@@ -1,10 +1,7 @@
 ﻿namespace CsGraphics.Object
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
+    using CsGraphics.Math;
 
     /// <summary>
     /// ポリゴンの情報を保持する.
@@ -16,10 +13,12 @@
         /// </summary>
         /// <param name="objectId">オブジェクトID.</param>
         /// <param name="vertexID">多角形面の頂点ID.</param>
-        internal Polygon(int objectId, int[][] vertexID)
+        /// <param name="normal">法線ベクトル.</param>
+        internal Polygon(int objectId, int[][] vertexID, Matrix[] normal)
         {
             this.ObjectId = objectId;
             this.VertexID = vertexID;
+            this.Normal = normal;
         }
 
         /// <summary>
@@ -33,13 +32,17 @@
         internal int[][] VertexID { get; set; }
 
         /// <summary>
+        /// Gets or sets 法線ベクトル.
+        /// </summary>
+        internal Matrix[] Normal { get; set; }
+
+        /// <summary>
         /// 面の数や面の数を取得.
         /// </summary>
-        /// <param name="dimension">取得する方向.</param>
         /// <returns>長さ.</returns>
-        internal int GetLength(int dimension)
+        internal int Length()
         {
-            return this.VertexID.GetLength(dimension);
+            return this.VertexID.Length;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿namespace CsGraphics
 {
     using System.Collections;
+    using CsGraphics.Math;
     using CsGraphics.Object;
     using Microsoft.Maui.Graphics;
 
@@ -55,8 +56,9 @@
             {
                 if (@object.IsVisible == true)
                 {
+                    (Point[] points, Color[] color, bool[] isVisiblePolygon) = Calculation.Calc((Object.Object)@object.Clone()); // 点や面の計算
+
                     // 点を描画
-                    (Point[] points, Color[] color) = CalcScreenCoord.Calc((Object.Object)@object.Clone());
                     points.Zip(color, (point, c) =>
                         {
                             canvas.FillColor = c;  // 点の色を設定
@@ -72,18 +74,24 @@
 
                     if (@object.Polygon != null)
                     {
+                        int j = 0;
                         foreach (int[] indices in (Polygon)@object.Polygon)
                         {
-                            PathF path = new ();
-                            path.MoveTo((float)points[indices[0] - 1].X, (float)points[indices[0] - 1].Y); // 初期点
-                            for (int i = 1; i < indices.Length; i++)
+                            if (isVisiblePolygon[j])
                             {
-                                path.LineTo((float)points[indices[i] - 1].X, (float)points[indices[i] - 1].Y); // 次の頂点
+                                PathF path = new ();
+                                path.MoveTo((float)points[indices[0] - 1].X, (float)points[indices[0] - 1].Y); // 初期点
+                                for (int i = 1; i < indices.Length; i++)
+                                {
+                                    path.LineTo((float)points[indices[i] - 1].X, (float)points[indices[i] - 1].Y); // 次の頂点
+                                }
+
+                                path.Close();
+                                canvas.FillPath(path);
+                                canvas.DrawPath(path);
                             }
 
-                            path.Close();
-                            canvas.FillPath(path);
-                            canvas.DrawPath(path);
+                            j++;
                         }
                     }
                 }
@@ -107,7 +115,16 @@
         public int AddObject(string name, double[,] vertexCoord, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null, int[][]? polygon = null)
         {
             int id = this.Objects.Count;
-            Object.Object @object = new (name, vertexCoord, id, vertexColor, origin, visible, scale, polygon);
+            Object.Object @object = new (name, vertexCoord, id, vertexColor, origin, visible, scale, polygon, null);
+            this.Objects.Add(@object);
+
+            return id;
+        }
+
+        private int AddObject(string name, double[,] vertexCoord, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null, int[][]? polygon = null, Matrix[]? normal = null)
+        {
+            int id = this.Objects.Count;
+            Object.Object @object = new(name, vertexCoord, id, vertexColor, origin, visible, scale, polygon, normal);
             this.Objects.Add(@object);
 
             return id;
@@ -121,8 +138,8 @@
         /// <returns>ID.</returns>
         public int AddObjectFromObj(string name, string filePath)
         {
-            (double[,] vertices, int[][] polygon) = Parser.ObjParseVertices(filePath);
-            int id = this.AddObject(name, vertices, polygon: polygon);
+            (double[,] vertices, int[][] polygon, Matrix[] normal) = Parser.ObjParseVertices(filePath);
+            int id = this.AddObject(name, vertices, polygon: polygon, normal: normal);
 
             return id;
         }
