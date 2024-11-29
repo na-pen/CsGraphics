@@ -39,7 +39,7 @@
         /// <returns>虚数と実数の和</returns>
         public static Complex operator +(Imaginary a, double b)
         {
-            Complex result = (b,a);
+            Complex result = (b, a);
             return result;
         }
 
@@ -167,7 +167,7 @@
         /// <returns>虚数(String)</returns>
         public override string ToString()
         {
-            string result = this.value.ToString() + "i";
+            string result = value.ToString() + "i";
             return result;
         }
     }

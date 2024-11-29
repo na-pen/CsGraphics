@@ -1,6 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using CsGraphics;
+using Microsoft.Extensions.Logging;
 
-namespace CsGraphics
+namespace Main
 {
     public static class MauiProgram
     {
@@ -16,7 +17,7 @@ namespace CsGraphics
                 });
 
 #if DEBUG
-    		builder.Logging.AddDebug();
+            builder.Logging.AddDebug();
 #endif
 
             return builder.Build();

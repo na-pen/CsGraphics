@@ -1,7 +1,7 @@
 ﻿using ObjCRuntime;
 using UIKit;
 
-namespace CsGraphics
+namespace Main.Platforms.iOS
 {
     public class Program
     {

@@ -1,5 +1,4 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.Maui.Controls.Shapes;
+﻿using Microsoft.Maui.Controls.Shapes;
 using System;
 namespace CsGraphics.Math
 {
@@ -20,8 +19,8 @@ namespace CsGraphics.Math
             }
             this.dimension = dimension;
             this.vertex = vertex;
-            this.data = new Matrix(4,vertex);
-            this.data.Initialize((i, j) =>
+            data = new Matrix(4, vertex);
+            data.Initialize((i, j) =>
             {
                 if (i == dimension)
                 {
@@ -40,32 +39,32 @@ namespace CsGraphics.Math
         {
             get
             {
-                if (row < 0 || row >= data.Rows || column < 0 || column >= this.data.Columns)
+                if (row < 0 || row >= data.Rows || column < 0 || column >= data.Columns)
                 {
                     throw new IndexOutOfRangeException("Invalid index.");
                 }
 
-                return this.data[row, column];
+                return data[row, column];
             }
 
             set
             {
-                if (row < 0 || row >= data.Rows || column < 0 || column >= this.data.Columns)
+                if (row < 0 || row >= data.Rows || column < 0 || column >= data.Columns)
                 {
                     throw new IndexOutOfRangeException("Invalid index.");
                 }
 
-                this.data[row, column] = value;
+                data[row, column] = value;
             }
         }
 
         public static Vector operator +(Vector a, Vector b)
         {
-            if(a.dimension != b.dimension || a.vertex != b.vertex)
+            if (a.dimension != b.dimension || a.vertex != b.vertex)
             {
                 throw new ArgumentException("The vectors to be added must have the same number of dimensions and the same number of data");
             }
-            Vector result = new (a.dimension, a.vertex)
+            Vector result = new(a.dimension, a.vertex)
             {
                 data = a.data + b.data,
             };
@@ -73,6 +72,7 @@ namespace CsGraphics.Math
             return result;
         }
 
+        /*
         /// <summary>
         /// 平行移動
         /// </summary>
@@ -81,15 +81,15 @@ namespace CsGraphics.Math
         public void Translation(Matrix matrix)
         {
             matrix.Resize(4);
-            Matrix temp = new(this.dimension + 1);
+            Matrix temp = new(dimension + 1);
             temp.Identity();
             temp.Resize(4, 4);
 
-            temp[0, dimension] = matrix[0,0];
+            temp[0, dimension] = matrix[0, 0];
             temp[1, dimension] = matrix[1, 0];
             temp[2, dimension] = matrix[2, 0];
 
-            this.data = temp * this.data;
+            data = temp * data;
         }
 
         /// <summary>
@@ -99,35 +99,35 @@ namespace CsGraphics.Math
         public void Scale(Matrix matrix)
         {
             matrix.Resize(4);
-            Matrix temp = new(this.dimension + 1);
+            Matrix temp = new(dimension + 1);
             temp.Identity();
             temp.Resize(4, 4);
 
-            for (int i = 0; i < this.dimension; i++)
+            for (int i = 0; i < dimension; i++)
             {
-                temp[i,i] = matrix[i,0];
+                temp[i, i] = matrix[i, 0];
             }
 
-            this.data = temp * this.data;
+            data = temp * data;
         }
-
+        */
         public void RotationZdeg(double deg)
         {
-            RotationZ(Single.DegreesToRadians((float)deg));
+            RotationZ(float.DegreesToRadians((float)deg));
         }
 
         public void RotationZ(double rad)
         {
-            Matrix temp = new(this.dimension + 1);
+            Matrix temp = new(dimension + 1);
             temp.Identity();
             temp.Resize(4, 4);
 
-            temp[0,0] = System.Math.Cos(rad);
-            temp[0,1] = -1 * System.Math.Sin(rad);
+            temp[0, 0] = System.Math.Cos(rad);
+            temp[0, 1] = -1 * System.Math.Sin(rad);
             temp[1, 0] = System.Math.Sin(rad);
             temp[1, 1] = System.Math.Cos(rad);
             string t = temp.ToString();
-            this.data = temp * this.data;
+            data = temp * data;
         }
 
         /// <summary>
@@ -137,23 +137,23 @@ namespace CsGraphics.Math
         /// <exception cref="ArgumentException">The vertex is incorrectly defined.</exception>
         public new void Initialize(double[,] vertices)
         {
-            if (vertices.GetLength(0) != this.dimension || vertices.GetLength(1) != this.data.Columns)
+            if (vertices.GetLength(0) != dimension || vertices.GetLength(1) != data.Columns)
             {
                 throw new ArgumentException("The vertex is incorrectly defined.");
             }
 
-            for (int i = 0; i < this.dimension; i++)
+            for (int i = 0; i < dimension; i++)
             {
-                for (int j = 0; j < this.data.Columns; j++)
+                for (int j = 0; j < data.Columns; j++)
                 {
-                    this.data[i, j] = vertices[i, j];
+                    data[i, j] = vertices[i, j];
                 }
             }
         }
 
         public override string ToString()
         {
-            return this.data.ToString();
+            return data.ToString();
         }
 
     }

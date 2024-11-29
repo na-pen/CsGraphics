@@ -1,10 +1,11 @@
-﻿namespace CsGraphics
+﻿namespace Main
 {
     using System;
     using System.ComponentModel;
     using System.Diagnostics;
     using System.Linq;
     using System.Reflection;
+    using CsGraphics;
     using Microsoft.CodeAnalysis.CSharp.Scripting;
     using Microsoft.CodeAnalysis.Scripting;
 
@@ -20,7 +21,7 @@
         {
             InitializeComponent();
 
-            scene = new Scene();  // MyDrawable インスタンスを作成
+            scene = new Scene(60);  // MyDrawable インスタンスを作成
             graphicsView.Drawable = scene;
             BindingContext = this;
             Scene = scene;  // Drawable に設定
@@ -111,7 +112,7 @@
                 "exit" => "Goodbye!",
                 "translation" => TranslationTest(),
                 "scale" => ScaleTest(),
-                "rotationz" => RotationZTest(),
+                "rotationz" => RotationTest(),
                 "test" => Test(),
                 "teapot" => AddTeapot(),
                 _ => "Unknown command."
@@ -147,41 +148,31 @@
 
         private string Test()
         {
-            this.scene.AddObject("rectangle", new double[,] { { 100, 300, 300, 100 }, { 100, 100, 400, 400 } });
-            return this.Scene.Objects[0].ToString() + "\nDone!";
+            int idRectangle = this.scene.AddObject("rectangle", new double[,] { { 100, 300, 300, 100 }, { 100, 100, 400, 400 } });
+            return this.Scene.GetObjectInfo(idRectangle);
         }
+
 
         private string TranslationTest()
         {
             // 平行移動
-            this.Scene.Objects[0].Translation(200, -100, 0); // 移動の適用
+            this.Scene.TranslationObject(0, 200, 100, 0);
 
-            return this.Scene.Objects[0].ToString() + "\nDone!";
+            return "\nDone!";
         }
 
         private string ScaleTest()
         {
-            // 平行移動
-            this.Scene.Objects[0].Scale(2, 0.5, 0); // 移動の適用
+            // 拡大
+            this.Scene.ScaleObject(0, 2, 0.5, 0);
 
-            return this.Scene.Objects[0].ToString() + "\nDone!";
+            return this.Scene.GetObjectInfo(0) + "\nDone!";
         }
 
-        private string RotationZTest()
+        private string RotationTest()
         {
-            /*
-            //テスト用、加工前データ
-            Math.Vector vec = new(2, 4);
-            vec.Initialize(new double[,] { { 100, 300, 300, 100 }, { 100, 100, 400, 400 } }); // 四角形を描画
-            //_myDrawable.AddPoints(vec, Colors.Aqua);
-
-            //拡大縮小
-            Math.Matrix rotate = new(2, 1);
-            vec.RotationZdeg(30); // 回転の適用(回転量(θ))
-            //_myDrawable.AddPoints(vec, Colors.Black);
-
-            // 描画を更新
-            graphicsView.Invalidate();  // GraphicsView を再描画*/
+            // 回転
+            this.Scene.RotationObject(0, 0, 0, 0.5);
 
             return "\nDone!";
         }
