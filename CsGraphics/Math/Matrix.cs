@@ -1,10 +1,4 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="Matrix.cs" company="Yuzuki Ohkusa">
-// Copyright (c) Yuzuki Ohkusa. All rights reserved.
-// </copyright>
-// -----------------------------------------------------------------------
-
-namespace CsGraphics.Math
+﻿namespace CsGraphics.Math
 {
     using System;
 

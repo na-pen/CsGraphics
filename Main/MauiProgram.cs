@@ -1,8 +1,8 @@
-﻿using CsGraphics;
-using Microsoft.Extensions.Logging;
-
-namespace Main
+﻿namespace Main
 {
+    using CsGraphics;
+    using Microsoft.Extensions.Logging;
+
     public static class MauiProgram
     {
         public static MauiApp CreateMauiApp()

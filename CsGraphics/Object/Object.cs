@@ -1,13 +1,12 @@
-﻿using Microsoft.Maui.Primitives;
-
-namespace CsGraphics.Object
+﻿namespace CsGraphics.Object
 {
+    using Microsoft.Maui.Primitives;
+
     /// <summary>
     /// オブジェクトの情報の保持や管理を行う.
     /// </summary>
     internal class Object : ICloneable
     {
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Object"/> class.
         /// </summary>
@@ -20,40 +19,40 @@ namespace CsGraphics.Object
         /// <param name="scale">オブジェクトの拡大倍率.</param>
         internal Object(string name, double[,] vertexCoord, int id = -1, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null)
         {
-            ID = id;
-            Name = name;
-            IsVisible = visible;
+            this.ID = id;
+            this.Name = name;
+            this.IsVisible = visible;
 
             if (origin == null)
             {
-                Origin = new(new double[,] { { 0 }, { 0 }, { 0 } });
+                this.Origin = new (new double[,] { { 0 }, { 0 }, { 0 } });
             }
             else
             {
-                Origin = new(origin);
+                this.Origin = new (origin);
             }
 
             if (scale == null)
             {
-                Magnification = new double[] { 1, 1, 1 };
+                this.Magnification = new double[] { 1, 1, 1 };
             }
             else
             {
-                Magnification = scale;
+                this.Magnification = scale;
             }
 
-            Vertex = new(id, vertexCoord, vertexColor);
+            this.Vertex = new (id, vertexCoord, vertexColor);
         }
 
         private Object(string name, Vertex vertex, int id, Math.Matrix origin, double[] magnification, bool visible, double[] angle)
         {
-            Name = name;
-            IsVisible = visible;
-            Origin = origin;
-            ID = id;
-            Vertex = vertex;
-            Magnification = magnification;
-            Angle = angle;
+            this.Name = name;
+            this.IsVisible = visible;
+            this.Origin = origin;
+            this.ID = id;
+            this.Vertex = vertex;
+            this.Magnification = magnification;
+            this.Angle = angle;
         }
 
         /// <summary>
@@ -92,6 +91,24 @@ namespace CsGraphics.Object
         internal double[] Angle { get; set; } = { 0, 0, 0 };
 
         /// <summary>
+        /// 自身をシャドーコピーする.
+        /// </summary>
+        /// <returns>Clone.</returns>
+        public object Clone()
+        {
+            return new Object(
+                this.Name,
+                (Vertex)this.Vertex.Clone(),
+                this.ID,
+                (Math.Matrix)this.Origin.Clone(),
+                (double[])this.Magnification.Clone(),
+                this.IsVisible,
+                this.Angle)
+            {
+            };
+        }
+
+        /// <summary>
         /// 平行移動(オブジェクトの原点を移動).
         /// </summary>
         /// <param name="x">x軸の移動量.</param>
@@ -99,7 +116,7 @@ namespace CsGraphics.Object
         /// <param name="z">z軸の移動量.</param>
         internal void SetTranslation(double x, double y, double z)
         {
-            Math.Matrix temp = new(3, 1);
+            Math.Matrix temp = new (3, 1);
 
             temp[0, 0] = x;
             temp[1, 0] = y;
@@ -116,30 +133,18 @@ namespace CsGraphics.Object
         /// <param name="z">z軸の拡大率.</param>
         internal void SetScale(double x, double y, double z)
         {
-            Magnification = new double[] { Magnification[0] * x, Magnification[1] * y, Magnification[2] * z };
-        }
-
-        public void SetRotation(double x, double y, double z)
-        {
-            this.Angle = new double[] { Angle[0] + x, Angle[1] + y, Angle[2] + z };
+            this.Magnification = new double[] { this.Magnification[0] * x, this.Magnification[1] * y, this.Magnification[2] * z };
         }
 
         /// <summary>
-        /// 自身をシャドーコピーする.
+        /// 回転(オブジェクトの原点基準).
         /// </summary>
-        /// <returns>Clone.</returns>
-        public object Clone()
+        /// <param name="x">x軸の回転角度.</param>
+        /// <param name="y">y軸の回転角度.</param>
+        /// <param name="z">z軸の回転角度.</param>
+        internal void SetRotation(double x, double y, double z)
         {
-            return new Object(
-                Name,
-                (Vertex)Vertex.Clone(),
-                ID,
-                (Math.Matrix)Origin.Clone(),
-                (double[])Magnification.Clone(),
-                IsVisible,
-                Angle)
-            {
-            };
+            this.Angle = new double[] { this.Angle[0] + x, this.Angle[1] + y, this.Angle[2] + z };
         }
     }
 }

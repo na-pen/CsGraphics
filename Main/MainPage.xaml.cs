@@ -9,25 +9,45 @@
     using Microsoft.CodeAnalysis.CSharp.Scripting;
     using Microsoft.CodeAnalysis.Scripting;
 
+    /// <summary>
+    /// アプリケーションのメインページ.
+    /// </summary>
     public partial class MainPage : ContentPage
     {
         private Scene scene;
 
-        public Scene Scene { get; set; }
+        /// <summary>
+        /// 画面の更新をするかどうか.
+        /// </summary>
+        private bool isUpdating = false;
 
-        private bool _isUpdating = false;
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MainPage"/> class.
+        /// </summary>
         public MainPage()
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
-            scene = new Scene(60);  // MyDrawable インスタンスを作成
-            graphicsView.Drawable = scene;
-            BindingContext = this;
-            Scene = scene;  // Drawable に設定
+            this.scene = new Scene(60);  // MyDrawable インスタンスを作成
+            this.graphicsView.Drawable = this.scene;
+            this.BindingContext = this;
+            this.Scene = this.scene;  // Drawable に設定
 
             this.UpdateLoop();
+        }
 
+        /// <summary>
+        /// Gets or sets シーン.
+        /// </summary>
+        public Scene Scene { get; set; }
+
+        /// <summary>
+        /// 画面更新を止める処理.
+        /// </summary>
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            this.isUpdating = false; // 更新ループを停止
         }
 
         /// <summary>
@@ -35,15 +55,15 @@
         /// </summary>
         private async void UpdateLoop()
         {
-            if (this._isUpdating)
+            if (this.isUpdating)
             {
                 return;
             }
 
-            this._isUpdating = true;
-            TimeSpan interval = TimeSpan.FromSeconds(1.0 / Scene.FrameRate);
+            this.isUpdating = true;
+            TimeSpan interval = TimeSpan.FromSeconds(1.0 / this.Scene.FrameRate);
 
-            while (this._isUpdating)
+            while (this.isUpdating)
             {
                 Stopwatch stopwatch = Stopwatch.StartNew();
 
@@ -60,44 +80,37 @@
             }
         }
 
-        /// <summary>
-        /// 画面更新を止める処理.
-        /// </summary>
-        protected override void OnDisappearing()
-        {
-            base.OnDisappearing();
-            this._isUpdating = false; // 更新ループを停止
-        }
-
         // コマンドが入力された時の処理
         private async void OnCommandEntered(object sender, EventArgs e)
         {
-            string command = InputField.Text?.Trim();
+            string? command = this.InputField.Text?.Trim();
             if (string.IsNullOrEmpty(command))
-                return ;
+            {
+                return;
+            }
 
             // 出力領域にコマンドを追加
-            AppendOutput($"> {command}");
+            this.AppendOutput($"> {command}");
 
             // コマンドに応じた結果を出力
             string result = string.Empty;
-            result = await ProcessCommand(command) + "\n";
+            result = await this.ProcessCommand(command) + "\n";
 
-            AppendOutput(result);
+            this.AppendOutput(result);
 
             // 入力フィールドをクリア
-            InputField.Text = string.Empty;
+            this.InputField.Text = string.Empty;
         }
 
         // 出力領域にテキストを追加
         private void AppendOutput(string text)
         {
-            OutputArea.Text += text + Environment.NewLine;
+            this.OutputArea.Text += text + Environment.NewLine;
 
             // スクロールを下に自動移動
             MainThread.BeginInvokeOnMainThread(async () =>
             {
-                await OutputScrollView.ScrollToAsync(0, OutputArea.Height, true);
+                await this.OutputScrollView.ScrollToAsync(0, this.OutputArea.Height, true);
             });
         }
 
@@ -106,15 +119,15 @@
         {
             return command.ToLower() switch
             {
-                _ when command.StartsWith("!") => await ExecuteCodeAsync(command.Substring(1)),
+                _ when command.StartsWith("!") => await this.ExecuteCodeAsync(command.Substring(1)),
                 "hello" => "Hello, user!",
                 "time" => DateTime.Now.ToString(),
                 "exit" => "Goodbye!",
-                "translation" => TranslationTest(),
-                "scale" => ScaleTest(),
-                "rotationz" => RotationTest(),
-                "test" => Test(),
-                "teapot" => AddTeapot(),
+                "translation" => this.TranslationTest(),
+                "scale" => this.ScaleTest(),
+                "rotationz" => this.RotationTest(),
+                "test" => this.Test(),
+                "teapot" => this.AddTeapot(),
                 _ => "Unknown command."
             };
         }
@@ -148,10 +161,12 @@
 
         private string Test()
         {
-            int idRectangle = this.scene.AddObject("rectangle", new double[,] { { 100, 300, 300, 100 }, { 100, 100, 400, 400 } });
+            int idRectangle = this.scene.AddObject(
+                "rectangle",
+                new double[,] { { 100, 300, 300, 100 }, { 100, 100, 400, 400 } });
+
             return this.Scene.GetObjectInfo(idRectangle);
         }
-
 
         private string TranslationTest()
         {

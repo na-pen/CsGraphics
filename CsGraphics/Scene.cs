@@ -3,13 +3,11 @@
     using System.Collections;
     using Microsoft.Maui.Graphics;
 
+    /// <summary>
+    /// シーン.
+    /// </summary>
     public class Scene : IDrawable
     {
-        /// <summary>
-        /// 画面の更新頻度.
-        /// </summary>
-        public int FrameRate { get; }
-
         /// <summary>
         /// 重力加速度.
         /// </summary>
@@ -27,8 +25,13 @@
         public Scene(int frameRate)
         {
             this.FrameRate = frameRate;
-            Objects = new List<Object.Object>(); // 初期化
+            this.Objects = new List<Object.Object>(); // 初期化
         }
+
+        /// <summary>
+        /// Gets 画面の更新頻度.
+        /// </summary>
+        public int FrameRate { get; }
 
         /// <summary>
         /// オブジェクトを画面に描画.
@@ -47,7 +50,7 @@
             canvas.Scale(1, -1);
 
             // 各点を指定された色で描画
-            foreach (Object.Object @object in Objects)
+            foreach (Object.Object @object in this.Objects)
             {
                 if (@object.IsVisible == true)
                 {
@@ -68,11 +71,18 @@
         /// <summary>
         /// シーンにオブジェクトを追加.
         /// </summary>
+        /// <param name="name">オブジェクト名.</param>
+        /// <param name="vertexCoord">頂点座標.</param>
+        /// <param name="vertexColor">頂点カラー.</param>
+        /// <param name="origin">オブジェクトの原点.</param>
+        /// <param name="visible">オブジェクトの可視状態.</param>
+        /// <param name="scale">拡大率.</param>
+        /// <returns>id.</returns>
         public int AddObject(string name, double[,] vertexCoord, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null)
         {
-            int id = Objects.Count;
-            Object.Object _object = new(name, vertexCoord, id, vertexColor, origin, visible, scale);
-            Objects.Add(_object);
+            int id = this.Objects.Count;
+            Object.Object @object = new (name, vertexCoord, id, vertexColor, origin, visible, scale);
+            this.Objects.Add(@object);
 
             return id;
         }
@@ -95,14 +105,14 @@
         /// <param name="level">表示レベル.</param>
         /// <returns>オブジェクト情報.</returns>
         /// <exception cref="ArgumentOutOfRangeException">存在しないオブジェクトを参照することはできません.</exception>
-        public string GetObjectInfo(int id,int level = 0)
+        public string GetObjectInfo(int id, int level = 0)
         {
-            if(id >= this.Objects.Count)
+            if (id >= this.Objects.Count)
             {
                 throw new ArgumentOutOfRangeException($"Object ID {id} does not exist in this scene.");
             }
 
-            Object.Object @object = Objects[id];
+            Object.Object @object = this.Objects[id];
 
             string result =
                 "ObjectID : " + id + "\n" +
@@ -116,19 +126,40 @@
             return result;
         }
 
+        /// <summary>
+        /// オブジェクトを移動する.
+        /// </summary>
+        /// <param name="id">オブジェクトID.</param>
+        /// <param name="x">x軸移動量.</param>
+        /// <param name="y">y軸移動量.</param>
+        /// <param name="z">z軸移動量.</param>
         public void TranslationObject(int id, double x, double y, double z)
         {
-            Objects[id].SetTranslation(x, y, z);
+            this.Objects[id].SetTranslation(x, y, z);
         }
 
+        /// <summary>
+        /// オブジェクトの拡大.
+        /// </summary>
+        /// <param name="id">オブジェクトID.</param>
+        /// <param name="x">x軸移動量.</param>
+        /// <param name="y">y軸移動量.</param>
+        /// <param name="z">z軸移動量.</param>
         public void ScaleObject(int id, double x, double y, double z)
         {
-            Objects[id].SetScale(x, y, z);
+            this.Objects[id].SetScale(x, y, z);
         }
 
+        /// <summary>
+        /// オブジェクトの回転.
+        /// </summary>
+        /// <param name="id">オブジェクトID.</param>
+        /// <param name="x">x軸移動量.</param>
+        /// <param name="y">y軸移動量.</param>
+        /// <param name="z">z軸移動量.</param>
         public void RotationObject(int id, double x, double y, double z)
         {
-            Objects[id].SetRotation(x, y, z);
+            this.Objects[id].SetRotation(x, y, z);
         }
     }
 }

@@ -1,13 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CsGraphics
+﻿namespace CsGraphics
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+
+    /// <summary>
+    /// 外部ファイルの読み込み.
+    /// </summary>
     internal static class Parser
     {
+        /// <summary>
+        /// .objを読み込む.
+        /// </summary>
+        /// <param name="filePath">ファイルパス.</param>
+        /// <returns>オブジェクトの頂点座標.</returns>
         internal static double[,] ObjParseVertices(string filePath)
         {
             var vertices = new List<double[]>(); // 動的リストで頂点情報を一時的に格納

@@ -1,15 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CsGraphics
+﻿namespace CsGraphics
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+
+    /// <summary>
+    /// IEnumeratorとかの設定.
+    /// </summary>
     internal static class DataExtensions
     {
         /// <summary>
-        /// Foreachを使うためのGetEnumeratorの実装
+        /// Foreachを使うためのGetEnumeratorの実装.
         /// </summary>
         /// <param name="vertex">頂点情報.</param>
         /// <returns>System.Collections.IEnumerator.</returns>
@@ -21,7 +24,7 @@ namespace CsGraphics
             .GetEnumerator();
 
         /// <summary>
-        /// Foreachを使うためのGetEnumeratorの実装
+        /// Foreachを使うためのGetEnumeratorの実装.
         /// </summary>
         /// <param name="matrix">4次元の行列情報.</param>
         /// <returns>System.Collections.IEnumerator.</returns>
