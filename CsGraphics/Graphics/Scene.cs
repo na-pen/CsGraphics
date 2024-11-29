@@ -63,10 +63,9 @@
         /// <summary>
         /// シーンにオブジェクトを追加.
         /// </summary>
-        /// <param name="_object">オブジェクト.</param>
-        public void AddObject(Object.Object _object)
+        public void AddObject(string name, double[,] vertexCoord, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null)
         {
-            _object.ID = this.Objects.Count;
+            Object.Object _object = new (name, vertexCoord, this.Objects.Count, vertexColor, origin, visible, scale);
             this.Objects.Add(_object);
         }
 
@@ -78,7 +77,7 @@
         public void AddObjectFromObj(string name, string filePath)
         {
             double[,] vertices = Parser.ObjParseVertices(filePath);
-            this.AddObject(new Object.Object(name, vertices));
+            this.AddObject(name, vertices);
         }
     }
 }

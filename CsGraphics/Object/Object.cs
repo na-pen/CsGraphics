@@ -15,13 +15,13 @@ namespace CsGraphics.Object
         /// <param name="vertexCoord">頂点座標.</param>
         /// <param name="vertexColor">頂点色.</param>
         /// <param name="origin">オブジェクトの原点.</param>
-        /// <param name="vidible">オブジェクトの表示状態.</param>
+        /// <param name="visible">オブジェクトの表示状態.</param>
         /// <param name="scale">オブジェクトの拡大倍率.</param>
-        public Object(string name, double[,] vertexCoord, int id = -1, Color[]? vertexColor = null, double[]? origin = null, bool vidible = true, double[]? scale = null)
+        public Object(string name, double[,] vertexCoord, int id = -1, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null)
         {
             this.ID = id;
             this.Name = name;
-            this.IsVisible = vidible;
+            this.IsVisible = visible;
 
             if (origin == null)
             {
@@ -45,10 +45,10 @@ namespace CsGraphics.Object
             this.Vertex = new (id, vertexCoord, vertexColor);
         }
 
-        private Object(string name, Vertex vertex, int id, Math.Matrix origin, Math.Matrix magnification, bool vidible)
+        private Object(string name, Vertex vertex, int id, Math.Matrix origin, Math.Matrix magnification, bool visible)
         {
             this.Name = name;
-            this.IsVisible = vidible;
+            this.IsVisible = visible;
             this.Origin = origin;
             this.ID = id;
             this.Vertex = vertex;
@@ -86,30 +86,38 @@ namespace CsGraphics.Object
         public Vertex Vertex { get; set; }
 
         /// <summary>
-        /// 平行移動.
+        /// 平行移動(オブジェクトの原点を移動).
         /// </summary>
-        /// <param name="matrix">移動量</param>
-        public void Translation(Math.Matrix matrix)
+        /// <param name="x">x軸の移動量.</param>
+        /// <param name="y">y軸の移動量.</param>
+        /// <param name="z">z軸の移動量.</param>
+        public void Translation(double x, double y, double z)
         {
             Math.Matrix temp = new (4);
             temp.Identity();
 
-            temp[0, 3] = matrix[0, 0];
-            temp[1, 3] = matrix[1, 0];
-            temp[2, 3] = matrix[2, 0];
+            temp[0, 3] = x;
+            temp[1, 3] = y;
+            temp[2, 3] = z;
 
             this.Origin = temp * this.Origin;
         }
 
         /// <summary>
-        /// 拡大・縮小
+        /// 拡大・縮小(オブジェクトの原点基準).
         /// </summary>
-        /// <param name="matrix">拡大・縮小後のベクトル</param>
+        /// <param name="x">x軸の拡大率.</param>
+        /// <param name="y">y軸の拡大率.</param>
+        /// <param name="z">z軸の拡大率.</param>
         public void Scale(double x, double y, double z)
         {
             this.Magnification = new (new double[,] { { x }, { y }, { z } });
         }
 
+        /// <summary>
+        /// 自身をシャドーコピーする.
+        /// </summary>
+        /// <returns>Clone.</returns>
         public object Clone()
         {
             return new Object(

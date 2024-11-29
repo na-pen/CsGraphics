@@ -8,7 +8,6 @@
     using Microsoft.CodeAnalysis.CSharp.Scripting;
     using Microsoft.CodeAnalysis.Scripting;
 
-
     public partial class MainPage : ContentPage
     {
         private Scene scene;
@@ -148,16 +147,14 @@
 
         private string Test()
         {
-            Object.Object quadrangle = new Object.Object("rectangle", new double[,] { { 100, 300, 300, 100 }, { 100, 100, 400, 400 } });
-            this.scene.AddObject(quadrangle);
-            return quadrangle.ToString() + "\nDone!";
+            this.scene.AddObject("rectangle", new double[,] { { 100, 300, 300, 100 }, { 100, 100, 400, 400 } });
+            return this.Scene.Objects[0].ToString() + "\nDone!";
         }
 
         private string TranslationTest()
         {
             // 平行移動
-            Math.Matrix trans = new (new double[] { 200, -100, 0 });
-            this.Scene.Objects[0].Translation(trans); // 移動の適用
+            this.Scene.Objects[0].Translation(200, -100, 0); // 移動の適用
 
             return this.Scene.Objects[0].ToString() + "\nDone!";
         }
@@ -165,8 +162,7 @@
         private string ScaleTest()
         {
             // 平行移動
-            Math.Matrix trans = new(new double[] { 2, 0.5,0 });
-            this.Scene.Objects[0].Scale(2,0.5,0); // 移動の適用
+            this.Scene.Objects[0].Scale(2, 0.5, 0); // 移動の適用
 
             return this.Scene.Objects[0].ToString() + "\nDone!";
         }
@@ -198,5 +194,4 @@
             return "Done!";
         }
     }
-
-    }
+}
