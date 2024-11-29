@@ -6,6 +6,9 @@
     using System.Text;
     using System.Threading.Tasks;
 
+    /// <summary>
+    /// 虚数の定義.
+    /// </summary>
     internal class Complex
     {
         private double real = 0;
