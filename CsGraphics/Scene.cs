@@ -35,6 +35,8 @@
         /// </summary>
         public int FrameRate { get; }
 
+        public bool IsUpdated { get; set; } = true;
+
         /// <summary>
         /// オブジェクトを画面に描画.
         /// </summary>
@@ -115,6 +117,7 @@
 
             // 元の状態に戻す
             canvas.RestoreState();
+            this.IsUpdated = false;
         }
 
         /// <summary>
@@ -134,6 +137,7 @@
             Object.Object @object = new (name, vertexCoord, id, vertexColor, origin, visible, scale, polygon, null);
             this.Objects.Add(@object);
 
+            this.IsUpdated = true;
             return id;
         }
 
@@ -143,6 +147,7 @@
             Object.Object @object = new(name, vertexCoord, id, vertexColor, origin, visible, scale, polygon, normal);
             this.Objects.Add(@object);
 
+            this.IsUpdated = true;
             return id;
         }
 
@@ -157,6 +162,7 @@
             (double[,] vertices, int[][] polygon, Matrix[] normal) = Parser.ObjParseVertices(filePath);
             int id = this.AddObject(name, vertices, polygon: polygon, normal: normal);
 
+            this.IsUpdated = true;
             return id;
         }
 
@@ -198,6 +204,7 @@
         public void TranslationObject(int id, double x, double y, double z)
         {
             this.Objects[id].SetTranslation(x, y, z);
+            this.IsUpdated = true;
         }
 
         /// <summary>
@@ -210,6 +217,7 @@
         public void ScaleObject(int id, double x, double y, double z)
         {
             this.Objects[id].SetScale(x, y, z);
+            this.IsUpdated = true;
         }
 
         /// <summary>
@@ -222,6 +230,7 @@
         public void RotationObject(int id, double x, double y, double z)
         {
             this.Objects[id].SetRotation(x, y, z);
+            this.IsUpdated = true;
         }
     }
 }

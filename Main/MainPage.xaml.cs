@@ -68,8 +68,11 @@
             {
                 Stopwatch stopwatch = Stopwatch.StartNew();
 
-                // 画面を更新
-                this.graphicsView.Invalidate();
+                if (this.scene.IsUpdated)
+                {
+                    // 画面を更新
+                    this.graphicsView.Invalidate();
+                }
 
                 // 次のフレームまで待機
                 TimeSpan elapsed = stopwatch.Elapsed;
@@ -127,6 +130,7 @@
                 _ when command.StartsWith("rotation") => this.RotationTest(int.Parse(args[0]), double.Parse(args[1]), double.Parse(args[2]), double.Parse(args[3])),
                 "test" => this.Test(),
                 "teapot" => this.AddTeapot(),
+                "miku" => this.AddMiku(),
                 _ => "Unknown command."
             };
         }
@@ -167,8 +171,12 @@
         private string AddTeapot()
         {
             int idTeapot = this.Scene.AddObjectFromObj("teapot", "E:\\Projects\\CsGraphics\\Main\\teapot.obj");
+            return "Done!";
+        }
 
-            // Math.Vector vec = files.VerticesFromObj("C:/Users/mail/Documents/CsGraphics/CsGraphics/teapot.obj");
+        private string AddMiku()
+        {
+            int idMiku = this.Scene.AddObjectFromObj("miku", "E:\\Projects\\CsGraphics\\Main\\miku.obj");
             return "Done!";
         }
     }
