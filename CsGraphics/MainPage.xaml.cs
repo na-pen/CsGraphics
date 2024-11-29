@@ -164,22 +164,11 @@
 
         private string ScaleTest()
         {
-            /*
-            //テスト用、加工前データ
-            Math.Vector vec = new(2, 4);
-            vec.Initialize(new double[,] { { 100, 300, 300, 100 }, { 100, 100, 400, 400 } }); // 四角形を描画
-            //_myDrawable.AddPoints(vec, Colors.Aqua);
+            // 平行移動
+            Math.Matrix trans = new(new double[] { 2, 0.5,0 });
+            this.Scene.Objects[0].Scale(2,0.5,0); // 移動の適用
 
-            //拡大縮小
-            Math.Matrix scale = new(2, 1);
-            //scale.Initialize(new double[] { 2, 0.5 }); //移動量
-            vec.Scale(scale); // 移動の適用
-            //_myDrawable.AddPoints(vec, Colors.Black);
-
-            // 描画を更新
-            graphicsView.Invalidate();  // GraphicsView を再描画*/
-
-            return "\nDone!";
+            return this.Scene.Objects[0].ToString() + "\nDone!";
         }
 
         private string RotationZTest()

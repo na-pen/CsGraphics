@@ -10,13 +10,14 @@ namespace CsGraphics.Math
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
+    using System.Text.Json.Serialization;
     using System.Threading.Tasks;
     using static System.Runtime.InteropServices.JavaScript.JSType;
 
     /// <summary>
     /// 行列の定義.
     /// </summary>
-    public class Matrix
+    public class Matrix : ICloneable
     {
         private double[,] data; // 行列データ
 
@@ -73,6 +74,13 @@ namespace CsGraphics.Math
                 throw new ArgumentException("Array dimensions must match the matrix dimensions.");
             }
             this.Initialize(array);
+        }
+
+        private Matrix(double[,] data,int rows,int columns)
+        {
+            this.data = data;
+            this.Rows = rows;
+            this.Columns = columns;
         }
 
         /// <summary>
@@ -412,6 +420,15 @@ namespace CsGraphics.Math
                 result += "\n";
             }
             return result;
+        }
+
+        public object Clone()
+        {
+            return new Matrix(
+                (double[,])this.data.Clone(),
+                this.Rows,
+                this.Columns
+                );
         }
     }
 

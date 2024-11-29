@@ -6,7 +6,7 @@
     /// <summary>
     /// オブジェクトのすべての頂点の情報の保持や管理を行う.
     /// </summary>
-    public class Vertex
+    public class Vertex : ICloneable
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Vertex"/> class.
@@ -36,15 +36,24 @@
             }
         }
 
+        private Vertex(int objectId, Matrix coordinate, Color[] color)
+        {
+            ObjectId = objectId;
+            Coordinate = coordinate;
+            Color = color;
+        }
+
+
+
         /// <summary>
         /// Gets オブジェクトID.
         /// </summary>
         public int ObjectId { get; }
 
         /// <summary>
-        /// Gets 3D空間上の3次元座標(オブジェクト基準).
+        /// Gets or Sets 3D空間上の3次元座標(オブジェクト基準).
         /// </summary>
-        public Math.Matrix Coordinate { get; }
+        public Math.Matrix Coordinate { get; set; }
 
         /// <summary>
         /// Gets or sets 頂点の色.
@@ -101,6 +110,15 @@
         public int GetLength(int dimension)
         {
             return this.Coordinate.GetLength(dimension);
+        }
+
+        public object Clone()
+        {
+            return new Vertex(
+                this.ObjectId,
+                (Matrix)this.Coordinate.Clone(),
+                (Color[])this.Color.Clone()
+                );
         }
 
         /*

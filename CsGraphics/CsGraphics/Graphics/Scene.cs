@@ -22,7 +22,7 @@
 
         public Scene()
         {
-            Objects = new List<Object.Object>(); // 初期化
+            this.Objects = new List<Object.Object>(); // 初期化
         }
 
         /// <summary>
