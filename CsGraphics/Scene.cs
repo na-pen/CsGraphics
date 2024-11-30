@@ -35,7 +35,12 @@
         /// </summary>
         public int FrameRate { get; }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether シーンが更新されたかどうか.
+        /// </summary>
         public bool IsUpdated { get; set; } = true;
+
+        private double[,] Z_Buffer { get; set; }
 
         /// <summary>
         /// オブジェクトを画面に描画.
