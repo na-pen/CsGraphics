@@ -69,21 +69,35 @@
             // 面の法線ベクトルを計算
             foreach (List<int> indices in polygon)
             {
-                Matrix ab = new (new double[]
-                {
-                    (vertices[indices[1] - 1][0] - vertices[indices[0] - 1][0]),
-                    (vertices[indices[1] - 1][1] - vertices[indices[0] - 1][1]),
-                    (vertices[indices[1] - 1][2] - vertices[indices[0] - 1][2]),
-                });
-                Matrix bc = new (new double[]
-                {
-                    (vertices[indices[2] - 1][0] - vertices[indices[1] - 1][0]),
-                    (vertices[indices[2] - 1][1] - vertices[indices[1] - 1][1]),
-                    (vertices[indices[2] - 1][2] - vertices[indices[1] - 1][2]),
-                });
-                Matrix temp = Matrix.CrossProduct(ab, bc);
-                temp.Resize(4, value: new double[] { 0 });
-                normal.Add(temp);
+                Math.Vector ab = new (
+                    new double[]
+                    {
+                        vertices[indices[0] - 1][0],
+                        vertices[indices[0] - 1][1],
+                        vertices[indices[0] - 1][2],
+                    },
+                    new double[]
+                    {
+                        vertices[indices[1] - 1][0],
+                        vertices[indices[1] - 1][1],
+                        vertices[indices[1] - 1][2],
+                    });
+
+                Math.Vector bc = new (new double[]
+                    {
+                        vertices[indices[1] - 1][0],
+                        vertices[indices[1] - 1][1],
+                        vertices[indices[1] - 1][2],
+                    },
+                    new double[]
+                    {
+                        vertices[indices[2] - 1][0],
+                        vertices[indices[2] - 1][1],
+                        vertices[indices[2] - 1][2]
+                    });
+
+                Math.Vector temp = Vector.CrossProduct(ab, bc);
+                normal.Add(temp.Data);
             }
 
             return (vertexArray, polygon.Select(innerList => innerList.ToArray()).ToArray(), normal.ToArray());
