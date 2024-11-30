@@ -40,7 +40,6 @@
         /// </summary>
         public bool IsUpdated { get; set; } = true;
 
-        private double[,] Z_Buffer { get; set; }
 
         /// <summary>
         /// オブジェクトを画面に描画.
@@ -49,6 +48,8 @@
         /// <param name="dirtyRect">dirtyRect.</param>
         public void Draw(ICanvas canvas, RectF dirtyRect)
         {
+            short[,] z_Buffer = new short[(int)dirtyRect.Height, (int)dirtyRect.Width];
+
             // 背景を白に設定
             canvas.FillColor = Colors.White;
             canvas.FillRectangle(dirtyRect);

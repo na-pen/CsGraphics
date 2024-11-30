@@ -1,6 +1,7 @@
 ﻿namespace CsGraphics
 {
     using CsGraphics.Math;
+    using System.Diagnostics;
     using System.Runtime.CompilerServices;
 
     /// <summary>
@@ -42,8 +43,9 @@
                 result.Add(new Point(vertex[0, 0], vertex[1, 0])); // スクリーン上の座標を求める計算 この場合はそのままコピー
 
                 depthZ.Add(vertex[2, 0]); // カメラから見た各頂点の深度情報を保存 この場合はz軸の値をコピー
-                depthZ = MinMaxNormalization(depthZ, 0, z_max); // 値を正規化
             }
+
+            depthZ = MinMaxNormalization(depthZ, 0, z_max); // 値を正規化
 
             // ポリゴンの法線がz=0の面とどの向きで交差するかどうか確認する
             if (@object.Polygon != null)
@@ -95,13 +97,9 @@
                     polygon.Bounds[j, 2] = -1; // y軸の最小値
                     polygon.Bounds[j, 3] = -1; // y軸の最大値
                 }
+
                 j++;
             }
-        }
-
-        private static void CalcBoundingBoxOnScreen()
-        {
-
         }
 
         private static List<double> MinMaxNormalization(List<double> data,double max, double min)
