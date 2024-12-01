@@ -1,5 +1,8 @@
-﻿namespace CsGraphics
+namespace CsGraphics
 {
+    using System.Collections;
+    using CsGraphics.Math;
+    using CsGraphics.Object;
     using Microsoft.Maui.Graphics;
     using Microsoft.Maui.Graphics.Platform;
     using Color = Microsoft.Maui.Graphics.Color;
@@ -37,11 +40,13 @@
         /// </summary>
         public int FrameRate { get; }
 
-        /// <summary>
-        /// Gets or sets a value indicating whether シーンが更新されたかどうか.
-        /// </summary>
         public bool IsUpdated { get; set; } = true;
 
+        /// <summary>
+        /// オブジェクトを画面に描画.
+        /// </summary>
+        /// <param name="canvas">キャンバス.</param>
+        /// <param name="dirtyRect">dirtyRect.</param>
         public void Draw(ICanvas canvas, RectF dirtyRect)
         {
             // 背景を白に設定
@@ -102,10 +107,8 @@
                         (points, color, isVisiblePolygon, obj) = (@object.Points, @object.PointsColor, @object.IsVisiblePolygon, @object);
                     }
 
-                    if (@object.Polygon != null) // ポリゴンが存在する場合のみ描画
-                    {
-                        // 各ポリゴンをチェック
-                        for (int i = 0; i < ((Object.Polygon)@object.Polygon).Length(); i++)
+                    // 点を描画
+                    points.Zip(color, (point, c) =>
                         {
                             /*
                             if (!isVisiblePolygon[i])
@@ -167,19 +170,22 @@
                                         pixelColors[(int)v.X, (int)v.Y] = this.GetColorForPolygon(0, 117, 194); // 色を設定
                                     }
                                 }
+
+                                path.Close();
+                                canvas.FillPath(path);
+                                canvas.DrawPath(path);
                             }
+
+                            j++;
                         }
-                    }
-                    else
-                    {
-                        continue;
                     }
                 }
             }
-
-            canvas.DrawImage(this.CreateImageFromColors(pixelColors, canvasWidth, canvasHeight), 0, 0, dirtyRect.Width, dirtyRect.Height);
+            // 元の状態に戻す
+            canvas.RestoreState();
             this.IsUpdated = false;
         }
+
 
         private static Point[] RasterizeTriangle(Point[] pt)
         {
@@ -270,14 +276,14 @@
         public int AddObject(string name, double[,] vertexCoord, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null, int[][]? polygon = null)
         {
             int id = this.Objects.Count;
-            Object.Object @object = new(name, vertexCoord, id, vertexColor, origin, visible, scale, polygon, null);
+            Object.Object @object = new (name, vertexCoord, id, vertexColor, origin, visible, scale, polygon, null);
             this.Objects.Add(@object);
 
             this.IsUpdated = true;
             return id;
         }
 
-        private int AddObject(string name, double[,] vertexCoord, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null, int[][]? polygon = null, Math.Matrix[]? normal = null)
+        private int AddObject(string name, double[,] vertexCoord, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null, int[][]? polygon = null, Matrix[]? normal = null)
         {
             int id = this.Objects.Count;
             Object.Object @object = new(name, vertexCoord, id, vertexColor, origin, visible, scale, polygon, normal);
@@ -295,7 +301,7 @@
         /// <returns>ID.</returns>
         public int AddObjectFromObj(string name, string filePath)
         {
-            (double[,] vertices, int[][] polygon, Math.Matrix[] normal) = Parser.ObjParseVertices(filePath);
+            (double[,] vertices, int[][] polygon, Matrix[] normal) = Parser.ObjParseVertices(filePath);
             int id = this.AddObject(name, vertices, polygon: polygon, normal: normal);
 
             this.IsUpdated = true;
