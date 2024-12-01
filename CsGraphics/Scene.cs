@@ -64,7 +64,7 @@ namespace CsGraphics
 
                     if (@object.IsUpdated == true)
                     {
-                        (points, color, isVisiblePolygon) = Calculation.Calc((Object.Object)@object.Clone()); // 点や面の計算
+                        (points, color, isVisiblePolygon, _) = Calc.Calculation.Calc((Object.Object)@object.Clone()); // 点や面の計算
 
                         @object.Points = points;
                         @object.PointsColor = color;
