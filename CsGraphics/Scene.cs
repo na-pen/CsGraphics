@@ -4,6 +4,11 @@ namespace CsGraphics
     using CsGraphics.Math;
     using CsGraphics.Object;
     using Microsoft.Maui.Graphics;
+    using Microsoft.Maui.Graphics.Platform;
+    using Color = Microsoft.Maui.Graphics.Color;
+    using Point = Microsoft.Maui.Graphics.Point;
+    using CsGraphics.Calc;
+    using System.Numerics;
 
     /// <summary>
     /// シーン.
@@ -48,10 +53,34 @@ namespace CsGraphics
             canvas.FillColor = Colors.White;
             canvas.FillRectangle(dirtyRect);
 
-            // 座標軸の補正
-            canvas.SaveState(); // 現在の状態を保存
-            canvas.Translate(0, dirtyRect.Height); // Y軸を下に移動
-            canvas.Scale(1, -1);
+            int canvasHeight = (int)dirtyRect.Height;
+            int canvasWidth = (int)dirtyRect.Width;
+
+            double[] viewPlanePointA = new double[3] { 0, 0, 0 }; // 描画面の左下の座標
+            double[] viewPlanePointB = new double[3] { 0, canvasHeight, 0 }; // 描画面の左上の座標
+            double[] viewPlanePointC = new double[3] { canvasWidth, 0, 0 }; // 描画面の右下の座標
+            Math.Vector ab = new Math.Vector(viewPlanePointA, viewPlanePointB); // ABベクトル
+            Math.Vector ac = new Math.Vector(viewPlanePointA, viewPlanePointC); // ACベクトル
+            Math.Vector viewPlaneEquation = Calc.ZDepth.PlaneEquation(ab, ac); // 描画面の平面方程式
+
+            Color[,] pixelColors = new Color[canvasWidth, canvasHeight];
+            for (int x = 0; x < canvasWidth; x++)
+            {
+                for (int y = 0; y < canvasHeight; y++)
+                {
+                    pixelColors[x, y] = Colors.White;
+                }
+            }
+
+            // Zバッファの初期化 (全て無限大で初期化)
+            double[,] zBuffer = new double[canvasWidth, canvasHeight];
+            for (int x = 0; x < canvasWidth; x++)
+            {
+                for (int y = 0; y < canvasHeight; y++)
+                {
+                    zBuffer[x, y] = 1;
+                }
+            }
 
             // 各点を指定された色で描画
             foreach (Object.Object @object in this.Objects)
@@ -61,10 +90,12 @@ namespace CsGraphics
                     Point[] points = Array.Empty<Point>();
                     Color[] color = Array.Empty<Color>();
                     bool[] isVisiblePolygon = Array.Empty<bool>();
+                    Object.Object obj;
 
-                    if (@object.IsUpdated == true)
+                    //if (@object.IsUpdated == true) // オブジェクトの情報に更新があれば再計算
+                    if (true)
                     {
-                        (points, color, isVisiblePolygon, _) = Calc.Calculation.Calc((Object.Object)@object.Clone()); // 点や面の計算
+                        (points, color, isVisiblePolygon, _, obj) = Calculation.Calc((Object.Object)@object.Clone()); // 点や面の計算
 
                         @object.Points = points;
                         @object.PointsColor = color;
@@ -73,35 +104,71 @@ namespace CsGraphics
                     }
                     else
                     {
-                        (points, color, isVisiblePolygon) = (@object.Points, @object.PointsColor, @object.IsVisiblePolygon);
+                        (points, color, isVisiblePolygon, obj) = (@object.Points, @object.PointsColor, @object.IsVisiblePolygon, @object);
                     }
 
                     // 点を描画
                     points.Zip(color, (point, c) =>
                         {
-                            canvas.FillColor = c;  // 点の色を設定
-                            canvas.FillCircle((float)point.X, (float)point.Y, 1);  // 点を描画
-
-                            return 0; // 必要に応じて適切な値を返す
-                        }).ToList();
-
-                    // 面を描画
-                    canvas.FillColor = Colors.LightBlue; // 塗りつぶしの色
-                    canvas.StrokeColor = Colors.Blue; // 線の色
-                    canvas.StrokeSize = 1;
-
-                    if (@object.Polygon != null)
-                    {
-                        int j = 0;
-                        foreach (int[] indices in (Polygon)@object.Polygon)
-                        {
-                            if (isVisiblePolygon[j]) // カメラに対して向いている面のみ描画
+                            /*
+                            if (!isVisiblePolygon[i])
                             {
-                                PathF path = new ();
-                                path.MoveTo((float)points[indices[0] - 1].X, (float)points[indices[0] - 1].Y); // 初期点
-                                for (int i = 1; i < indices.Length; i++)
+                                continue; // カメラに向いていないポリゴンは描画しない
+                            }
+                            */
+
+                            // ポリゴンの頂点を取得
+                            int[] polygon = ((Object.Polygon)@object.Polygon).VertexID[i];
+                            Point[] vertex = polygon.Select(p => points[p - 1]).ToArray();
+
+                            // 面を描く
+                            Point[] pixels = RasterizeTriangle(vertex); // 描画するPixelの一覧
+                            double[] polygonPointA = new double[3] { obj.Vertex.Coordinate[0, polygon[0] - 1], obj.Vertex.Coordinate[1, polygon[0] - 1], obj.Vertex.Coordinate[2, polygon[0] - 1] }; // ポリゴンの頂点
+                            double[] polygonPointB = new double[3] { obj.Vertex.Coordinate[0, polygon[1] - 1], obj.Vertex.Coordinate[1, polygon[1] - 1], obj.Vertex.Coordinate[2, polygon[1] - 1] }; // 
+                            double[] polygonPointC = new double[3] { obj.Vertex.Coordinate[0, polygon[2] - 1], obj.Vertex.Coordinate[1, polygon[2] - 1], obj.Vertex.Coordinate[2, polygon[2] - 1] }; // 
+                            Math.Vector abP = new Math.Vector(polygonPointA, polygonPointB); // ABベクトル
+                            Math.Vector acP = new Math.Vector(polygonPointA, polygonPointC); // ACベクトル
+                            Math.Vector polygonEquation = Calc.ZDepth.PlaneEquation(abP, acP);
+
+                            foreach (Point p in pixels)
+                            {
+                                if ((int)p.X < 0 || (int)p.Y < 0 || (int)p.Y > canvasHeight - 1 || (int)p.X > canvasWidth)
                                 {
-                                    path.LineTo((float)points[indices[i] - 1].X, (float)points[indices[i] - 1].Y); // 次の頂点
+                                    continue;
+                                }
+                                else
+                                {
+                                    double[] pixel = new double[2] { (int)p.X, (int)p.Y };
+
+                                    // Z深度を計算
+                                    double depth = Calc.ZDepth.ZDepsParallel(pixel, polygonPointA, polygonPointB, polygonPointC, 500, -500);
+
+                                    // Zバッファを更新 (近いものだけ描画)
+                                    if (depth < zBuffer[(int)p.X, (int)p.Y] && depth >= 0)
+                                    {
+                                        zBuffer[(int)p.X, (int)p.Y] = depth;
+                                        pixelColors[(int)p.X, (int)p.Y] = this.GetColorForPolygon((int)(135 * depth), (int)(206 * depth), (int)(250 * depth)); // 色を設定
+                                    }
+                                }
+                            }
+
+                            // 頂点を描く
+                            foreach (Point v in vertex)
+                            {
+                                double[] pixel = new double[2] { (int)v.X, (int)v.Y };
+                                if ((int)v.X < 0 || (int)v.Y < 0 || (int)v.Y > canvasHeight - 1 || (int)v.X > canvasWidth)
+                                {
+                                    continue;
+                                }
+                                else
+                                {
+                                    // Z深度を計算
+                                    double depth = Calc.ZDepth.ZDepsParallel(pixel, polygonPointA, polygonPointB, polygonPointC, 500, -500);
+                                    if (depth <= zBuffer[(int)v.X, (int)v.Y] && depth >= 0)
+                                    {
+                                        zBuffer[(int)v.X, (int)v.Y] = depth;
+                                        pixelColors[(int)v.X, (int)v.Y] = this.GetColorForPolygon(0, 117, 194); // 色を設定
+                                    }
                                 }
 
                                 path.Close();
@@ -117,6 +184,82 @@ namespace CsGraphics
             // 元の状態に戻す
             canvas.RestoreState();
             this.IsUpdated = false;
+        }
+
+
+        private static Point[] RasterizeTriangle(Point[] pt)
+        {
+            // 境界ボックスを計算
+            double xmin = System.Math.Min(pt[0].X, System.Math.Min(pt[1].X, pt[2].X));
+            double xmax = System.Math.Max(pt[0].X, System.Math.Max(pt[1].X, pt[2].X));
+            double ymin = System.Math.Min(pt[0].Y, System.Math.Min(pt[1].Y, pt[2].Y));
+            double ymax = System.Math.Max(pt[0].Y, System.Math.Max(pt[1].Y, pt[2].Y));
+
+            List<Point> pixels = new();
+
+            // 境界ボックス内のピクセルを調べる
+            for (int x = (int)System.Math.Floor(xmin); x <= System.Math.Ceiling(xmax); x++)
+            {
+                for (int y = (int)System.Math.Floor(ymin); y <= System.Math.Ceiling(ymax); y++)
+                {
+                    if (IsPointInTriangle(x, y, pt))
+                    {
+                        pixels.Add(new Point(x, y));
+                    }
+                }
+            }
+
+            return pixels.ToArray();
+        }
+
+        private static bool IsPointInTriangle(int px, int py, Point[] pt)
+        {
+            double ax = pt[0].X;
+            double ay = pt[0].Y;
+            double bx = pt[1].X;
+            double by = pt[1].Y;
+            double cx = pt[2].X;
+            double cy = pt[2].Y;
+
+            // バリューコーディネート法による内外判定
+            double denominator = (double)((bx - ax) * (cy - ay) - (cx - ax) * (by - ay));
+            double lambda1 = ((bx - px) * (cy - py) - (cx - px) * (by - py)) / denominator;
+            double lambda2 = ((cx - px) * (ay - py) - (ax - px) * (cy - py)) / denominator;
+            double lambda3 = 1.0 - lambda1 - lambda2;
+
+            return lambda1 >= 0 && lambda2 >= 0 && lambda3 >= 0;
+        }
+
+        private IImage CreateImageFromColors(Color[,] colors, int width, int height)
+        {
+            // メモリストリームを使用して画像データを作成
+            using (var stream = new MemoryStream())
+            {
+                Bitmap bitmap = new(width, height, colors);
+                // ストリームに画像データを書き込む
+                stream.Write(bitmap.FileHeader.Bytes);
+                stream.Write(bitmap.InfoHeader.Bytes);
+                stream.Write(bitmap.img);
+                stream.Position = 0;
+                IImage image = PlatformImage.FromStream(stream, ImageFormat.Bmp);
+                // PlatformImage をストリームから読み込んで画像を作成
+
+                /*
+                using (FileStream fs = new FileStream("E:\\Projects\\CsGraphics\\Main\\test.bmp", FileMode.Create))
+                {
+                    fs.Write(bitmap.FileHeader.Bytes);
+                    fs.Write(bitmap.InfoHeader.Bytes);
+                    fs.Write(bitmap.img);
+                }*/
+                return image;
+            }
+        }
+
+        // ポリゴンの色を取得 (色設定)
+        private Color GetColorForPolygon(int r, int g, int b)
+        {
+            // 例: ポリゴンごとの色を設定
+            return Color.FromRgb(r, g, b); // 赤色
         }
 
         /// <summary>
