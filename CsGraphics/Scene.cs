@@ -114,7 +114,6 @@
                     }
                 }
             }
-
             // 元の状態に戻す
             canvas.RestoreState();
             this.IsUpdated = false;
