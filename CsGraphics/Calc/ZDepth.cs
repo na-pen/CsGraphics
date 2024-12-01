@@ -32,71 +32,33 @@ namespace CsGraphics.Calc
         /// <summary>
         /// 平行投影時のz深度を求める.
         /// </summary>
-        /// <param name="viewPlaneEquation">描画面の方程式.</param>
-        /// <param name="viewPixel">描画面上の点.</param>
-        /// <param name="polygonEquation">描画対象のポリゴン.</param>
         /// <returns>z深度.</returns>
-        internal static double ZDepsParallel(Vector viewPlaneEquation, Vector viewPixel, Vector polygonEquation, double[] polygonPointA, double[] polygonPointB, double[] polygonPointC)
+        internal static double ZDepsParallel(double[] pixel, double[] polygonPointA, double[] polygonPointB, double[] polygonPointC,int zMax, int zMin)
         {
             double result = 0;
-            viewPixel.W = 1; // viewPixel は座標なので4次元目を1とする
 
-            Vector o = new (viewPixel); // 光学中心の座標: 平行投影の場合はScreen座標(zのみ-1)
-            o.Z = -1; // 要修正: 描画面がz=n のときのみ有効
+            double px = pixel[0];
+            double py = pixel[1];
 
-            double top = -1 * Vector.DotProduct(polygonEquation, viewPixel);
-            double bottom = Vector.DotProduct(polygonEquation, o) - Vector.DotProduct(polygonEquation, viewPixel);
-            double t = top / bottom;
+            // 三角形の面積を計算
+            double area = TriangleArea(polygonPointA[0], polygonPointA[1], polygonPointB[0], polygonPointB[1], polygonPointC[0], polygonPointC[1]);
 
-            if (bottom != 0)
-            {
-                Vector q = viewPixel + (t * (o - viewPixel)); // ポリゴン上の点Q
-                Math.Vector ac = new Math.Vector(polygonPointA, polygonPointC); // ACベクトル
-                Math.Vector ab = new Math.Vector(polygonPointA, polygonPointB); // ABベクトル
-                Math.Vector aq = new Math.Vector(polygonPointA, new double[] { q.X, q.Y, q.Z }); // AQベクトル
+            // 各重心座標を計算
+            double A = TriangleArea(px, py, polygonPointB[0], polygonPointB[1], polygonPointC[0], polygonPointC[1]) / area;
+            double B = TriangleArea(polygonPointA[0], polygonPointA[1], px, py, polygonPointC[0], polygonPointC[1]) / area;
+            double C = TriangleArea(polygonPointA[0], polygonPointA[1], polygonPointB[0], polygonPointB[1], px, py) / area;
 
-                double d00 = Math.Vector.DotProduct(ac, ac);
-                double d01 = Math.Vector.DotProduct(ac, ab);
-                double d11 = Math.Vector.DotProduct(ab, ab);
-                double d20 = Math.Vector.DotProduct(aq, ac);
-                double d21 = Math.Vector.DotProduct(aq, ab);
+            // ピクセルの深度を計算 (加重平均)
+            result = A * polygonPointA[2] + B * polygonPointB[2] + C * polygonPointC[2];
 
-                Math.Matrix m = new (new double[,]
-                    {
-                        { d00, d01 },
-                        { d01, d11 },
-                    });
-                Math.Matrix mI = m.Inverse();
 
-                Math.Matrix b = new (new double[,]
-                    {
-                        { d20 },
-                        { d21 },
-                    });
+            return MinMaxNormalization(result,zMax,zMin);
+        }
 
-                Math.Matrix r = mI * b;
-
-                double r1 = 1 - r[0, 0] - r[1, 0];
-
-                if (r1 > 0 && r[0, 0] > 0 && r[1, 0] > 0)
-                {
-                    double distancePixelQ = Distance(viewPixel, q);
-
-                    const int z_max = 1920; // 描画基準面から奥行方向への最大描画距離
-                    result = MinMaxNormalization(distancePixelQ, z_max, 0); // 値を正規化
-                }
-                else
-                {
-                    result = -1;
-                }
-
-            }
-            else
-            {
-                result = -1;
-            }
-
-            return result;
+        internal static double TriangleArea(double x1, double y1, double x2, double y2, double x3, double y3)
+        {
+            // 三角形の面積を計算 (符号付き)
+            return System.Math.Abs((x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2.0);
         }
 
         /// <summary>
