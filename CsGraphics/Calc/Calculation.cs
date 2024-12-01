@@ -13,7 +13,7 @@
         /// </summary>
         /// <param name="object">オブジェクト.</param>
         /// <returns>スクリーン座標のリスト.</returns>
-        internal static (Point[], Color[], bool[], double[]) Calc(Object.Object @object)
+        internal static (Point[], Color[], bool[], double[], Object.Object) Calc(Object.Object @object)
         {
             return DrawFromOrigin(@object);
         }
@@ -23,10 +23,9 @@
         /// </summary>
         /// <param name="object">オブジェクト.</param>
         /// <returns>スクリーン座標のリスト.</returns>
-        private static (Point[], Color[], bool[], double[]) DrawFromOrigin(Object.Object @object)
+        private static (Point[], Color[], bool[], double[], Object.Object) DrawFromOrigin(Object.Object @object)
         {
-            const int z_max = 1920; // 描画基準面から奥行方向への最大描画距離
-            List<double> depthZ = new List<double>(); // z深度
+            List<double> depthZ = new List<double>(); // z深度 : 使用しない
 
             List<Point> result = new(); // 画面上の描画座標
             bool[] isVisiblePolygon = Array.Empty<bool>(); // 面を描画するかどうかのフラグ
@@ -37,14 +36,15 @@
 
             Matrix matrix = translate * rotate * scale; // 拡大縮小 → 回転 → 平行移動 をした変換行列を計算
 
-            foreach (Matrix vertex in matrix * @object.Vertex.Coordinate) // 変換行列 * 頂点行列を行い、移動後の3D空間上の頂点座標を計算する
+            Matrix vertex = matrix * @object.Vertex.Coordinate;
+            for (int n = 0; n < @object.Vertex.Coordinate.GetLength(1); n++)
             {
-                result.Add(new Point(vertex[0, 0], vertex[1, 0])); // スクリーン上の座標を求める計算 この場合はそのままコピー
-
-                depthZ.Add(vertex[2, 0]); // カメラから見た各頂点の深度情報を保存 この場合はz軸の値をコピー
+                result.Add(new Point(vertex[0, n], vertex[1, n])); // スクリーン上の座標を求める計算 この場合はそのままコピー
+                @object.Vertex.Coordinate[0,n] = vertex[0,n];
+                @object.Vertex.Coordinate[1,n] = vertex[1, n];
+                @object.Vertex.Coordinate[2,n] = vertex[2, n];
+                @object.Vertex.Coordinate[3,n] = vertex[3, n];
             }
-
-            depthZ = MinMaxNormalization(depthZ, 0, z_max); // 値を正規化
 
             // ポリゴンの法線がz=0の面とどの向きで交差するかどうか確認する
             if (@object.Polygon != null)
@@ -69,7 +69,7 @@
                 GetPolygonBounds(result, (Object.Polygon)@object.Polygon, isVisiblePolygon); // 面ごとの画面上の描画範囲を求める
             }
 
-            return (result.ToArray(), @object.Vertex.Color, isVisiblePolygon, depthZ.ToArray());
+            return (result.ToArray(), @object.Vertex.Color, isVisiblePolygon, depthZ.ToArray(),@object);
         }
 
         private static void GetPolygonBounds(List<Point> points, Object.Polygon polygon, bool[] isVisiblePolygon)
@@ -100,24 +100,6 @@
 
                 j++;
             }
-        }
-
-        private static List<double> MinMaxNormalization(List<double> data, double max, double min)
-        {
-            List<double> result = new();
-            foreach (double d in data)
-            {
-                if (min < d && d < max) // 上限値以下かつ下限値以上であれば正規化した値を代入
-                {
-                    result.Add((d - min) / (max - min));
-                }
-                else // それ以外の場合は -1 を代入
-                {
-                    result.Add(-1);
-                }
-            }
-
-            return result;
         }
 
         /// <summary>

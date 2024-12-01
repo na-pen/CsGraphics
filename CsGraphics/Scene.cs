@@ -5,6 +5,7 @@
     using Color = Microsoft.Maui.Graphics.Color;
     using Point = Microsoft.Maui.Graphics.Point;
     using CsGraphics.Calc;
+    using System.Numerics;
 
     /// <summary>
     /// シーン.
@@ -52,6 +53,13 @@
             int canvasHeight = (int)dirtyRect.Height;
             int canvasWidth = (int)dirtyRect.Width;
 
+            double[] viewPlanePointA = new double[3] { 0, 0, 0 }; // 描画面の左下の座標
+            double[] viewPlanePointB = new double[3] { 0, canvasHeight, 0 }; // 描画面の左上の座標
+            double[] viewPlanePointC = new double[3] { canvasWidth, 0, 0 }; // 描画面の右下の座標
+            Math.Vector ab = new Math.Vector(viewPlanePointA, viewPlanePointB); // ABベクトル
+            Math.Vector ac = new Math.Vector(viewPlanePointA, viewPlanePointC); // ACベクトル
+            Math.Vector viewPlaneEquation = Calc.ZDepth.PlaneEquation(ab, ac); // 描画面の平面方程式
+
             Color[,] pixelColors = new Color[canvasWidth, canvasHeight];
             for (int x = 0; x < canvasWidth; x++)
             {
@@ -79,10 +87,11 @@
                     Point[] points = Array.Empty<Point>();
                     Color[] color = Array.Empty<Color>();
                     bool[] isVisiblePolygon = Array.Empty<bool>();
+                    Object.Object obj;
 
                     if (@object.IsUpdated == true) // オブジェクトの情報に更新があれば再計算
                     {
-                        (points, color, isVisiblePolygon, zDepths) = Calculation.Calc((Object.Object)@object.Clone()); // 点や面の計算
+                        (points, color, isVisiblePolygon, zDepths, obj) = Calculation.Calc((Object.Object)@object.Clone()); // 点や面の計算
 
                         @object.Points = points;
                         @object.PointsColor = color;
@@ -91,7 +100,7 @@
                     }
                     else
                     {
-                        (points, color, isVisiblePolygon) = (@object.Points, @object.PointsColor, @object.IsVisiblePolygon);
+                        (points, color, isVisiblePolygon, obj) = (@object.Points, @object.PointsColor, @object.IsVisiblePolygon,@object);
                     }
 
                     if (@object.Polygon != null) // ポリゴンが存在する場合のみ描画
@@ -99,7 +108,6 @@
                         // 各ポリゴンをチェック
                         for (int i = 0; i < ((Object.Polygon)@object.Polygon).Length(); i++)
                         {
-
                             if (!isVisiblePolygon[i])
                             {
                                 continue; // カメラに向いていないポリゴンは描画しない
@@ -110,6 +118,15 @@
                             Point p1 = points[polygon[0] - 1];
                             Point p2 = points[polygon[1] - 1];
                             Point p3 = points[polygon[2] - 1];
+
+
+
+                            double[] polygonPointA = new double[3] { obj.Vertex.Coordinate[0,polygon[0] - 1], obj.Vertex.Coordinate[1, polygon[0] - 1], obj.Vertex.Coordinate[2, polygon[0] - 1] }; // ポリゴンの頂点
+                            double[] polygonPointB = new double[3] { obj.Vertex.Coordinate[0, polygon[1] - 1], obj.Vertex.Coordinate[1, polygon[1] - 1], obj.Vertex.Coordinate[2, polygon[1] - 1] }; // 
+                            double[] polygonPointC = new double[3] { obj.Vertex.Coordinate[0, polygon[2] - 1], obj.Vertex.Coordinate[1, polygon[2] - 1], obj.Vertex.Coordinate[2, polygon[2] - 1] }; // 
+                            Math.Vector abP = new Math.Vector(polygonPointA, polygonPointB); // ABベクトル
+                            Math.Vector acP = new Math.Vector(polygonPointA, polygonPointC); // ACベクトル
+                            Math.Vector polygonEquation = Calc.ZDepth.PlaneEquation(abP, acP); // 描画面の平面方程式
 
                             // バウンディングボックスの範囲を取得
                             double xMin = ((Object.Polygon)@object.Polygon).Bounds[i, 0];
@@ -128,18 +145,17 @@
                                     }
                                     else
                                     {
-                                        // ピクセルがポリゴンの内部かどうかをチェック (バリデーション)
-                                        if (this.IsPointInTriangle(x, y, p1, p2, p3))
-                                        {
-                                            // Z深度を計算 (平行投影なので深度は1次元)
-                                            double depth = this.GetZDepth(x, y, p1, p2, p3, zDepths[polygon[0] - 1], zDepths[polygon[1] - 1], zDepths[polygon[2] - 1]);
 
-                                            // Zバッファを更新 (近いものだけ描画)
-                                            if (depth < zBuffer[x, y])
-                                            {
-                                                zBuffer[x, y] = depth;
-                                                pixelColors[x, y] = this.GetColorForPolygon(i); // 色を設定
-                                            }
+                                        //pixelColors[x, y] = this.GetColorForPolygon(i);
+                                        Math.Vector pixel = new(x, y, 0);
+                                        // Z深度を計算
+                                        double depth = Calc.ZDepth.ZDepsParallel(viewPlaneEquation, pixel, polygonEquation, polygonPointA, polygonPointB, polygonPointC);
+
+                                        // Zバッファを更新 (近いものだけ描画)
+                                        if (depth < zBuffer[x, y] && depth >= 0)
+                                        {
+                                            zBuffer[x, y] = depth;
+                                            pixelColors[x, y] = this.GetColorForPolygon(i); // 色を設定
                                         }
                                     }
                                 }
@@ -180,25 +196,6 @@
                 }*/
                 return image;
             }
-        }
-
-        // 点が三角形内部にあるか判定 (バリデーション)
-        private bool IsPointInTriangle(int px, int py, Point p1, Point p2, Point p3)
-        {
-            double area = 0.5 * ((-p2.Y * p3.X) + (p1.Y * (-p2.X + p3.X)) + (p1.X * (p2.Y - p3.Y)) + (p2.X * p3.Y));
-            double s = 1 / (2 * area) * ((p1.Y * p3.X) - (p1.X * p3.Y) + ((p3.Y - p1.Y) * px) + ((p1.X - p3.X) * py));
-            double t = 1 / (2 * area) * ((p1.X * p2.Y) - (p1.Y * p2.X) + ((p1.Y - p2.Y) * px) + ((p2.X - p1.X) * py));
-
-            return s > 0 && t > 0 && 1 - s - t > 0;
-        }
-
-        // Z深度を計算 (平行投影)
-        private double GetZDepth(int x, int y, Point p1, Point p2, Point p3, double z1, double z2, double z3)
-        {
-            // Z深度の補間 (バリデーション用に簡単な方法を適用)
-            return (z1 * (1 - ((x - p2.X) / (p1.X - p2.X))) * (1 - ((y - p2.Y) / (p1.Y - p2.Y)))) +
-                   (z2 * (1 - ((x - p3.X) / (p2.X - p3.X))) * (1 - ((y - p3.Y) / (p2.Y - p3.Y)))) +
-                   (z3 * (1 - ((x - p1.X) / (p3.X - p1.X))) * (1 - ((y - p1.Y) / (p3.Y - p1.Y))));
         }
 
         // ポリゴンの色を取得 (色設定)

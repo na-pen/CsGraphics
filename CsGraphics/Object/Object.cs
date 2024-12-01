@@ -1,7 +1,7 @@
 ﻿namespace CsGraphics.Object
 {
     using CsGraphics.Math;
-    using Microsoft.Maui.Primitives;
+    using Microsoft.Maui.Controls.Shapes;
 
     /// <summary>
     /// オブジェクトの情報の保持や管理を行う.
@@ -18,7 +18,7 @@
         /// <param name="origin">オブジェクトの原点.</param>
         /// <param name="visible">オブジェクトの表示状態.</param>
         /// <param name="scale">オブジェクトの拡大倍率.</param>
-        internal Object(string name, double[,] vertexCoord, int id = -1, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null, int[][]? polygon = null, Matrix[] normal = null)
+        internal Object(string name, double[,] vertexCoord, int id = -1, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null, int[][]? polygon = null, Math.Matrix[] normal = null)
         {
             this.ID = id;
             this.Name = name;
@@ -60,6 +60,18 @@
             this.Magnification = magnification;
             this.Angle = angle;
             this.Polygon = polygon;
+        }
+
+        internal Object(Object obj)
+        {
+            this.Name = obj.Name;
+            this.IsVisible = obj.IsVisible;
+            this.Origin = obj.Origin;
+            this.ID = obj.ID;
+            this.Vertex = obj.Vertex;
+            this.Magnification = obj.Magnification;
+            this.Angle = obj.Angle;
+            this.Polygon = obj.Polygon;
         }
 
         /// <summary>

@@ -372,6 +372,91 @@
             this.Columns = temp;
         }
 
+        public Matrix Inverse()
+        {
+            if (Rows != Columns)
+            {
+                throw new InvalidOperationException("逆行列は正方行列に対してのみ計算可能です。");
+            }
+
+            int n = Rows;
+            Matrix augmented = new Matrix(n, 2 * n);
+
+            // 拡大行列を作成（元の行列 | 単位行列）
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < n; j++)
+                {
+                    augmented[i, j] = this[i, j];
+                }
+                augmented[i, n + i] = 1.0; // 単位行列部分
+            }
+
+            // ガウス・ジョルダン法で逆行列を計算
+            for (int i = 0; i < n; i++)
+            {
+                // 対角要素がゼロの場合、列を交換
+                if (augmented[i, i] == 0)
+                {
+                    bool swapped = false;
+                    for (int k = i + 1; k < n; k++)
+                    {
+                        if (augmented[k, i] != 0)
+                        {
+                            SwapRows(augmented, i, k);
+                            swapped = true;
+                            break;
+                        }
+                    }
+                    if (!swapped)
+                    {
+                        throw new InvalidOperationException("行列は正則ではありません（逆行列が存在しません）。");
+                    }
+                }
+
+                // ピボットを1に正規化
+                double pivot = augmented[i, i];
+                for (int j = 0; j < 2 * n; j++)
+                {
+                    augmented[i, j] /= pivot;
+                }
+
+                // 他の行から現在の列を消去
+                for (int k = 0; k < n; k++)
+                {
+                    if (k == i) continue;
+                    double factor = augmented[k, i];
+                    for (int j = 0; j < 2 * n; j++)
+                    {
+                        augmented[k, j] -= factor * augmented[i, j];
+                    }
+                }
+            }
+
+            // 結果の逆行列部分を抽出
+            Matrix inverse = new Matrix(n, n);
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < n; j++)
+                {
+                    inverse[i, j] = augmented[i, n + j];
+                }
+            }
+
+            return inverse;
+        }
+
+        private static void SwapRows(Matrix matrix, int row1, int row2)
+        {
+            int columns = matrix.Columns;
+            for (int j = 0; j < columns; j++)
+            {
+                double temp = matrix[row1, j];
+                matrix[row1, j] = matrix[row2, j];
+                matrix[row2, j] = temp;
+            }
+        }
+
         /// <summary>
         /// 行列を指定したサイズにリサイズする.
         /// </summary>

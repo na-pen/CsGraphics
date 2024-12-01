@@ -91,6 +91,14 @@ namespace CsGraphics.Math
             this.Data[3, 0] = 0;
         }
 
+        public Vector(Vector vector)
+        {
+            this.X = vector.X;
+            this.Y = vector.Y;
+            this.Z = vector.Z;
+            this.W = vector.W;
+        }
+
         public static Vector operator +(Vector a, Vector b)
         {
             Vector result = new Vector();
@@ -143,6 +151,24 @@ namespace CsGraphics.Math
             result.Data[2, 0] = (vectorA.Data[0, 0] * vectorB.Data[1, 0]) - (vectorA.Data[1, 0] * vectorB.Data[0, 0]);
             result.Data[3, 0] = 0;
 
+            return result;
+        }
+
+        /// <summary>
+        /// 2つのベクトル(同次座標系行列)の内積を計算する.
+        /// </summary>
+        /// <param name="vectorA">a</param>
+        /// <param name="vectorB">b</param>
+        /// <returns>内積の結果.</returns>
+        internal static double DotProduct(Vector vectorA, Vector vectorB)
+        {
+            double result = (vectorA.X * vectorB.X) + (vectorA.Y * vectorB.Y) + (vectorA.Z * vectorB.Z) +  (vectorA.W * vectorB.W);
+            return result;
+        }
+
+        public static double Size(Vector vector)
+        {
+            double result = System.Math.Sqrt(System.Math.Pow(vector.X, 2) + System.Math.Pow(vector.Y, 2) + System.Math.Pow(vector.Z, 2));
             return result;
         }
     }
