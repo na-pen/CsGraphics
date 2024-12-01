@@ -1,4 +1,4 @@
-﻿namespace CsGraphics
+namespace CsGraphics
 {
     using System.Collections;
     using CsGraphics.Math;

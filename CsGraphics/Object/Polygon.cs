@@ -19,6 +19,8 @@
             this.ObjectId = objectId;
             this.VertexID = vertexID;
             this.Normal = normal;
+            this.Bounds = new double[normal.Length, 4];
+            this.NormalCalced = normal;
         }
 
         /// <summary>
@@ -35,6 +37,16 @@
         /// Gets or sets 法線ベクトル.
         /// </summary>
         internal Matrix[] Normal { get; set; }
+
+        /// <summary>
+        /// Gets or sets 計算後の法線ベクトル.
+        /// </summary>
+        internal Matrix[] NormalCalced { get; set; }
+
+        /// <summary>
+        /// Gets or sets 各面ごとのScreen座標上のバウンディングボックス.
+        /// </summary>
+        internal double[,] Bounds { get; set; }
 
         /// <summary>
         /// 面の数や面の数を取得.

@@ -304,30 +304,6 @@
         }
 
         /// <summary>
-        /// Matrix(3,1) をベクトルとして外積を計算する.
-        /// </summary>
-        /// <param name="vectorA">a</param>
-        /// <param name="vectorB">b</param>
-        /// <returns>外積の結果.</returns>
-        /// <exception cref="ArgumentException">ベクトルは3次元である必要があります.</exception>
-        internal static Matrix CrossProduct(Matrix vectorA, Matrix vectorB)
-        {
-            if (vectorA.Rows != 3 || vectorB.Rows != 3 || vectorA.Columns != 1 || vectorB.Columns != 1)
-            {
-                throw new ArgumentException("ベクトルは3次元である必要があります。");
-            }
-
-            Matrix result = new Matrix(3, 1);
-
-            // 外積の計算 (a2 * b3 - a3 * b2, a3 * b1 - a1 * b3, a1 * b2 - a2 * b1)
-            result[0, 0] = (vectorA[1, 0] * vectorB[2, 0]) - (vectorA[2, 0] * vectorB[1, 0]);
-            result[1, 0] = (vectorA[2, 0] * vectorB[0, 0]) - (vectorA[0, 0] * vectorB[2, 0]);
-            result[2, 0] = (vectorA[0, 0] * vectorB[1, 0]) - (vectorA[1, 0] * vectorB[0, 0]);
-
-            return result;
-        }
-
-        /// <summary>
         /// 行列を初期値で埋める.
         /// </summary>
         /// <param name="initializer">initializer.</param>

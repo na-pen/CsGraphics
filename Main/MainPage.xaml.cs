@@ -29,7 +29,7 @@
         {
             this.InitializeComponent();
 
-            this.scene = new Scene(60);  // MyDrawable インスタンスを作成
+            this.scene = new Scene(10);  // MyDrawable インスタンスを作成
             this.graphicsView.Drawable = this.scene;
             this.BindingContext = this;
             this.Scene = this.scene;  // Drawable に設定
