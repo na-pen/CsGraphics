@@ -384,6 +384,7 @@
             int temp = -1;
             if (value == null)
             {
+                value = new double[row - this.Rows - 1];
                 Array.Fill(value, 0, 0, row - this.Rows - 1);
             }
 

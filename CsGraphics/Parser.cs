@@ -1,5 +1,6 @@
 ﻿namespace CsGraphics
 {
+    using CsGraphics.Math;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -16,9 +17,11 @@
         /// </summary>
         /// <param name="filePath">ファイルパス.</param>
         /// <returns>オブジェクトの頂点座標.</returns>
-        internal static double[,] ObjParseVertices(string filePath)
+        internal static (double[,],int[][], Matrix[]) ObjParseVertices(string filePath)
         {
             var vertices = new List<double[]>(); // 動的リストで頂点情報を一時的に格納
+            List<List<int>> polygon = new List<List<int>>(); // 動的リストで面を構成する頂点のIDを一時的に格納
+            List<Matrix> normal = new List<Matrix>(); // 動的リストで面の法線ベクトルを一時的に格納
 
             // ファイルを1行ずつ読み取る
             foreach (var line in File.ReadLines(filePath))
@@ -35,6 +38,21 @@
                         vertices.Add(new[] { x, y, z });
                     }
                 }
+                else if (line.StartsWith("f ")) // 面情報のとき
+                {
+                    List<int> p = new List<int>();
+                    var parts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (parts.Length >= 4) // 面の情報が存在する場合
+                    {
+                        foreach (var part in parts.Skip(1))
+                        {
+                            string[] _part = part.Split("/");
+                            p.Add(int.Parse(_part[0]));
+                        }
+                    }
+
+                    polygon.Add(p);
+                }
             }
 
             // List<double[]> を double[,] に変換
@@ -48,7 +66,41 @@
                 vertexArray[2, i] = vertices[i][2];
             }
 
-            return vertexArray;
+            // 面の法線ベクトルを計算
+            foreach (List<int> indices in polygon)
+            {
+                Math.Vector ab = new (
+                    new double[]
+                    {
+                        vertices[indices[0] - 1][0],
+                        vertices[indices[0] - 1][1],
+                        vertices[indices[0] - 1][2],
+                    },
+                    new double[]
+                    {
+                        vertices[indices[1] - 1][0],
+                        vertices[indices[1] - 1][1],
+                        vertices[indices[1] - 1][2],
+                    });
+
+                Math.Vector bc = new (new double[]
+                    {
+                        vertices[indices[1] - 1][0],
+                        vertices[indices[1] - 1][1],
+                        vertices[indices[1] - 1][2],
+                    },
+                    new double[]
+                    {
+                        vertices[indices[2] - 1][0],
+                        vertices[indices[2] - 1][1],
+                        vertices[indices[2] - 1][2]
+                    });
+
+                Math.Vector temp = Vector.CrossProduct(ab, bc);
+                normal.Add(temp.Data);
+            }
+
+            return (vertexArray, polygon.Select(innerList => innerList.ToArray()).ToArray(), normal.ToArray());
         }
     }
 }

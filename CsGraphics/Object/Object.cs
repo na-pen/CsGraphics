@@ -1,5 +1,6 @@
 ﻿namespace CsGraphics.Object
 {
+    using CsGraphics.Math;
     using Microsoft.Maui.Primitives;
 
     /// <summary>
@@ -17,7 +18,7 @@
         /// <param name="origin">オブジェクトの原点.</param>
         /// <param name="visible">オブジェクトの表示状態.</param>
         /// <param name="scale">オブジェクトの拡大倍率.</param>
-        internal Object(string name, double[,] vertexCoord, int id = -1, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null)
+        internal Object(string name, double[,] vertexCoord, int id = -1, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null, int[][]? polygon = null, Matrix[] normal = null)
         {
             this.ID = id;
             this.Name = name;
@@ -42,9 +43,14 @@
             }
 
             this.Vertex = new (id, vertexCoord, vertexColor);
+
+            if (polygon != null)
+            {
+                this.Polygon = new Polygon(this.ID, polygon, normal);
+            }
         }
 
-        private Object(string name, Vertex vertex, int id, Math.Matrix origin, double[] magnification, bool visible, double[] angle)
+        private Object(string name, Vertex vertex, int id, Math.Matrix origin, double[] magnification, bool visible, double[] angle, Polygon? polygon)
         {
             this.Name = name;
             this.IsVisible = visible;
@@ -53,6 +59,7 @@
             this.Vertex = vertex;
             this.Magnification = magnification;
             this.Angle = angle;
+            this.Polygon = polygon;
         }
 
         /// <summary>
@@ -91,6 +98,33 @@
         internal double[] Angle { get; set; } = { 0, 0, 0 };
 
         /// <summary>
+        /// Gets or sets 多角形面の情報.
+        /// </summary>
+        internal Polygon? Polygon { get; set; } = null;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets オブジェクトが更新されたかどうか.
+        /// </summary>
+        internal bool IsUpdated { get; set; } = true;
+
+        //------------------------------------------------------ ここから 計算済み情報の保持 ------------------------------------------------------/
+
+        /// <summary>
+        /// Gets or sets 計算後の画面上の描画座標を保持.
+        /// </summary>
+        internal Point[] Points { get; set; } = Array.Empty<Point>();
+
+        /// <summary>
+        /// Gets or sets 計算後の画面上の頂点色を保持.
+        /// </summary>
+        internal Color[] PointsColor { get; set; } = Array.Empty<Color>();
+
+        /// <summary>
+        /// Gets or sets 計算後の画面上の面の表示状態の保持.
+        /// </summary>
+        internal bool[] IsVisiblePolygon { get; set; } = Array.Empty<bool>();
+
+        /// <summary>
         /// 自身をシャドーコピーする.
         /// </summary>
         /// <returns>Clone.</returns>
@@ -103,7 +137,8 @@
                 (Math.Matrix)this.Origin.Clone(),
                 (double[])this.Magnification.Clone(),
                 this.IsVisible,
-                this.Angle)
+                this.Angle,
+                this.Polygon)
             {
             };
         }
@@ -116,6 +151,8 @@
         /// <param name="z">z軸の移動量.</param>
         internal void SetTranslation(double x, double y, double z)
         {
+            this.IsUpdated = true;
+
             Math.Matrix temp = new (3, 1);
 
             temp[0, 0] = x;
@@ -133,6 +170,7 @@
         /// <param name="z">z軸の拡大率.</param>
         internal void SetScale(double x, double y, double z)
         {
+            this.IsUpdated = true;
             this.Magnification = new double[] { this.Magnification[0] * x, this.Magnification[1] * y, this.Magnification[2] * z };
         }
 
@@ -144,6 +182,7 @@
         /// <param name="z">z軸の回転角度.</param>
         internal void SetRotation(double x, double y, double z)
         {
+            this.IsUpdated = true;
             this.Angle = new double[] { this.Angle[0] + x, this.Angle[1] + y, this.Angle[2] + z };
         }
     }
