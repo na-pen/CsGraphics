@@ -17,11 +17,14 @@
         /// </summary>
         /// <param name="filePath">ファイルパス.</param>
         /// <returns>オブジェクトの頂点座標.</returns>
-        internal static (double[,],int[][], Matrix[]) ObjParseVertices(string filePath)
+        internal static (double[,],int[][], Matrix[], Color[]) ObjParseVertices(string filePath)
         {
             var vertices = new List<double[]>(); // 動的リストで頂点情報を一時的に格納
             List<List<int>> polygon = new List<List<int>>(); // 動的リストで面を構成する頂点のIDを一時的に格納
             List<Matrix> normal = new List<Matrix>(); // 動的リストで面の法線ベクトルを一時的に格納
+            List<Color> color = new List<Color>(); // ポリゴンカラー
+            Dictionary<string, Color> dic = new Dictionary<string, Color>();
+            string mtlNow = String.Empty;
 
             // ファイルを1行ずつ読み取る
             foreach (var line in File.ReadLines(filePath))
@@ -44,6 +47,15 @@
                     var parts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                     if (parts.Length >= 4) // 面の情報が存在する場合
                     {
+                        if (mtlNow != String.Empty)
+                        {
+                            color.Add(dic[mtlNow]);
+                        }
+                        else
+                        {
+                            color.Add(new Color(0, 0, 0));
+                        }
+
                         foreach (var part in parts.Skip(1))
                         {
                             string[] _part = part.Split("/");
@@ -52,6 +64,16 @@
                     }
 
                     polygon.Add(p);
+                }
+                else if (line.StartsWith("mtllib ")) // 面情報のとき
+                {
+                    var parts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    dic = MtlParser(System.IO.Path.GetDirectoryName(filePath) + "\\" +parts[1]);
+                }
+                else if (line.StartsWith("usemtl ")) // 面情報のとき
+                {
+                    var parts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    mtlNow = parts[1];
                 }
             }
 
@@ -100,7 +122,29 @@
                 normal.Add(temp.Data);
             }
 
-            return (vertexArray, polygon.Select(innerList => innerList.ToArray()).ToArray(), normal.ToArray());
+            return (vertexArray, polygon.Select(innerList => innerList.ToArray()).ToArray(), normal.ToArray(), color.ToArray());
+        }
+
+        private static Dictionary<string, Color> MtlParser(string path)
+        {
+            Dictionary<string, Color> dic = new Dictionary<string, Color>();
+
+            string mtlName = string.Empty;
+            foreach (var line in File.ReadLines(path))
+            {
+                if (line.StartsWith("newmtl ")) // 頂点情報の場合
+                {
+                    var parts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    mtlName = parts[1];
+                }
+                else if (line.StartsWith("Kd ")) // 面情報のとき
+                {
+                    var parts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    dic.Add(mtlName, new Color((int)(double.Parse(parts[1]) * 255), (int)(double.Parse(parts[2]) * 255), (int)(double.Parse(parts[3]) * 255)));
+                }
+            }
+
+            return dic;
         }
     }
 }

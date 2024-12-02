@@ -144,7 +144,7 @@ namespace CsGraphics
                                     if (depth < zBuffer[(int)p.X, (int)p.Y] && depth >= 0)
                                     {
                                         zBuffer[(int)p.X, (int)p.Y] = depth;
-                                        pixelColors[(int)p.X, (int)p.Y] = this.GetColorForPolygon((int)(135 * depth), (int)(206 * depth), (int)(250 * depth)); // 色を設定
+                                        pixelColors[(int)p.X, (int)p.Y] = ((Object.Polygon)@object.Polygon).Colors[i]; // 色を設定
                                     }
                                 }
                             }
@@ -164,7 +164,7 @@ namespace CsGraphics
                                     if (depth <= zBuffer[(int)v.X, (int)v.Y] && depth >= 0)
                                     {
                                         zBuffer[(int)v.X, (int)v.Y] = depth;
-                                        pixelColors[(int)v.X, (int)v.Y] = this.GetColorForPolygon(0, 117, 194); // 色を設定
+                                        pixelColors[(int)v.X, (int)v.Y] = this.GetColorForPolygon(0, 0, 0); // 色を設定
                                     }
                                 }
                             }
@@ -267,20 +267,20 @@ namespace CsGraphics
         /// <param name="scale">拡大率.</param>
         /// <param name="polygon">面を構成する点の情報.</param>
         /// <returns>id.</returns>
-        public int AddObject(string name, double[,] vertexCoord, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null, int[][]? polygon = null)
+        public int AddObject(string name, double[,] vertexCoord, Color[]? polygonColor = null, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null, int[][]? polygon = null)
         {
             int id = this.Objects.Count;
-            Object.Object @object = new(name, vertexCoord, id, vertexColor, origin, visible, scale, polygon, null);
+            Object.Object @object = new(name, vertexCoord, id, polygonColor, vertexColor, origin, visible, scale, polygon, null);
             this.Objects.Add(@object);
 
             this.IsUpdated = true;
             return id;
         }
 
-        private int AddObject(string name, double[,] vertexCoord, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null, int[][]? polygon = null, Math.Matrix[]? normal = null)
+        private int AddObject(string name, double[,] vertexCoord, Color[]? polygonColor = null, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null, int[][]? polygon = null, Math.Matrix[]? normal = null)
         {
             int id = this.Objects.Count;
-            Object.Object @object = new(name, vertexCoord, id, vertexColor, origin, visible, scale, polygon, normal);
+            Object.Object @object = new(name, vertexCoord, id, polygonColor, vertexColor, origin, visible, scale, polygon, normal);
             this.Objects.Add(@object);
 
             this.IsUpdated = true;
@@ -295,8 +295,8 @@ namespace CsGraphics
         /// <returns>ID.</returns>
         public int AddObjectFromObj(string name, string filePath)
         {
-            (double[,] vertices, int[][] polygon, Math.Matrix[] normal) = Parser.ObjParseVertices(filePath);
-            int id = this.AddObject(name, vertices, polygon: polygon, normal: normal);
+            (double[,] vertices, int[][] polygon, Math.Matrix[] normal, Color[]? polygonColor) = Parser.ObjParseVertices(filePath);
+            int id = this.AddObject(name, vertices, polygon: polygon, normal: normal, polygonColor: polygonColor);
 
             this.IsUpdated = true;
             return id;

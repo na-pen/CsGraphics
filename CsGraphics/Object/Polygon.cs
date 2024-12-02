@@ -14,13 +14,14 @@
         /// <param name="objectId">オブジェクトID.</param>
         /// <param name="vertexID">多角形面の頂点ID.</param>
         /// <param name="normal">法線ベクトル.</param>
-        internal Polygon(int objectId, int[][] vertexID, Matrix[] normal)
+        internal Polygon(int objectId, int[][] vertexID, Matrix[] normal, Color[] color)
         {
             this.ObjectId = objectId;
             this.VertexID = vertexID;
             this.Normal = normal;
             this.Bounds = new double[normal.Length, 4];
             this.NormalCalced = normal;
+            this.Colors = color;
         }
 
         /// <summary>
@@ -47,6 +48,8 @@
         /// Gets or sets 各面ごとのScreen座標上のバウンディングボックス.
         /// </summary>
         internal double[,] Bounds { get; set; }
+
+        internal Color[] Colors { get; set; }
 
         /// <summary>
         /// 面の数や面の数を取得.
