@@ -216,9 +216,9 @@ namespace CsGraphics
             double cy = pt[2].Y;
 
             // バリューコーディネート法による内外判定
-            double denominator = (double)((bx - ax) * (cy - ay) - (cx - ax) * (by - ay));
-            double lambda1 = ((bx - px) * (cy - py) - (cx - px) * (by - py)) / denominator;
-            double lambda2 = ((cx - px) * (ay - py) - (ax - px) * (cy - py)) / denominator;
+            double denominator = (double)(((bx - ax) * (cy - ay)) - ((cx - ax) * (by - ay)));
+            double lambda1 = (((bx - px) * (cy - py)) - ((cx - px) * (by - py))) / denominator;
+            double lambda2 = (((cx - px) * (ay - py)) - ((ax - px) * (cy - py))) / denominator;
             double lambda3 = 1.0 - lambda1 - lambda2;
 
             return lambda1 >= 0 && lambda2 >= 0 && lambda3 >= 0;
@@ -270,17 +270,17 @@ namespace CsGraphics
         public int AddObject(string name, double[,] vertexCoord, Color[]? polygonColor = null, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null, int[][]? polygon = null)
         {
             int id = this.Objects.Count;
-            Object.Object @object = new(name, vertexCoord, id, polygonColor, vertexColor, origin, visible, scale, polygon, null);
+            Object.Object @object = new(name, vertexCoord, id, polygonColor, vertexColor, origin, visible, scale, polygon);
             this.Objects.Add(@object);
 
             this.IsUpdated = true;
             return id;
         }
 
-        private int AddObject(string name, double[,] vertexCoord, Color[]? polygonColor = null, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null, int[][]? polygon = null, Math.Matrix[]? normal = null)
+        private int AddObject(string name, double[,] vertexCoord, Color[]? polygonColor = null, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null, int[][]? polygon = null, Math.Matrix[]? normal = null, int[][]? mtlV = null, double[][] vt = null)
         {
             int id = this.Objects.Count;
-            Object.Object @object = new(name, vertexCoord, id, polygonColor, vertexColor, origin, visible, scale, polygon, normal);
+            Object.Object @object = new(name, vertexCoord, id, polygonColor, vertexColor, origin, visible, scale, polygon, normal, mtlV, vt);
             this.Objects.Add(@object);
 
             this.IsUpdated = true;
@@ -293,10 +293,10 @@ namespace CsGraphics
         /// <param name="name">オブジェクト名.</param>
         /// <param name="filePath">.objのパス.</param>
         /// <returns>ID.</returns>
-        public int AddObjectFromObj(string name, string filePath)
+        public int AddObjectFromObj(string name, string filePath, string texturePath = null)
         {
-            (double[,] vertices, int[][] polygon, Math.Matrix[] normal, Color[]? polygonColor) = Parser.ObjParseVertices(filePath);
-            int id = this.AddObject(name, vertices, polygon: polygon, normal: normal, polygonColor: polygonColor);
+            (double[,] vertices, int[][] polygon, Math.Matrix[] normal, Color[]? polygonColor, int[][] mtlV, double[][] vt) = Parser.ObjParseVertices(filePath);
+            int id = this.AddObject(name, vertices, polygon: polygon, normal: normal, polygonColor: polygonColor,mtlV: mtlV, vt: vt);
 
             this.IsUpdated = true;
             return id;

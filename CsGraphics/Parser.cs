@@ -1,11 +1,11 @@
 ﻿namespace CsGraphics
 {
     using CsGraphics.Math;
+    using Microsoft.Maui.Graphics.Platform;
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
+    using System.Reflection;
 
     /// <summary>
     /// 外部ファイルの読み込み.
@@ -17,13 +17,15 @@
         /// </summary>
         /// <param name="filePath">ファイルパス.</param>
         /// <returns>オブジェクトの頂点座標.</returns>
-        internal static (double[,],int[][], Matrix[], Color[]) ObjParseVertices(string filePath)
+        internal static (double[,],int[][], Matrix[], Color[], int[][], double[][]) ObjParseVertices(string filePath)
         {
             var vertices = new List<double[]>(); // 動的リストで頂点情報を一時的に格納
+            var verticesT = new List<double[]>(); // 動的リストでテクスチャ座標情報を一時的に格納
             List<List<int>> polygon = new List<List<int>>(); // 動的リストで面を構成する頂点のIDを一時的に格納
             List<Matrix> normal = new List<Matrix>(); // 動的リストで面の法線ベクトルを一時的に格納
             List<Color> color = new List<Color>(); // ポリゴンカラー
             Dictionary<string, Color> dic = new Dictionary<string, Color>();
+            List<List<int>> mtlV = new List<List<int>>();
             string mtlNow = String.Empty;
 
             // ファイルを1行ずつ読み取る
@@ -41,9 +43,21 @@
                         vertices.Add(new[] { x, y, z });
                     }
                 }
+                else if (line.StartsWith("vt ")) // 頂点情報の場合
+                {
+                    // "vt x y" を解析
+                    var parts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (parts.Length >= 3) // 頂点座標が存在する場合
+                    {
+                        double x = double.Parse(parts[1]) % 1;
+                        double y = double.Parse(parts[2]) % 1;
+                        verticesT.Add(new[] { x, y });
+                    }
+                }
                 else if (line.StartsWith("f ")) // 面情報のとき
                 {
                     List<int> p = new List<int>();
+                    List<int> mtl = new List<int>();
                     var parts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                     if (parts.Length >= 4) // 面の情報が存在する場合
                     {
@@ -59,11 +73,14 @@
                         foreach (var part in parts.Skip(1))
                         {
                             string[] _part = part.Split("/");
+
                             p.Add(int.Parse(_part[0]));
+                            mtl.Add(int.Parse(_part[1]));
                         }
                     }
 
                     polygon.Add(p);
+                    mtlV.Add(mtl);
                 }
                 else if (line.StartsWith("mtllib ")) // 面情報のとき
                 {
@@ -122,7 +139,7 @@
                 normal.Add(temp.Data);
             }
 
-            return (vertexArray, polygon.Select(innerList => innerList.ToArray()).ToArray(), normal.ToArray(), color.ToArray());
+            return (vertexArray, polygon.Select(innerList => innerList.ToArray()).ToArray(), normal.ToArray(), color.ToArray(), mtlV.Select(innerList => innerList.ToArray()).ToArray(), verticesT.ToArray());
         }
 
         private static Dictionary<string, Color> MtlParser(string path)

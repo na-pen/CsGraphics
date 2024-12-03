@@ -18,7 +18,7 @@
         /// <param name="origin">オブジェクトの原点.</param>
         /// <param name="visible">オブジェクトの表示状態.</param>
         /// <param name="scale">オブジェクトの拡大倍率.</param>
-        internal Object(string name, double[,] vertexCoord, int id = -1, Color[]? polygonColor = null, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null, int[][]? polygon = null, Math.Matrix[] normal = null)
+        internal Object(string name, double[,] vertexCoord, int id = -1, Color[]? polygonColor = null, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null, int[][]? polygon = null, Math.Matrix[] normal = null, int[][]? mtlV =null, double[][] vt = null)
         {
             this.ID = id;
             this.Name = name;
@@ -42,11 +42,11 @@
                 this.Magnification = scale;
             }
 
-            this.Vertex = new (id, vertexCoord, vertexColor);
+            this.Vertex = new (id, vertexCoord, vertexColor, vt);
 
             if (polygon != null && polygonColor != null)
             {
-                this.Polygon = new Polygon(this.ID, polygon, normal, polygonColor);
+                this.Polygon = new Polygon(this.ID, polygon, normal, polygonColor, mtlV);
             }
         }
 

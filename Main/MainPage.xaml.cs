@@ -1,14 +1,9 @@
 ﻿namespace Main
 {
     using System;
-    using System.ComponentModel;
     using System.Diagnostics;
-    using System.Linq;
-    using System.Reflection;
     using System.Text.RegularExpressions;
     using CsGraphics;
-    using Microsoft.CodeAnalysis.CSharp.Scripting;
-    using Microsoft.CodeAnalysis.Scripting;
 
     /// <summary>
     /// アプリケーションのメインページ.
@@ -128,20 +123,9 @@
                 _ when command.StartsWith("translation") => this.TranslationTest(int.Parse(args[0]), double.Parse(args[1]), double.Parse(args[2]), double.Parse(args[3])),
                 _ when command.StartsWith("scale") => this.ScaleTest(int.Parse(args[0]), double.Parse(args[1]), double.Parse(args[2]), double.Parse(args[3])),
                 _ when command.StartsWith("rotation") => this.RotationTest(int.Parse(args[0]), double.Parse(args[1]), double.Parse(args[2]), double.Parse(args[3])),
-                "test" => this.Test(),
-                "teapot" => this.AddTeapot(),
-                "miku" => this.AddMiku(),
+                _ when command.StartsWith("object") => "ID : " + this.Scene.AddObjectFromObj(args[0].Replace("\"", string.Empty), args[1].Replace("\"", string.Empty)).ToString(),
                 _ => "Unknown command."
             };
-        }
-
-        private string Test()
-        {
-            int idRectangle = this.scene.AddObject(
-                "rectangle",
-                new double[,] { { 100, 300, 300, 100 }, { 100, 100, 400, 400 } });
-
-            return this.Scene.GetObjectInfo(idRectangle);
         }
 
         private string TranslationTest(int id, double x, double y, double z)
@@ -165,18 +149,6 @@
             // 回転
             this.Scene.RotationObject(id, x, y, z);
 
-            return "Done!";
-        }
-
-        private string AddTeapot()
-        {
-            int idTeapot = this.Scene.AddObjectFromObj("teapot", "E:\\Projects\\CsGraphics\\Main\\teapot.obj");
-            return "Done!";
-        }
-
-        private string AddMiku()
-        {
-            int idMiku = this.Scene.AddObjectFromObj("miku", "E:\\Projects\\CsGraphics\\Main\\miku.obj");
             return "Done!";
         }
     }

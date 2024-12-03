@@ -14,7 +14,7 @@
         /// <param name="objectId">オブジェクトID.</param>
         /// <param name="vertexID">多角形面の頂点ID.</param>
         /// <param name="normal">法線ベクトル.</param>
-        internal Polygon(int objectId, int[][] vertexID, Matrix[] normal, Color[] color)
+        internal Polygon(int objectId, int[][] vertexID, Matrix[] normal, Color[] color, int[][] mtlVertexID)
         {
             this.ObjectId = objectId;
             this.VertexID = vertexID;
@@ -22,6 +22,7 @@
             this.Bounds = new double[normal.Length, 4];
             this.NormalCalced = normal;
             this.Colors = color;
+            this.MtlVertexID = mtlVertexID;
         }
 
         /// <summary>
@@ -49,10 +50,18 @@
         /// </summary>
         internal double[,] Bounds { get; set; }
 
+        /// <summary>
+        /// Get or sets 各ポリゴンの色.
+        /// </summary>
         internal Color[] Colors { get; set; }
 
         /// <summary>
-        /// 面の数や面の数を取得.
+        /// 各頂点のマテリアル座標のIDを取得.
+        /// </summary>
+        internal int[][] MtlVertexID { get; set; }
+
+        /// <summary>
+        /// 面の数を取得.
         /// </summary>
         /// <returns>長さ.</returns>
         internal int Length()

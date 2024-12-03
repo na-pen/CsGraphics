@@ -15,7 +15,7 @@
         /// <param name="coordinate">3次元空間上の座標(オブジェクト基準).</param>
         /// <param name="color">頂点の色.</param>
         /// <exception cref="ArgumentException">頂点の色を指定する場合は、すべての頂点に対して指定する必要があります.</exception>
-        internal Vertex(int objectId, double[,] coordinate, Color[]? color)
+        internal Vertex(int objectId, double[,] coordinate, Color[]? color, double[][]? vt)
         {
             // 初期値の適用
             this.ObjectId = objectId;
@@ -35,13 +35,16 @@
             {
                 Array.Fill(this.Color, Colors.Black);
             }
+
+            this.Vt = vt;
         }
 
-        private Vertex(int objectId, Matrix coordinate, Color[] color)
+        private Vertex(int objectId, Matrix coordinate, Color[] color, double[][] vt)
         {
             this.ObjectId = objectId;
             this.Coordinate = coordinate;
             this.Color = color;
+            this.Vt = vt;
         }
 
         /// <summary>
@@ -58,6 +61,8 @@
         /// Gets or sets 頂点の色.
         /// </summary>
         internal Color[] Color { get; set; }
+
+        internal double[][]? Vt { get; set; }
 
         /// <summary>
         /// 頂点情報をStringにする.
@@ -92,7 +97,8 @@
             return new Vertex(
                 this.ObjectId,
                 (Matrix)this.Coordinate.Clone(),
-                (Color[])this.Color.Clone());
+                (Color[])this.Color.Clone(),
+                (double[][] ?)this.Vt.Clone());
         }
 
         /// <summary>
