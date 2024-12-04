@@ -143,12 +143,13 @@ namespace CsGraphics
 
                             foreach (Point p in pixels)
                             {
-                                if ((int)p.X < 0 || (int)p.Y < 0 || (int)p.Y > canvasHeight - 1 || (int)p.X > canvasWidth)
+                                if ((int)p.X < 0 || (int)p.Y < 0 || (int)p.Y > canvasHeight - 1 || (int)p.X > canvasWidth - 1)
                                 {
                                     continue;
                                 }
                                 else
                                 {
+                                    Color? pixelcolor = null;
                                     double[] pixel = new double[2] { (int)p.X, (int)p.Y };
 
                                     // Z深度を計算
@@ -157,18 +158,31 @@ namespace CsGraphics
                                     // テクスチャ中の座標を計算
                                     if (vt != null)
                                     {
-                                        double texVx = vt[0][0];
-
+                                        double texVx = (a * vt[0][0]) + (b * vt[1][0]) + (c * vt[2][0]);
+                                        double texVy = (a * vt[0][1]) + (b * vt[1][1]) + (c * vt[2][1]);
+                                        if (@object.Texture != null && texVx >= 0 && texVx <= 1 && texVy >= 0 && texVy <= 1)
+                                        {
+                                            pixelcolor = @object.Texture[(int)(texVx * @object.Texture.GetLength(0)) - 1, (int)(texVy * @object.Texture.GetLength(1)) - 1];
+                                        }
                                     }
                                     // Zバッファを更新 (近いものだけ描画)
                                     if (depth < zBuffer[(int)p.X, (int)p.Y] && depth >= 0)
                                     {
                                         zBuffer[(int)p.X, (int)p.Y] = depth;
-                                        pixelColors[(int)p.X, (int)p.Y] = ((Object.Polygon)@object.Polygon).Colors[i]; // 色を設定
+
+                                        if (pixelcolor == null)
+                                        {
+                                            pixelColors[(int)p.X, (int)p.Y] = ((Object.Polygon)@object.Polygon).Colors[i]; // 色を設定
+                                        }
+                                        else
+                                        {
+                                            pixelColors[(int)p.X, (int)p.Y] = pixelcolor;
+                                        }
                                     }
                                 }
                             }
 
+                            /*
                             // 頂点を描く
                             foreach (Point v in vertex)
                             {
@@ -188,6 +202,7 @@ namespace CsGraphics
                                     }
                                 }
                             }
+                            */
                         }
                     }
                     else
