@@ -43,14 +43,14 @@
                         vertices.Add(new[] { x, y, z });
                     }
                 }
-                else if (line.StartsWith("vt ")) // 頂点情報の場合
+                else if (line.StartsWith("vt ")) // テクスチャ頂点情報の場合
                 {
                     // "vt x y" を解析
                     var parts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                    if (parts.Length >= 3) // 頂点座標が存在する場合
+                    if (parts.Length >= 3) // テクスチャ頂点座標が存在する場合
                     {
-                        double x = double.Parse(parts[1]) % 1;
-                        double y = double.Parse(parts[2]) % 1;
+                        double x = double.Parse(parts[1]);
+                        double y = double.Parse(parts[2]);
                         verticesT.Add(new[] { x, y });
                     }
                 }
@@ -85,7 +85,7 @@
                 else if (line.StartsWith("mtllib ")) // 面情報のとき
                 {
                     var parts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                    dic = MtlParser(System.IO.Path.GetDirectoryName(filePath) + "\\" +parts[1]);
+                    dic = MtlParser(System.IO.Path.GetDirectoryName(filePath) + "\\" + parts[1]);
                 }
                 else if (line.StartsWith("usemtl ")) // 面情報のとき
                 {

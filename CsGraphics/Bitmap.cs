@@ -117,5 +117,78 @@ namespace CsGraphics
             }
         }
 
+        public static Color[,] LoadFromFile(string filePath)
+        {
+            using FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+            using BinaryReader reader = new BinaryReader(fs);
+
+            // 1. ファイルヘッダーを読み取る
+            var fileHeaderBytes = reader.ReadBytes(14);
+            BITMAPFILEHEADER fileHeader = new();
+            fileHeader.bfType = BitConverter.ToUInt16(fileHeaderBytes, 0);
+            fileHeader.bfSize = BitConverter.ToUInt32(fileHeaderBytes, 2);
+            fileHeader.bfReserved1 = BitConverter.ToUInt16(fileHeaderBytes, 6);
+            fileHeader.bfReserved2 = BitConverter.ToUInt16(fileHeaderBytes, 8);
+            fileHeader.bfOffBits = BitConverter.ToUInt32(fileHeaderBytes, 10);
+
+            // 2. 情報ヘッダーを読み取る
+            var infoHeaderBytes = reader.ReadBytes(40);
+            BITMAPINFOHEADER infoHeader = new(
+                BitConverter.ToInt32(infoHeaderBytes, 4),
+                BitConverter.ToInt32(infoHeaderBytes, 8),
+                BitConverter.ToUInt16(infoHeaderBytes, 14)
+            )
+            {
+                biSize = BitConverter.ToUInt32(infoHeaderBytes, 0),
+                biPlanes = BitConverter.ToUInt16(infoHeaderBytes, 12),
+                biCompression = BitConverter.ToUInt32(infoHeaderBytes, 16),
+                biSizeImage = BitConverter.ToUInt32(infoHeaderBytes, 20),
+                biXPelsPerMeter = BitConverter.ToInt32(infoHeaderBytes, 24),
+                biYPelsPerMeter = BitConverter.ToInt32(infoHeaderBytes, 28),
+                biClrUsed = BitConverter.ToUInt32(infoHeaderBytes, 32),
+                biClrImportant = BitConverter.ToUInt32(infoHeaderBytes, 36)
+            };
+
+            // 3. ピクセルデータを読み取る
+            int width = infoHeader.biWidth;
+            int height = infoHeader.biHeight;
+            int bitCount = infoHeader.biBitCount;
+            int rowSize = ((width * bitCount + 31) / 32) * 4; // 4バイト境界
+            int imageSize = rowSize * System.Math.Abs(height);
+
+            byte[] pixelData = reader.ReadBytes(imageSize);
+
+            // 4. データをBitmap形式に変換
+            Color[,] colors = new Color[width, height];
+            int index = 0;
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    if (bitCount == 32)
+                    {
+                        byte blue = pixelData[index++];
+                        byte green = pixelData[index++];
+                        byte red = pixelData[index++];
+                        byte alpha = pixelData[index++];
+                        colors[x, height - y - 1] = new Color(red / 255.0f, green / 255.0f, blue / 255.0f, alpha / 255.0f);
+                    }
+                    else if (bitCount == 24)
+                    {
+                        byte blue = pixelData[index++];
+                        byte green = pixelData[index++];
+                        byte red = pixelData[index++];
+                        colors[x, height - y - 1] = new Color(red / 255.0f, green / 255.0f, blue / 255.0f, 1.0f);
+                    }
+                }
+
+                // パディングバイトをスキップ
+                index += rowSize - width * (bitCount / 8);
+            }
+
+            return colors;
+        }
     }
+
 }

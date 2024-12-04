@@ -50,7 +50,7 @@
             }
         }
 
-        private Object(string name, Vertex vertex, int id, Math.Matrix origin, double[] magnification, bool visible, double[] angle, Polygon? polygon)
+        private Object(string name, Vertex vertex, int id, Math.Matrix origin, double[] magnification, bool visible, double[] angle, Polygon? polygon, Color[,]? texture)
         {
             this.Name = name;
             this.IsVisible = visible;
@@ -60,6 +60,7 @@
             this.Magnification = magnification;
             this.Angle = angle;
             this.Polygon = polygon;
+            this.Texture = texture;
         }
 
         internal Object(Object obj)
@@ -119,6 +120,8 @@
         /// </summary>
         internal bool IsUpdated { get; set; } = true;
 
+        internal Color[,]? Texture { get; set; } = null;
+
         //------------------------------------------------------ ここから 計算済み情報の保持 ------------------------------------------------------/
 
         /// <summary>
@@ -150,7 +153,8 @@
                 (double[])this.Magnification.Clone(),
                 this.IsVisible,
                 this.Angle,
-                this.Polygon)
+                this.Polygon,
+                this.Texture)
             {
             };
         }
@@ -196,6 +200,12 @@
         {
             this.IsUpdated = true;
             this.Angle = new double[] { this.Angle[0] + x, this.Angle[1] + y, this.Angle[2] + z };
+        }
+
+        internal void AddTexture(string path)
+        {
+            this.IsUpdated = true;
+            this.Texture = Bitmap.LoadFromFile(path);
         }
     }
 }

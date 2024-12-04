@@ -86,6 +86,7 @@ namespace CsGraphics
                     Color[] color = Array.Empty<Color>();
                     bool[] isVisiblePolygon = Array.Empty<bool>();
                     Object.Object obj;
+                    double[] pT = Array.Empty<double>();
 
                     //if (@object.IsUpdated == true) // オブジェクトの情報に更新があれば再計算
                     if (true)
@@ -118,6 +119,19 @@ namespace CsGraphics
                             int[] polygon = ((Object.Polygon)@object.Polygon).VertexID[i];
                             Point[] vertex = polygon.Select(p => points[p - 1]).ToArray();
 
+                            // テクスチャ頂点の取得
+                            int[] vTId = new int[polygon.Length];
+                            if(((Object.Polygon)@object.Polygon).MtlVertexID != null)
+                            {
+                                vTId = ((Object.Polygon)@object.Polygon).MtlVertexID[i];
+                            }
+
+                            double[][] vt = null;
+                            if (@object.Vertex.Vt != null)
+                            {
+                                vt = vTId.Select(p => @object.Vertex.Vt[p - 1]).ToArray();
+                            }
+
                             // 面を描く
                             Point[] pixels = RasterizeTriangle(vertex); // 描画するPixelの一覧
                             double[] polygonPointA = new double[3] { obj.Vertex.Coordinate[0, polygon[0] - 1], obj.Vertex.Coordinate[1, polygon[0] - 1], obj.Vertex.Coordinate[2, polygon[0] - 1] }; // ポリゴンの頂点
@@ -138,8 +152,14 @@ namespace CsGraphics
                                     double[] pixel = new double[2] { (int)p.X, (int)p.Y };
 
                                     // Z深度を計算
-                                    double depth = Calc.ZDepth.ZDepsParallel(pixel, polygonPointA, polygonPointB, polygonPointC, 500, -500);
+                                    (double depth, double a, double b, double c) = Calc.ZDepth.ZDepsParallel(pixel, polygonPointA, polygonPointB, polygonPointC, 500, -500);
 
+                                    // テクスチャ中の座標を計算
+                                    if (vt != null)
+                                    {
+                                        double texVx = vt[0][0];
+
+                                    }
                                     // Zバッファを更新 (近いものだけ描画)
                                     if (depth < zBuffer[(int)p.X, (int)p.Y] && depth >= 0)
                                     {
@@ -160,7 +180,7 @@ namespace CsGraphics
                                 else
                                 {
                                     // Z深度を計算
-                                    double depth = Calc.ZDepth.ZDepsParallel(pixel, polygonPointA, polygonPointB, polygonPointC, 500, -500);
+                                    (double depth, double a, double b, double c) = Calc.ZDepth.ZDepsParallel(pixel, polygonPointA, polygonPointB, polygonPointC, 500, -500);
                                     if (depth <= zBuffer[(int)v.X, (int)v.Y] && depth >= 0)
                                     {
                                         zBuffer[(int)v.X, (int)v.Y] = depth;
@@ -366,6 +386,12 @@ namespace CsGraphics
         public void RotationObject(int id, double x, double y, double z)
         {
             this.Objects[id].SetRotation(x, y, z);
+            this.IsUpdated = true;
+        }
+
+        public void AddTexture2Object(int id, string path)
+        {
+            this.Objects[id].AddTexture(path);
             this.IsUpdated = true;
         }
     }
