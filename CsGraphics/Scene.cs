@@ -167,25 +167,26 @@ namespace CsGraphics
                                         {
                                             double texVx = (a * vt[0][0]) + (b * vt[1][0]) + (c * vt[2][0]);
                                             double texVy = (a * vt[0][1]) + (b * vt[1][1]) + (c * vt[2][1]);
-                                            if (@object.Texture != null && texVx >= 0 && texVx <= 1 && texVy >= 0 && texVy <= 1 && @object.Texture.ContainsKey(key))
+                                            if (@object.Texture != null && @object.Texture.ContainsKey(key))
                                             {
                                                 (Color cl, _) = ((Object.Polygon)@object.Polygon).Colors[key];
-                                                pixelcolor = (@object.Texture[key][(int)(texVx * @object.Texture[key].GetLength(0)) - 1, (int)(texVy * @object.Texture[key].GetLength(1)) - 1]).MultiplyAlpha(cl.Alpha);
+                                                pixelcolor = @object.Texture[key][(int)((texVx % 1) * @object.Texture[key].GetLength(0)) - 1, ((int)((texVy % 1) * @object.Texture[key].GetLength(1))) - 1].MultiplyAlpha(cl.Alpha);
                                             }
                                         }
                                         // Zバッファを更新 (近いものだけ描画)
-                                        if (depth < zBuffer[(int)p.X, (int)p.Y] && depth >= 0)
+                                        if (depth < zBuffer[(int)p.X, (int)p.Y] && depth >= 0 && pixelcolor.Alpha == 1)
                                         {
                                             zBuffer[(int)p.X, (int)p.Y] = depth;
 
                                             if (pixelcolor == null)
                                             {
-                                                (Color cl,_) = ((Object.Polygon)@object.Polygon).Colors[key];
+                                                (Color cl, _) = ((Object.Polygon)@object.Polygon).Colors[key];
                                                 pixelColors[(int)p.X, (int)p.Y] = cl; // 色を設定
                                             }
                                             else
                                             {
                                                 pixelColors[(int)p.X, (int)p.Y] = pixelcolor;
+
                                             }
                                         }
                                     }
@@ -341,7 +342,7 @@ namespace CsGraphics
         public int AddObjectFromObj(string name, string filePath, string texturePath = null)
         {
             (double[,] vertices, Dictionary<string, int[][]> polygon, Math.Matrix[] normal, Dictionary<string, (Color, string)>? polygonColor, int[][] mtlV, double[][] vt) = Parser.ObjParseVerticesV2(filePath);
-            int id = this.AddObject(name, vertices, polygon: polygon, normal: normal, polygonColor: polygonColor,mtlV: mtlV, vt: vt);
+            int id = this.AddObject(name, vertices, polygon: polygon, normal: normal, polygonColor: polygonColor, mtlV: mtlV, vt: vt);
             foreach (var kvp in polygonColor)
             {
                 string key = kvp.Key;
