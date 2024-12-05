@@ -35,16 +35,5 @@
                 new Math.Matrix(new double[] { matrix[0, i], matrix[1, i], matrix[2, i], matrix[3, i] }))
             .GetEnumerator();
 
-        /// <summary>
-        /// Foreachを使うためのGetEnumeratorの実装.
-        /// </summary>
-        /// <param name="polygon">面情報.</param>
-        /// <returns>System.Collections.IEnumerator.</returns>
-        public static System.Collections.IEnumerator GetEnumerator(this Object.Polygon polygon)
-            =>
-            Enumerable.Range(0, polygon.Length())
-            .Select(i =>
-                polygon.VertexID[i])
-            .GetEnumerator();
     }
 }

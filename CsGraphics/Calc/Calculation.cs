@@ -1,6 +1,7 @@
 ﻿namespace CsGraphics.Calc
 {
     using CsGraphics.Math;
+    using System.Collections.Generic;
 
 
     /// <summary>
@@ -74,31 +75,44 @@
 
         private static void GetPolygonBounds(List<Point> points, Object.Polygon polygon, bool[] isVisiblePolygon)
         {
-            int j = 0;
-            foreach (int[] t in polygon.VertexID)
+            foreach (var kvp in polygon.VertexID)
             {
-                if (isVisiblePolygon[j])
+                string key = kvp.Key;
+
+                int j = 0;
+                double[,] tempArr = new double[polygon.VertexID[key].Length, 4];
+                foreach (int[] t in polygon.VertexID[key])
                 {
-                    Point[] temp = new Point[t.Length];
-                    for (int i = 0; i < t.Length; i++)
+                    if (isVisiblePolygon[j])
                     {
-                        temp[i] = points[t[i] - 1];
+                        Point[] temp = new Point[t.Length];
+                        for (int i = 0; i < t.Length; i++)
+                        {
+                            temp[i] = points[t[i] - 1];
+                        }
+
+                        tempArr[j, 0] = temp.Min(p => p.X); // x軸の最小値
+                        tempArr[j, 1] = temp.Max(p => p.X); // x軸の最大値
+                        tempArr[j, 2] = temp.Min(p => p.Y); // y軸の最小値
+                        tempArr[j, 3] = temp.Max(p => p.Y); // y軸の最大値
+
+                    }
+                    else
+                    {
+                        tempArr[j, 0] = -1; // x軸の最小値
+                        tempArr[j, 1] = -1; // x軸の最大値
+                        tempArr[j, 2] = -1; // y軸の最小値
+                        tempArr[j, 3] = -1; // y軸の最大値
+
                     }
 
-                    polygon.Bounds[j, 0] = temp.Min(p => p.X); // x軸の最小値
-                    polygon.Bounds[j, 1] = temp.Max(p => p.X); // x軸の最大値
-                    polygon.Bounds[j, 2] = temp.Min(p => p.Y); // y軸の最小値
-                    polygon.Bounds[j, 3] = temp.Max(p => p.Y); // y軸の最大値
-                }
-                else
-                {
-                    polygon.Bounds[j, 0] = -1; // x軸の最小値
-                    polygon.Bounds[j, 1] = -1; // x軸の最大値
-                    polygon.Bounds[j, 2] = -1; // y軸の最小値
-                    polygon.Bounds[j, 3] = -1; // y軸の最大値
+                    j++;
                 }
 
-                j++;
+                if (!polygon.Bounds.TryAdd(key, tempArr))
+                {
+                    polygon.Bounds[key] = tempArr;
+                }
             }
         }
 

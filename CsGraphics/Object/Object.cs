@@ -18,7 +18,7 @@
         /// <param name="origin">オブジェクトの原点.</param>
         /// <param name="visible">オブジェクトの表示状態.</param>
         /// <param name="scale">オブジェクトの拡大倍率.</param>
-        internal Object(string name, double[,] vertexCoord, int id = -1, Color[]? polygonColor = null, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null, int[][]? polygon = null, Math.Matrix[] normal = null, int[][]? mtlV =null, double[][] vt = null)
+        internal Object(string name, double[,] vertexCoord, int id = -1, Dictionary<string, (Color, string)>? polygonColor = null, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null, Dictionary<string, int[][]>? polygon = null, Math.Matrix[] normal = null, int[][]? mtlV = null, double[][] vt = null)
         {
             this.ID = id;
             this.Name = name;
@@ -26,11 +26,11 @@
 
             if (origin == null)
             {
-                this.Origin = new (new double[,] { { 0 }, { 0 }, { 0 } });
+                this.Origin = new(new double[,] { { 0 }, { 0 }, { 0 } });
             }
             else
             {
-                this.Origin = new (origin);
+                this.Origin = new(origin);
             }
 
             if (scale == null)
@@ -42,7 +42,7 @@
                 this.Magnification = scale;
             }
 
-            this.Vertex = new (id, vertexCoord, vertexColor, vt);
+            this.Vertex = new(id, vertexCoord, vertexColor, vt);
 
             if (polygon != null && polygonColor != null)
             {
@@ -50,7 +50,7 @@
             }
         }
 
-        private Object(string name, Vertex vertex, int id, Math.Matrix origin, double[] magnification, bool visible, double[] angle, Polygon? polygon, Color[,]? texture)
+        private Object(string name, Vertex vertex, int id, Math.Matrix origin, double[] magnification, bool visible, double[] angle, Polygon? polygon, Dictionary<string, Color[,]>? texture)
         {
             this.Name = name;
             this.IsVisible = visible;
@@ -120,7 +120,7 @@
         /// </summary>
         internal bool IsUpdated { get; set; } = true;
 
-        internal Color[,]? Texture { get; set; } = null;
+        internal Dictionary<string, Color[,]>? Texture { get; set; } = null;
 
         //------------------------------------------------------ ここから 計算済み情報の保持 ------------------------------------------------------/
 
@@ -169,7 +169,7 @@
         {
             this.IsUpdated = true;
 
-            Math.Matrix temp = new (3, 1);
+            Math.Matrix temp = new(3, 1);
 
             temp[0, 0] = x;
             temp[1, 0] = y;
@@ -202,10 +202,29 @@
             this.Angle = new double[] { this.Angle[0] + x, this.Angle[1] + y, this.Angle[2] + z };
         }
 
-        internal void AddTexture(string path)
+        internal void AddTexture(string matName,string path)
         {
+            if(this.Texture == null)
+            {
+                this.Texture = new Dictionary<string, Color[,]>();
+            }
             this.IsUpdated = true;
-            this.Texture = Bitmap.LoadFromFile(path);
+            if(path != string.Empty)
+            {
+                this.Texture.Add(matName, Bitmap.LoadFromFile(path));
+            }
+        }
+
+        internal int GetTextureLength(int dimension)
+        {
+
+            int result = 0;
+            foreach (var kvp in this.Texture)
+            {
+                Color[,] array = kvp.Value;
+                result += array.GetLength(dimension);
+            }
+            return result;
         }
     }
 }

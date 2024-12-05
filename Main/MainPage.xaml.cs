@@ -155,7 +155,6 @@
 
         private string AddTextureTest(int id, string path)
         {
-            this.Scene.AddTexture2Object(id, path);
 
             return "Done";
         }

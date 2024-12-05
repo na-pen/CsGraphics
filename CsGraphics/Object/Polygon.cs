@@ -1,6 +1,7 @@
 ﻿namespace CsGraphics.Object
 {
     using System;
+    using System.Collections.Generic;
     using CsGraphics.Math;
 
     /// <summary>
@@ -14,12 +15,12 @@
         /// <param name="objectId">オブジェクトID.</param>
         /// <param name="vertexID">多角形面の頂点ID.</param>
         /// <param name="normal">法線ベクトル.</param>
-        internal Polygon(int objectId, int[][] vertexID, Matrix[] normal, Color[] color, int[][] mtlVertexID)
+        internal Polygon(int objectId, Dictionary<string, int[][]> vertexID, Matrix[] normal, Dictionary<string, (Color, string)> color, int[][] mtlVertexID)
         {
             this.ObjectId = objectId;
             this.VertexID = vertexID;
             this.Normal = normal;
-            this.Bounds = new double[normal.Length, 4];
+            this.Bounds = new Dictionary < string, double[,]>();
             this.NormalCalced = normal;
             this.Colors = color;
             this.MtlVertexID = mtlVertexID;
@@ -33,7 +34,7 @@
         /// <summary>
         /// Gets or sets n個の頂点からなる多角形面の頂点IDを保存.
         /// </summary>
-        internal int[][] VertexID { get; set; }
+        internal Dictionary<string, int[][]> VertexID { get; set; }
 
         /// <summary>
         /// Gets or sets 法線ベクトル.
@@ -48,17 +49,18 @@
         /// <summary>
         /// Gets or sets 各面ごとのScreen座標上のバウンディングボックス.
         /// </summary>
-        internal double[,] Bounds { get; set; }
+        internal Dictionary<string, double[,]> Bounds { get; set; }
 
         /// <summary>
         /// Get or sets 各ポリゴンの色.
         /// </summary>
-        internal Color[] Colors { get; set; }
+        internal Dictionary<string, (Color, string)> Colors { get; set; }
 
         /// <summary>
         /// 各頂点のマテリアル座標のIDを取得.
         /// </summary>
         internal int[][] MtlVertexID { get; set; }
+
 
         /// <summary>
         /// 面の数を取得.
@@ -66,7 +68,13 @@
         /// <returns>長さ.</returns>
         internal int Length()
         {
-            return this.VertexID.Length;
+            int result = 0;
+            foreach (var kvp in this.VertexID)
+            {
+                int[][] array = kvp.Value;
+                result += array.Length;
+            }
+            return result;
         }
     }
 }
