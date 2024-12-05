@@ -18,7 +18,7 @@
         /// <param name="origin">オブジェクトの原点.</param>
         /// <param name="visible">オブジェクトの表示状態.</param>
         /// <param name="scale">オブジェクトの拡大倍率.</param>
-        internal Object(string name, double[,] vertexCoord, int id = -1, Dictionary<string, (Color, string)>? polygonColor = null, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null, Dictionary<string, int[][]>? polygon = null, Math.Matrix[] normal = null, int[][]? mtlV = null, double[][] vt = null)
+        internal Object(string name, double[,] vertexCoord, int id = -1, Dictionary<string, (Color, string)>? polygonColor = null, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null, Dictionary<string, int[][]>? polygon = null, Math.Matrix[] normal = null, Dictionary<string, int[][]>? mtlV = null, double[][] vt = null)
         {
             this.ID = id;
             this.Name = name;

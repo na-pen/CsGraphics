@@ -15,7 +15,7 @@
         /// <param name="objectId">オブジェクトID.</param>
         /// <param name="vertexID">多角形面の頂点ID.</param>
         /// <param name="normal">法線ベクトル.</param>
-        internal Polygon(int objectId, Dictionary<string, int[][]> vertexID, Matrix[] normal, Dictionary<string, (Color, string)> color, int[][] mtlVertexID)
+        internal Polygon(int objectId, Dictionary<string, int[][]> vertexID, Matrix[] normal, Dictionary<string, (Color, string)> color, Dictionary<string, int[][]> mtlVertexID)
         {
             this.ObjectId = objectId;
             this.VertexID = vertexID;
@@ -59,7 +59,7 @@
         /// <summary>
         /// 各頂点のマテリアル座標のIDを取得.
         /// </summary>
-        internal int[][] MtlVertexID { get; set; }
+        internal Dictionary<string, int[][]> MtlVertexID { get; set; }
 
 
         /// <summary>

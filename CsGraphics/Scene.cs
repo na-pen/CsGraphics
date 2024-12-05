@@ -112,6 +112,8 @@ namespace CsGraphics
                             string key = kvp.Key;
                             int[][] array = kvp.Value;
 
+                            int[][] array2 = ((Object.Polygon)@object.Polygon).MtlVertexID[key];
+
                             // 各ポリゴンをチェック
                             for (int i = 0; i < array.GetLength(0); i++)
                             {
@@ -126,13 +128,9 @@ namespace CsGraphics
                                 int[] polygon = array[i];
                                 Point[] vertex = polygon.Select(p => points[p - 1]).ToArray();
 
-                                // テクスチャ頂点の取得
-                                int[] vTId = new int[polygon.Length];
-                                if (((Object.Polygon)@object.Polygon).MtlVertexID != null)
-                                {
-                                    vTId = ((Object.Polygon)@object.Polygon).MtlVertexID[i];
-                                }
+                                // テクスチャ頂点番号の取得
 
+                                int[] vTId = array2[i];
                                 double[][] vt = null;
                                 if (@object.Vertex.Vt != null)
                                 {
@@ -170,11 +168,14 @@ namespace CsGraphics
                                             if (@object.Texture != null && @object.Texture.ContainsKey(key))
                                             {
                                                 (Color cl, _) = ((Object.Polygon)@object.Polygon).Colors[key];
-                                                pixelcolor = @object.Texture[key][(int)((texVx % 1) * @object.Texture[key].GetLength(0)) - 1, ((int)((texVy % 1) * @object.Texture[key].GetLength(1))) - 1].MultiplyAlpha(cl.Alpha);
+                                                int x = (int)((texVx % 1) * @object.Texture[key].GetLength(0)) - 1;
+                                                int y = ((int)((texVy % 1) * @object.Texture[key].GetLength(1))) - 1;
+                                                pixelcolor = @object.Texture[key][x, y].MultiplyAlpha(cl.Alpha);
+                                                int m = 0;
                                             }
                                         }
                                         // Zバッファを更新 (近いものだけ描画)
-                                        if (depth < zBuffer[(int)p.X, (int)p.Y] && depth >= 0 && pixelcolor.Alpha == 1)
+                                        if (depth < zBuffer[(int)p.X, (int)p.Y] && depth >= 0)
                                         {
                                             zBuffer[(int)p.X, (int)p.Y] = depth;
 
@@ -182,6 +183,11 @@ namespace CsGraphics
                                             {
                                                 (Color cl, _) = ((Object.Polygon)@object.Polygon).Colors[key];
                                                 pixelColors[(int)p.X, (int)p.Y] = cl; // 色を設定
+                                            }
+                                            else if (pixelcolor.Alpha != 1)
+                                            {
+                                                pixelColors[(int)p.X, (int)p.Y] = BlendColors(pixelcolor, pixelColors[(int)p.X, (int)p.Y]);
+
                                             }
                                             else
                                             {
@@ -296,10 +302,30 @@ namespace CsGraphics
         }
 
         // ポリゴンの色を取得 (色設定)
-        private Color GetColorForPolygon(int r, int g, int b)
+        private static Color BlendColors(Color foreground, Color background)
         {
-            // 例: ポリゴンごとの色を設定
-            return Color.FromRgb(r, g, b); // 赤色
+            // 前景色のRGBA成分
+            float rF = (float)foreground.Red;
+            float gF = (float)foreground.Green;
+            float bF = (float)foreground.Blue;
+            float aF = (float)foreground.Alpha;
+
+            // 背景色のRGBA成分
+            float rB = (float)background.Red;
+            float gB = (float)background.Green;
+            float bB = (float)background.Blue;
+            float aB = (float)background.Alpha;
+
+            // アルファ値の合成
+            float aResult = aF + aB * (1 - aF);
+
+            // 各成分のブレンド計算
+            float rResult = (aF * rF + (1 - aF) * aB * rB) / aResult;
+            float gResult = (aF * gF + (1 - aF) * aB * gB) / aResult;
+            float bResult = (aF * bF + (1 - aF) * aB * bB) / aResult;
+
+            // 合成結果の色を返す
+            return new Color(rResult, gResult, bResult, aResult);
         }
 
         /// <summary>
@@ -323,7 +349,7 @@ namespace CsGraphics
             return id;
         }
 
-        private int AddObject(string name, double[,] vertexCoord, Dictionary<string, (Color, string)>? polygonColor = null, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null, Dictionary<string, int[][]>? polygon = null, Math.Matrix[]? normal = null, int[][]? mtlV = null, double[][] vt = null)
+        private int AddObject(string name, double[,] vertexCoord, Dictionary<string, (Color, string)>? polygonColor = null, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null, Dictionary<string, int[][]>? polygon = null, Math.Matrix[]? normal = null, Dictionary<string, int[][]>? mtlV = null, double[][] vt = null)
         {
             int id = this.Objects.Count;
             Object.Object @object = new(name, vertexCoord, id, polygonColor, vertexColor, origin, visible, scale, polygon, normal, mtlV, vt);
@@ -341,7 +367,7 @@ namespace CsGraphics
         /// <returns>ID.</returns>
         public int AddObjectFromObj(string name, string filePath, string texturePath = null)
         {
-            (double[,] vertices, Dictionary<string, int[][]> polygon, Math.Matrix[] normal, Dictionary<string, (Color, string)>? polygonColor, int[][] mtlV, double[][] vt) = Parser.ObjParseVerticesV2(filePath);
+            (double[,] vertices, Dictionary<string, int[][]> polygon, Math.Matrix[] normal, Dictionary<string, (Color, string)>? polygonColor, Dictionary<string, int[][]> mtlV, double[][] vt) = Parser.ObjParseVerticesV2(filePath);
             int id = this.AddObject(name, vertices, polygon: polygon, normal: normal, polygonColor: polygonColor, mtlV: mtlV, vt: vt);
             foreach (var kvp in polygonColor)
             {

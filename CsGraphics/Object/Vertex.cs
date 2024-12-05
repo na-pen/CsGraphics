@@ -98,7 +98,7 @@
                 this.ObjectId,
                 (Matrix)this.Coordinate.Clone(),
                 (Color[])this.Color.Clone(),
-                (double[][] ?)this.Vt.Clone());
+                (double[][])(this.Vt));
         }
 
         /// <summary>

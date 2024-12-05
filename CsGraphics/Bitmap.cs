@@ -86,9 +86,9 @@ namespace CsGraphics
             int rowSize = width * 4; // 4バイト境界に揃える
             int bufferSize = rowSize * height; // 全体のバッファサイズ
 
-            this.InfoHeader = new BITMAPINFOHEADER(rowSize/4, height, bitCount = 32);
+            this.InfoHeader = new BITMAPINFOHEADER(rowSize / 4, height, bitCount = 32);
 
-            this.FileHeader.bfSize = (uint)((bufferSize/4 * bitCount) / 8) + this.FileHeader.bfOffBits;
+            this.FileHeader.bfSize = (uint)((bufferSize / 4 * bitCount) / 8) + this.FileHeader.bfOffBits;
 
 
             // バッファサイズを計算 (BGR8)
@@ -129,7 +129,7 @@ namespace CsGraphics
             fileHeader.bfOffBits = BitConverter.ToUInt32(fileHeaderBytes, 10);
 
             // 2. 情報ヘッダーを読み取る
-            var infoHeaderBytes = reader.ReadBytes(40);
+            var infoHeaderBytes = reader.ReadBytes((int)(fileHeader.bfOffBits - 14));
             BITMAPINFOHEADER infoHeader = new(
                 BitConverter.ToInt32(infoHeaderBytes, 4),
                 BitConverter.ToInt32(infoHeaderBytes, 8),
@@ -150,7 +150,7 @@ namespace CsGraphics
             int width = infoHeader.biWidth;
             int height = infoHeader.biHeight;
             int bitCount = infoHeader.biBitCount;
-            int rowSize = ((width * bitCount + 31) / 32) * 4; // 4バイト境界
+            int rowSize = (((width * (bitCount / 8)) + 3) / 4) * 4; // 4バイト境界
             int imageSize = rowSize * System.Math.Abs(height);
 
             byte[] pixelData = reader.ReadBytes(imageSize);
@@ -169,19 +169,21 @@ namespace CsGraphics
                         byte green = pixelData[index++];
                         byte red = pixelData[index++];
                         byte alpha = pixelData[index++];
-                        colors[x, height - y - 1] = new Color(red / 255.0f, green / 255.0f, blue / 255.0f, alpha / 255.0f);
+                        colors[x, y] = new Color(red / 255.0f, green / 255.0f, blue / 255.0f, alpha / 255.0f);
                     }
                     else if (bitCount == 24)
                     {
                         byte blue = pixelData[index++];
                         byte green = pixelData[index++];
                         byte red = pixelData[index++];
-                        colors[x, height - y - 1] = new Color(red / 255.0f, green / 255.0f, blue / 255.0f, 1.0f);
+                        colors[x,  y] = new Color(red / 255.0f, green / 255.0f, blue / 255.0f, 1.0f);
                     }
                 }
 
-                // パディングバイトをスキップ
-                index += rowSize - width * (bitCount / 8);
+                while (index % 4 != 0)
+                {
+                    index++;
+                }
             }
 
             return colors;
