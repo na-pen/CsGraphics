@@ -167,9 +167,10 @@ namespace CsGraphics
                                         {
                                             double texVx = (a * vt[0][0]) + (b * vt[1][0]) + (c * vt[2][0]);
                                             double texVy = (a * vt[0][1]) + (b * vt[1][1]) + (c * vt[2][1]);
-                                            if (@object.Texture != null && texVx >= 0 && texVx <= 1 && texVy >= 0 && texVy <= 1)
+                                            if (@object.Texture != null && texVx >= 0 && texVx <= 1 && texVy >= 0 && texVy <= 1 && @object.Texture.ContainsKey(key))
                                             {
-                                                pixelcolor = @object.Texture[key][(int)(texVx * @object.Texture[key].GetLength(0)) - 1, (int)(texVy * @object.Texture[key].GetLength(1)) - 1];
+                                                (Color cl, _) = ((Object.Polygon)@object.Polygon).Colors[key];
+                                                pixelcolor = (@object.Texture[key][(int)(texVx * @object.Texture[key].GetLength(0)) - 1, (int)(texVy * @object.Texture[key].GetLength(1)) - 1]).MultiplyAlpha(cl.Alpha);
                                             }
                                         }
                                         // Zバッファを更新 (近いものだけ描画)

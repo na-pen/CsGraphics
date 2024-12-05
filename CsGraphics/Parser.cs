@@ -286,6 +286,7 @@
             Dictionary<string, Color> dic = new Dictionary<string, Color>();
 
             string mtlName = string.Empty;
+            double d = 1;
             foreach (var line in File.ReadLines(path))
             {
                 if (line.StartsWith("newmtl ")) // 頂点情報の場合
@@ -296,7 +297,12 @@
                 else if (line.StartsWith("Kd ")) // 面情報のとき
                 {
                     var parts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                    dic.Add(mtlName, new Color((int)(double.Parse(parts[1]) * 255), (int)(double.Parse(parts[2]) * 255), (int)(double.Parse(parts[3]) * 255)));
+                    dic.Add(mtlName, new Color((int)(double.Parse(parts[1]) * 255), (int)(double.Parse(parts[2]) * 255), (int)(double.Parse(parts[3]) * 255), (int)(d * 255)));
+                }
+                else if (line.StartsWith("d ")) // テクスチャ透過率のとき
+                {
+                    var parts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    d = double.Parse(parts[1]);
                 }
 
             }
@@ -309,6 +315,7 @@
             Dictionary<string, (Color, string)> dic = new Dictionary<string, (Color, string)>();
 
             string mtlName = string.Empty;
+            double d = 1;
             foreach (var line in File.ReadLines(path))
             {
                 if (line.StartsWith("newmtl ")) // 頂点情報の場合
@@ -319,12 +326,20 @@
                 else if (line.StartsWith("Kd ")) // 面情報のとき
                 {
                     var parts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                    dic.Add(mtlName, (new Color((int)(double.Parse(parts[1]) * 255), (int)(double.Parse(parts[2]) * 255), (int)(double.Parse(parts[3]) * 255)), string.Empty));
+                    Color x = new Color((int)(double.Parse(parts[1]) * 255), (int)(double.Parse(parts[2]) * 255), (int)(double.Parse(parts[3]) * 255), (int)(d * 255));
+                    dic.Add(mtlName, (x, string.Empty));
                 }
                 else if (line.StartsWith("map_Kd "))
                 {
                     var parts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                     dic[mtlName] = (dic[mtlName].Item1, System.IO.Path.GetDirectoryName(path) + "\\" + parts[1]);
+                }
+                else if (line.StartsWith("d ")) // テクスチャ透過率のとき
+                {
+                    var parts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    d = double.Parse(parts[1]);
+                    string lastKey = dic.Keys.Last<string>();
+                    dic[lastKey] = (new Color(dic[lastKey].Item1.Red, dic[lastKey].Item1.Green, dic[lastKey].Item1.Blue, (int)(d * 255)), dic[lastKey].Item2);
                 }
             }
 
