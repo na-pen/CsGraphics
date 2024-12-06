@@ -1,5 +1,6 @@
 ﻿namespace CsGraphics.Calc
 {
+    using CsGraphics.Asset;
     using CsGraphics.Math;
     using System.Collections.Generic;
 
@@ -14,7 +15,16 @@
         /// </summary>
         /// <param name="object">オブジェクト.</param>
         /// <returns>スクリーン座標のリスト.</returns>
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
         internal static (Point[], Color[], bool[], double[], Object.Object) Calc(Object.Object @object)
+        {
+後:
+        internal static (Point[], Color[], bool[], double[], Object) Calc(Object @object)
+        {
+*/
+        internal static (Point[], Color[], bool[], double[], CsGraphics.Asset.Object) Calc(CsGraphics.Asset.Object @object)
         {
             return DrawFromOrigin(@object);
         }
@@ -24,7 +34,16 @@
         /// </summary>
         /// <param name="object">オブジェクト.</param>
         /// <returns>スクリーン座標のリスト.</returns>
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
         private static (Point[], Color[], bool[], double[], Object.Object) DrawFromOrigin(Object.Object @object)
+        {
+後:
+        private static (Point[], Color[], bool[], double[], Object) DrawFromOrigin(Object @object)
+        {
+*/
+        private static (Point[], Color[], bool[], double[], CsGraphics.Asset.Object) DrawFromOrigin(CsGraphics.Asset.Object @object)
         {
             List<double> depthZ = new List<double>(); // z深度 : 使用しない
 
@@ -50,14 +69,14 @@
             // ポリゴンの法線がz=0の面とどの向きで交差するかどうか確認する
             if (@object.Polygon != null)
             {
-                isVisiblePolygon = new bool[((Object.Polygon)@object.Polygon).Length()];
-                for (int i = 0; i < ((Object.Polygon)@object.Polygon).Length(); i++)
+                isVisiblePolygon = new bool[((Asset.Polygon)@object.Polygon).Length()];
+                for (int i = 0; i < ((Asset.Polygon)@object.Polygon).Length(); i++)
                 {
-                    ((Object.Polygon)@object.Polygon).NormalCalced[i] = matrix * ((Object.Polygon)@object.Polygon).Normal[i];
+                    ((Asset.Polygon)@object.Polygon).NormalCalced[i] = matrix * ((Asset.Polygon)@object.Polygon).Normal[i];
                     // 各ポリゴンの法線ベクトルに対して、オブジェクトの移動を反映する
                     // この場合、法線ベクトル.z > 0 ならば正の向きで交差する.
                     // 交差するときのみ、描画フラグを立てる
-                    if (((Object.Polygon)@object.Polygon).NormalCalced[i][2, 0] > 0)
+                    if (((Asset.Polygon)@object.Polygon).NormalCalced[i][2, 0] > 0)
                     {
                         isVisiblePolygon[i] = true;
                     }
@@ -67,13 +86,13 @@
                     }
                 }
 
-                GetPolygonBounds(result, (Object.Polygon)@object.Polygon, isVisiblePolygon); // 面ごとの画面上の描画範囲を求める
+                GetPolygonBounds(result, (Asset.Polygon)@object.Polygon, isVisiblePolygon); // 面ごとの画面上の描画範囲を求める
             }
 
             return (result.ToArray(), @object.Vertex.Color, isVisiblePolygon, depthZ.ToArray(), @object);
         }
 
-        private static void GetPolygonBounds(List<Point> points, Object.Polygon polygon, bool[] isVisiblePolygon)
+        private static void GetPolygonBounds(List<Point> points, Asset.Polygon polygon, bool[] isVisiblePolygon)
         {
             foreach (var kvp in polygon.VertexID)
             {
@@ -120,7 +139,16 @@
         /// オブジェクトの移動を計算する.
         /// </summary>
         /// <returns>移動の行列.</returns>
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
         private static Matrix CalcTranslation(Object.Object @object)
+        {
+後:
+        private static Matrix CalcTranslation(Object @object)
+        {
+*/
+        private static Matrix CalcTranslation(CsGraphics.Asset.Object @object)
         {
             Matrix temp = new(4);
             temp.Identity();
@@ -135,7 +163,16 @@
         /// オブジェクトの拡大縮小を計算する.
         /// </summary>
         /// <returns>拡大縮小の行列.</returns>
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
         private static Matrix CalcScale(Object.Object @object)
+        {
+後:
+        private static Matrix CalcScale(Object @object)
+        {
+*/
+        private static Matrix CalcScale(CsGraphics.Asset.Object @object)
         {
             Matrix temp = new(4);
             temp.Identity();
@@ -148,7 +185,16 @@
         /// 行列を用いて、YXZの順に回転を計算する.
         /// </summary>
         /// <returns>回転行列.</returns>
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
         private static Matrix CalcRotation(Object.Object @object)
+        {
+後:
+        private static Matrix CalcRotation(Object @object)
+        {
+*/
+        private static Matrix CalcRotation(CsGraphics.Asset.Object @object)
         {
             Matrix xAxis = new(4);
             xAxis.Identity();

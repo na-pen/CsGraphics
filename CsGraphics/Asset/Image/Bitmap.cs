@@ -1,17 +1,17 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace CsGraphics
+namespace CsGraphics.Asset.Image
 {
     public class Bitmap
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         public struct BITMAPFILEHEADER()
         {
-            public UInt16 bfType = 0x4d42;
-            public UInt32 bfSize;
-            public UInt16 bfReserved1 = 0;
-            public UInt16 bfReserved2 = 0;
-            public UInt32 bfOffBits = 54;
+            public ushort bfType = 0x4d42;
+            public uint bfSize;
+            public ushort bfReserved1 = 0;
+            public ushort bfReserved2 = 0;
+            public uint bfOffBits = 54;
 
             public int Length = 14;
 
@@ -27,7 +27,7 @@ namespace CsGraphics
                     Array.Copy(BitConverter.GetBytes(bfReserved2), 0, Datas, 8, 2);
                     Array.Copy(BitConverter.GetBytes(bfOffBits), 0, Datas, 10, 4);
 
-                    return (Datas);
+                    return Datas;
                 }
             }
         }
@@ -35,17 +35,17 @@ namespace CsGraphics
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         public struct BITMAPINFOHEADER(int width, int height, int bitCount = 32)
         {
-            public UInt32 biSize = 40;
-            public Int32 biWidth = width;
-            public Int32 biHeight = height;
-            public UInt16 biPlanes = 1;
-            public UInt16 biBitCount = (ushort)bitCount;
-            public UInt32 biCompression = 0;
-            public UInt32 biSizeImage = (uint)((width * height * bitCount) / 8);
-            public Int32 biXPelsPerMeter = 0;
-            public Int32 biYPelsPerMeter = 0;
-            public UInt32 biClrUsed = 0;
-            public UInt32 biClrImportant = 0;
+            public uint biSize = 40;
+            public int biWidth = width;
+            public int biHeight = height;
+            public ushort biPlanes = 1;
+            public ushort biBitCount = (ushort)bitCount;
+            public uint biCompression = 0;
+            public uint biSizeImage = (uint)(width * height * bitCount / 8);
+            public int biXPelsPerMeter = 0;
+            public int biYPelsPerMeter = 0;
+            public uint biClrUsed = 0;
+            public uint biClrImportant = 0;
 
             public int Length = 40;
 
@@ -67,7 +67,7 @@ namespace CsGraphics
                     Array.Copy(BitConverter.GetBytes(biClrUsed), 0, Datas, 32, 4);
                     Array.Copy(BitConverter.GetBytes(biClrImportant), 0, Datas, 36, 4);
 
-                    return (Datas);
+                    return Datas;
                 }
             }
         }
@@ -78,18 +78,18 @@ namespace CsGraphics
 
         public Bitmap(int width, int height, Color[,] data, int bitCount = 32)
         {
-            this.FileHeader = new();
+            FileHeader = new();
 
             int rowSize = width * 4; // 4バイト境界に揃える
             int bufferSize = rowSize * height; // 全体のバッファサイズ
 
-            this.InfoHeader = new BITMAPINFOHEADER(rowSize / 4, height, bitCount = 32);
+            InfoHeader = new BITMAPINFOHEADER(rowSize / 4, height, bitCount = 32);
 
-            this.FileHeader.bfSize = (uint)((bufferSize / 4 * bitCount) / 8) + this.FileHeader.bfOffBits;
+            FileHeader.bfSize = (uint)(bufferSize / 4 * bitCount / 8) + FileHeader.bfOffBits;
 
 
             // バッファサイズを計算 (BGR8)
-            this.img = new byte[bufferSize * 4]; // BGR
+            img = new byte[bufferSize * 4]; // BGR
             int index = 0;
             for (int y = 0; y < height; y++)
             {
@@ -140,14 +140,14 @@ namespace CsGraphics
                 biXPelsPerMeter = BitConverter.ToInt32(infoHeaderBytes, 24),
                 biYPelsPerMeter = BitConverter.ToInt32(infoHeaderBytes, 28),
                 biClrUsed = BitConverter.ToUInt32(infoHeaderBytes, 32),
-                biClrImportant = BitConverter.ToUInt32(infoHeaderBytes, 36)
+                biClrImportant = BitConverter.ToUInt32(infoHeaderBytes, 36),
             };
 
             // 3. ピクセルデータを読み取る
             int width = infoHeader.biWidth;
             int height = infoHeader.biHeight;
             int bitCount = infoHeader.biBitCount;
-            int rowSize = (((width * (bitCount / 8)) + 3) / 4) * 4; // 4バイト境界
+            int rowSize = (width * (bitCount / 8) + 3) / 4 * 4; // 4バイト境界
             int imageSize = rowSize * System.Math.Abs(height);
 
             byte[] pixelData = reader.ReadBytes(imageSize);

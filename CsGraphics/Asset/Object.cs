@@ -1,4 +1,6 @@
-﻿namespace CsGraphics.Object
+﻿using CsGraphics.Asset.Image;
+
+namespace CsGraphics.Asset
 {
     /// <summary>
     /// オブジェクトの情報の保持や管理を行う.
@@ -17,59 +19,59 @@
         /// <param name="scale">オブジェクトの拡大倍率.</param>
         internal Object(string name, double[,] vertexCoord, int id = -1, Dictionary<string, (Color, string)>? polygonColor = null, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null, Dictionary<string, int[][]>? polygon = null, Math.Matrix[] normal = null, Dictionary<string, int[][]>? mtlV = null, double[][] vt = null)
         {
-            this.ID = id;
-            this.Name = name;
-            this.IsVisible = visible;
+            ID = id;
+            Name = name;
+            IsVisible = visible;
 
             if (origin == null)
             {
-                this.Origin = new(new double[,] { { 0 }, { 0 }, { 0 } });
+                Origin = new(new double[,] { { 0 }, { 0 }, { 0 } });
             }
             else
             {
-                this.Origin = new(origin);
+                Origin = new(origin);
             }
 
             if (scale == null)
             {
-                this.Magnification = new double[] { 1, 1, 1 };
+                Magnification = new double[] { 1, 1, 1 };
             }
             else
             {
-                this.Magnification = scale;
+                Magnification = scale;
             }
 
-            this.Vertex = new(id, vertexCoord, vertexColor, vt);
+            Vertex = new(id, vertexCoord, vertexColor, vt);
 
             if (polygon != null && polygonColor != null)
             {
-                this.Polygon = new Polygon(this.ID, polygon, normal, polygonColor, mtlV);
+                Polygon = new Polygon(ID, polygon, normal, polygonColor, mtlV);
             }
         }
 
         private Object(string name, Vertex vertex, int id, Math.Matrix origin, double[] magnification, bool visible, double[] angle, Polygon? polygon, Dictionary<string, Color[,]>? texture)
         {
-            this.Name = name;
-            this.IsVisible = visible;
-            this.Origin = origin;
-            this.ID = id;
-            this.Vertex = vertex;
-            this.Magnification = magnification;
-            this.Angle = angle;
-            this.Polygon = polygon;
-            this.Texture = texture;
+            Name = name;
+            IsVisible = visible;
+            Origin = origin;
+            ID = id;
+            Vertex = vertex;
+            Magnification = magnification;
+            Angle = angle;
+            Polygon = polygon;
+            Texture = texture;
         }
 
         internal Object(Object obj)
         {
-            this.Name = obj.Name;
-            this.IsVisible = obj.IsVisible;
-            this.Origin = obj.Origin;
-            this.ID = obj.ID;
-            this.Vertex = obj.Vertex;
-            this.Magnification = obj.Magnification;
-            this.Angle = obj.Angle;
-            this.Polygon = obj.Polygon;
+            Name = obj.Name;
+            IsVisible = obj.IsVisible;
+            Origin = obj.Origin;
+            ID = obj.ID;
+            Vertex = obj.Vertex;
+            Magnification = obj.Magnification;
+            Angle = obj.Angle;
+            Polygon = obj.Polygon;
         }
 
         /// <summary>
@@ -143,15 +145,15 @@
         public object Clone()
         {
             return new Object(
-                this.Name,
-                (Vertex)this.Vertex.Clone(),
-                this.ID,
-                (Math.Matrix)this.Origin.Clone(),
-                (double[])this.Magnification.Clone(),
-                this.IsVisible,
-                this.Angle,
-                this.Polygon,
-                this.Texture)
+                Name,
+                (Vertex)Vertex.Clone(),
+                ID,
+                (Math.Matrix)Origin.Clone(),
+                (double[])Magnification.Clone(),
+                IsVisible,
+                Angle,
+                Polygon,
+                Texture)
             {
             };
         }
@@ -164,7 +166,7 @@
         /// <param name="z">z軸の移動量.</param>
         internal void SetTranslation(double x, double y, double z)
         {
-            this.IsUpdated = true;
+            IsUpdated = true;
 
             Math.Matrix temp = new(3, 1);
 
@@ -172,7 +174,7 @@
             temp[1, 0] = y;
             temp[2, 0] = z;
 
-            this.Origin += temp;
+            Origin += temp;
         }
 
         /// <summary>
@@ -183,8 +185,8 @@
         /// <param name="z">z軸の拡大率.</param>
         internal void SetScale(double x, double y, double z)
         {
-            this.IsUpdated = true;
-            this.Magnification = new double[] { this.Magnification[0] * x, this.Magnification[1] * y, this.Magnification[2] * z };
+            IsUpdated = true;
+            Magnification = new double[] { Magnification[0] * x, Magnification[1] * y, Magnification[2] * z };
         }
 
         /// <summary>
@@ -195,20 +197,20 @@
         /// <param name="z">z軸の回転角度.</param>
         internal void SetRotation(double x, double y, double z)
         {
-            this.IsUpdated = true;
-            this.Angle = new double[] { this.Angle[0] + x, this.Angle[1] + y, this.Angle[2] + z };
+            IsUpdated = true;
+            Angle = new double[] { Angle[0] + x, Angle[1] + y, Angle[2] + z };
         }
 
         internal void AddTexture(string matName, string path)
         {
-            if (this.Texture == null)
+            if (Texture == null)
             {
-                this.Texture = new Dictionary<string, Color[,]>();
+                Texture = new Dictionary<string, Color[,]>();
             }
-            this.IsUpdated = true;
+            IsUpdated = true;
             if (path != string.Empty)
             {
-                this.Texture.Add(matName, Bitmap.LoadFromFile(path));
+                Texture.Add(matName, Bitmap.LoadFromFile(path));
             }
         }
 
@@ -216,7 +218,7 @@
         {
 
             int result = 0;
-            foreach (var kvp in this.Texture)
+            foreach (var kvp in Texture)
             {
                 Color[,] array = kvp.Value;
                 result += array.GetLength(dimension);

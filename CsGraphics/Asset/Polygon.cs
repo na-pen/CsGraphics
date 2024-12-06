@@ -1,4 +1,4 @@
-﻿namespace CsGraphics.Object
+﻿namespace CsGraphics.Asset
 {
     using CsGraphics.Math;
     using System.Collections.Generic;
@@ -16,13 +16,13 @@
         /// <param name="normal">法線ベクトル.</param>
         internal Polygon(int objectId, Dictionary<string, int[][]> vertexID, Matrix[] normal, Dictionary<string, (Color, string)> color, Dictionary<string, int[][]> mtlVertexID)
         {
-            this.ObjectId = objectId;
-            this.VertexID = vertexID;
-            this.Normal = normal;
-            this.Bounds = new Dictionary<string, double[,]>();
-            this.NormalCalced = normal;
-            this.Colors = color;
-            this.MtlVertexID = mtlVertexID;
+            ObjectId = objectId;
+            VertexID = vertexID;
+            Normal = normal;
+            Bounds = new Dictionary<string, double[,]>();
+            NormalCalced = normal;
+            Colors = color;
+            MtlVertexID = mtlVertexID;
         }
 
         /// <summary>
@@ -68,7 +68,7 @@
         internal int Length()
         {
             int result = 0;
-            foreach (var kvp in this.VertexID)
+            foreach (var kvp in VertexID)
             {
                 int[][] array = kvp.Value;
                 result += array.Length;

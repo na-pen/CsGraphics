@@ -1,4 +1,4 @@
-﻿namespace CsGraphics.Object
+﻿namespace CsGraphics.Asset
 {
     using CsGraphics.Math;
     using Microsoft.Maui.Graphics;
@@ -18,10 +18,10 @@
         internal Vertex(int objectId, double[,] coordinate, Color[]? color, double[][]? vt)
         {
             // 初期値の適用
-            this.ObjectId = objectId;
-            this.Coordinate = this.ConvertMatriix2Calcable(new Math.Matrix(coordinate));
+            ObjectId = objectId;
+            Coordinate = ConvertMatriix2Calcable(new Matrix(coordinate));
 
-            this.Color = new Color[coordinate.GetLength(1)];
+            Color = new Color[coordinate.GetLength(1)];
             if (color != null)
             {
                 if (coordinate.GetLength(1) != color.Length) // すべての頂点に対して色指定がされているか
@@ -29,22 +29,22 @@
                     throw new ArgumentException("頂点の色を指定する場合は、すべての頂点に対して指定する必要があります。");
                 }
 
-                this.Color = color;
+                Color = color;
             }
             else
             {
-                Array.Fill(this.Color, Colors.Black);
+                Array.Fill(Color, Colors.Black);
             }
 
-            this.Vt = vt;
+            Vt = vt;
         }
 
         private Vertex(int objectId, Matrix coordinate, Color[] color, double[][] vt)
         {
-            this.ObjectId = objectId;
-            this.Coordinate = coordinate;
-            this.Color = color;
-            this.Vt = vt;
+            ObjectId = objectId;
+            Coordinate = coordinate;
+            Color = color;
+            Vt = vt;
         }
 
         /// <summary>
@@ -55,7 +55,7 @@
         /// <summary>
         /// Gets or Sets 3D空間上の3次元座標(オブジェクト基準).
         /// </summary>
-        internal Math.Matrix Coordinate { get; set; }
+        internal Matrix Coordinate { get; set; }
 
         /// <summary>
         /// Gets or sets 頂点の色.
@@ -71,11 +71,11 @@
         public override string ToString() // Vertex test = new(0, new double[] { 0, 0, 0 });
         {
             string result = string.Empty;
-            Math.Matrix coordinate = this.Coordinate;
-            Color[] color = this.Color;
+            Matrix coordinate = Coordinate;
+            Color[] color = Color;
 
             result =
-                "ObjectID : " + this.ObjectId.ToString() + "\n" +
+                "ObjectID : " + ObjectId.ToString() + "\n" +
                 string.Join(
                     "\n\n",
                     Enumerable.Range(0, coordinate.GetLength(1)) // 各列を対象にする
@@ -95,10 +95,10 @@
         public object Clone()
         {
             return new Vertex(
-                this.ObjectId,
-                (Matrix)this.Coordinate.Clone(),
-                (Color[])this.Color.Clone(),
-                (double[][])(this.Vt));
+                ObjectId,
+                (Matrix)Coordinate.Clone(),
+                (Color[])Color.Clone(),
+                Vt);
         }
 
         /// <summary>
@@ -108,7 +108,7 @@
         /// <returns>長さ.</returns>
         internal int GetLength(int dimension)
         {
-            return this.Coordinate.GetLength(dimension);
+            return Coordinate.GetLength(dimension);
         }
 
         /// <summary>
@@ -117,7 +117,7 @@
         /// <param name="matrix">変換する行列.</param>
         /// <returns>行列.</returns>
         /// <exception cref="ArgumentException">データの次元数が誤っています.</exception>
-        private Math.Matrix ConvertMatriix2Calcable(Math.Matrix matrix)
+        private Matrix ConvertMatriix2Calcable(Matrix matrix)
         {
             switch (matrix.GetLength(0))
             {

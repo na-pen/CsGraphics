@@ -1,5 +1,6 @@
 namespace CsGraphics
 {
+    using CsGraphics.Asset.Image;
     using CsGraphics.Calc;
     using Microsoft.Maui.Graphics;
     using Microsoft.Maui.Graphics.Platform;
@@ -20,7 +21,8 @@ namespace CsGraphics
         /// <summary>
         /// シーンに含まれるオブジェクト.
         /// </summary>
-        internal List<Object.Object> Objects;
+
+        internal List<CsGraphics.Asset.Object> Objects;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Scene"/> class.
@@ -29,7 +31,8 @@ namespace CsGraphics
         public Scene(int frameRate)
         {
             this.FrameRate = frameRate;
-            this.Objects = new List<Object.Object>(); // 初期化
+
+            this.Objects = new List<CsGraphics.Asset.Object>(); // 初期化
         }
 
         /// <summary>
@@ -78,20 +81,22 @@ namespace CsGraphics
             }
 
             // 各点を指定された色で描画
-            foreach (Object.Object @object in this.Objects)
+
+            foreach (CsGraphics.Asset.Object @object in this.Objects)
             {
                 if (@object.IsVisible == true)
                 {
                     Point[] points = Array.Empty<Point>();
                     Color[] color = Array.Empty<Color>();
                     bool[] isVisiblePolygon = Array.Empty<bool>();
-                    Object.Object obj;
+
+                    CsGraphics.Asset.Object obj;
                     double[] pT = Array.Empty<double>();
 
                     //if (@object.IsUpdated == true) // オブジェクトの情報に更新があれば再計算
                     if (true)
                     {
-                        (points, color, isVisiblePolygon, _, obj) = Calculation.Calc((Object.Object)@object.Clone()); // 点や面の計算
+                        (points, color, isVisiblePolygon, _, obj) = Calculation.Calc((CsGraphics.Asset.Object)@object.Clone()); // 点や面の計算
 
                         @object.Points = points;
                         @object.PointsColor = color;
@@ -106,12 +111,12 @@ namespace CsGraphics
                     if (@object.Polygon != null) // ポリゴンが存在する場合のみ描画
                     {
                         // polygonのグループごとに処理
-                        foreach (var kvp in ((Object.Polygon)@object.Polygon).VertexID)
+                        foreach (var kvp in ((Asset.Polygon)@object.Polygon).VertexID)
                         {
                             string key = kvp.Key;
                             int[][] array = kvp.Value;
 
-                            int[][] array2 = ((Object.Polygon)@object.Polygon).MtlVertexID[key];
+                            int[][] array2 = ((Asset.Polygon)@object.Polygon).MtlVertexID[key];
 
                             // 各ポリゴンをチェック
                             for (int i = 0; i < array.GetLength(0); i++)
@@ -166,7 +171,7 @@ namespace CsGraphics
                                             double texVy = (a * vt[0][1]) + (b * vt[1][1]) + (c * vt[2][1]);
                                             if (@object.Texture != null && @object.Texture.ContainsKey(key))
                                             {
-                                                (Color cl, _) = ((Object.Polygon)@object.Polygon).Colors[key];
+                                                (Color cl, _) = ((Asset.Polygon)@object.Polygon).Colors[key];
                                                 int x = (int)((texVx % 1) * @object.Texture[key].GetLength(0)) - 1;
                                                 int y = ((int)((texVy % 1) * @object.Texture[key].GetLength(1))) - 1;
                                                 pixelcolor = @object.Texture[key][x, y].MultiplyAlpha(cl.Alpha);
@@ -180,7 +185,7 @@ namespace CsGraphics
 
                                             if (pixelcolor == null)
                                             {
-                                                (Color cl, _) = ((Object.Polygon)@object.Polygon).Colors[key];
+                                                (Color cl, _) = ((Asset.Polygon)@object.Polygon).Colors[key];
                                                 pixelColors[(int)p.X, (int)p.Y] = cl; // 色を設定
                                             }
                                             else if (pixelcolor.Alpha != 1)
@@ -341,7 +346,7 @@ namespace CsGraphics
         public int AddObject(string name, double[,] vertexCoord, Dictionary<string, (Color, string)>? polygonColor = null, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null, Dictionary<string, int[][]>? polygon = null)
         {
             int id = this.Objects.Count;
-            Object.Object @object = new(name, vertexCoord, id, polygonColor, vertexColor, origin, visible, scale, polygon);
+            CsGraphics.Asset.Object @object = new(name, vertexCoord, id, polygonColor, vertexColor, origin, visible, scale, polygon);
             this.Objects.Add(@object);
 
             this.IsUpdated = true;
@@ -351,7 +356,7 @@ namespace CsGraphics
         private int AddObject(string name, double[,] vertexCoord, Dictionary<string, (Color, string)>? polygonColor = null, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null, Dictionary<string, int[][]>? polygon = null, Math.Matrix[]? normal = null, Dictionary<string, int[][]>? mtlV = null, double[][] vt = null)
         {
             int id = this.Objects.Count;
-            Object.Object @object = new(name, vertexCoord, id, polygonColor, vertexColor, origin, visible, scale, polygon, normal, mtlV, vt);
+            CsGraphics.Asset.Object @object = new(name, vertexCoord, id, polygonColor, vertexColor, origin, visible, scale, polygon, normal, mtlV, vt);
             this.Objects.Add(@object);
 
             this.IsUpdated = true;
@@ -393,7 +398,7 @@ namespace CsGraphics
                 throw new ArgumentOutOfRangeException($"Object ID {id} does not exist in this scene.");
             }
 
-            Object.Object @object = this.Objects[id];
+            CsGraphics.Asset.Object @object = this.Objects[id];
 
             string result =
                 "ObjectID : " + id + "\n" +
