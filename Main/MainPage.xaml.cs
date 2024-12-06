@@ -1,14 +1,12 @@
 ﻿namespace Main
 {
-    using System;
-    using System.ComponentModel;
-    using System.Diagnostics;
-    using System.Linq;
-    using System.Reflection;
-    using System.Text.RegularExpressions;
     using CsGraphics;
-    using Microsoft.CodeAnalysis.CSharp.Scripting;
-    using Microsoft.CodeAnalysis.Scripting;
+    using Microsoft.Maui.Graphics.Platform;
+    using Microsoft.Maui.Graphics;
+    using System;
+    using System.Diagnostics;
+    using System.Text.RegularExpressions;
+    using CsGraphics.Asset.Image;
 
     /// <summary>
     /// アプリケーションのメインページ.
@@ -119,7 +117,7 @@
         }
 
         // コマンド処理ロジック
-        private string ProcessCommand(string command)
+        private unsafe string ProcessCommand(string command)
         {
             string pattern = @"\((.*?)\)";
             string[] args = Regex.Match(command, pattern).Groups[1].Value.Split(',');
@@ -128,20 +126,10 @@
                 _ when command.StartsWith("translation") => this.TranslationTest(int.Parse(args[0]), double.Parse(args[1]), double.Parse(args[2]), double.Parse(args[3])),
                 _ when command.StartsWith("scale") => this.ScaleTest(int.Parse(args[0]), double.Parse(args[1]), double.Parse(args[2]), double.Parse(args[3])),
                 _ when command.StartsWith("rotation") => this.RotationTest(int.Parse(args[0]), double.Parse(args[1]), double.Parse(args[2]), double.Parse(args[3])),
-                "test" => this.Test(),
-                "teapot" => this.AddTeapot(),
-                "miku" => this.AddMiku(),
+                _ when command.StartsWith("object") => "ID : " + this.Scene.AddObjectFromObj(args[0].Replace("\"", string.Empty), args[1].Replace("\"", string.Empty)).ToString(),
+                _ when command.StartsWith("test") => sizeof(byte).ToString(),
                 _ => "Unknown command."
             };
-        }
-
-        private string Test()
-        {
-            int idRectangle = this.scene.AddObject(
-                "rectangle",
-                new double[,] { { 100, 300, 300, 100 }, { 100, 100, 400, 400 } });
-
-            return this.Scene.GetObjectInfo(idRectangle);
         }
 
         private string TranslationTest(int id, double x, double y, double z)
@@ -168,16 +156,33 @@
             return "Done!";
         }
 
-        private string AddTeapot()
+        /*
+        private string Png()
         {
-            int idTeapot = this.Scene.AddObjectFromObj("teapot", "E:\\Projects\\CsGraphics\\Main\\teapot.obj");
-            return "Done!";
-        }
+            string filePath = "C:\\Users\\mail\\OneDrive\\tx\\服1.png";
+            Color[,] tex = Asset(filePath);
 
-        private string AddMiku()
-        {
-            int idMiku = this.Scene.AddObjectFromObj("miku", "E:\\Projects\\CsGraphics\\Main\\miku.obj");
-            return "Done!";
+            using (var stream = new MemoryStream())
+            {
+                Bitmap bitmap = new(2048, 2048, colors);
+                // ストリームに画像データを書き込む
+                stream.Write(bitmap.FileHeader.Bytes);
+                stream.Write(bitmap.InfoHeader.Bytes);
+                stream.Write(bitmap.img);
+                stream.Position = 0;
+                IImage image = PlatformImage.FromStream(stream, ImageFormat.Bmp);
+                // PlatformImage をストリームから読み込んで画像を作成
+
+
+                using (FileStream fs = new FileStream("C:\\Users\\mail\\Documents\\CsGraphics\\Main\\test.bmp", FileMode.Create))
+                {
+                    fs.Write(bitmap.FileHeader.Bytes);
+                    fs.Write(bitmap.InfoHeader.Bytes);
+                    fs.Write(bitmap.img);
+                }
+            }
+            return "Done";
         }
+        */
     }
 }

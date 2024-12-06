@@ -1,10 +1,6 @@
 ﻿namespace CsGraphics
 {
-    using System;
-    using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
 
     /// <summary>
     /// IEnumeratorとかの設定.
@@ -16,7 +12,16 @@
         /// </summary>
         /// <param name="vertex">頂点情報.</param>
         /// <returns>System.Collections.IEnumerator.</returns>
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
         public static System.Collections.IEnumerator GetEnumerator(this Object.Vertex vertex)
+            =>
+後:
+        public static System.Collections.IEnumerator GetEnumerator(this Vertex vertex)
+            =>
+*/
+        public static System.Collections.IEnumerator GetEnumerator(this Asset.Vertex vertex)
             =>
             Enumerable.Range(0, vertex.GetLength(1))
             .Select(i =>
@@ -35,16 +40,5 @@
                 new Math.Matrix(new double[] { matrix[0, i], matrix[1, i], matrix[2, i], matrix[3, i] }))
             .GetEnumerator();
 
-        /// <summary>
-        /// Foreachを使うためのGetEnumeratorの実装.
-        /// </summary>
-        /// <param name="polygon">面情報.</param>
-        /// <returns>System.Collections.IEnumerator.</returns>
-        public static System.Collections.IEnumerator GetEnumerator(this Object.Polygon polygon)
-            =>
-            Enumerable.Range(0, polygon.Length())
-            .Select(i =>
-                polygon.VertexID[i])
-            .GetEnumerator();
     }
 }

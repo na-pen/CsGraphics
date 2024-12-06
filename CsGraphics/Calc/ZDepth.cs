@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using CsGraphics.Math;
+﻿using CsGraphics.Math;
 
 namespace CsGraphics.Calc
 {
@@ -32,8 +26,8 @@ namespace CsGraphics.Calc
         /// <summary>
         /// 平行投影時のz深度を求める.
         /// </summary>
-        /// <returns>z深度.</returns>
-        internal static double ZDepsParallel(double[] pixel, double[] polygonPointA, double[] polygonPointB, double[] polygonPointC,int zMax, int zMin)
+        /// <returns>[z深度,重心A,y重心B,重心C].</returns>
+        internal static (double, double, double, double) ZDepsParallel(double[] pixel, double[] polygonPointA, double[] polygonPointB, double[] polygonPointC, int zMax, int zMin)
         {
             double result = 0;
 
@@ -52,7 +46,7 @@ namespace CsGraphics.Calc
             result = A * polygonPointA[2] + B * polygonPointB[2] + C * polygonPointC[2];
 
 
-            return MinMaxNormalization(result,zMax,zMin);
+            return (MinMaxNormalization(result, zMax, zMin), A, B, C);
         }
 
         internal static double TriangleArea(double x1, double y1, double x2, double y2, double x3, double y3)
