@@ -41,10 +41,10 @@
             for (int n = 0; n < @object.Vertex.Coordinate.GetLength(1); n++)
             {
                 result.Add(new Point(vertex[0, n], vertex[1, n])); // スクリーン上の座標を求める計算 この場合はそのままコピー
-                @object.Vertex.Coordinate[0,n] = vertex[0,n];
-                @object.Vertex.Coordinate[1,n] = vertex[1, n];
-                @object.Vertex.Coordinate[2,n] = vertex[2, n];
-                @object.Vertex.Coordinate[3,n] = vertex[3, n];
+                @object.Vertex.Coordinate[0, n] = vertex[0, n];
+                @object.Vertex.Coordinate[1, n] = vertex[1, n];
+                @object.Vertex.Coordinate[2, n] = vertex[2, n];
+                @object.Vertex.Coordinate[3, n] = vertex[3, n];
             }
 
             // ポリゴンの法線がz=0の面とどの向きで交差するかどうか確認する
@@ -70,7 +70,7 @@
                 GetPolygonBounds(result, (Object.Polygon)@object.Polygon, isVisiblePolygon); // 面ごとの画面上の描画範囲を求める
             }
 
-            return (result.ToArray(), @object.Vertex.Color, isVisiblePolygon, depthZ.ToArray(),@object);
+            return (result.ToArray(), @object.Vertex.Color, isVisiblePolygon, depthZ.ToArray(), @object);
         }
 
         private static void GetPolygonBounds(List<Point> points, Object.Polygon polygon, bool[] isVisiblePolygon)

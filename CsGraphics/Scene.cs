@@ -1,12 +1,11 @@
 namespace CsGraphics
 {
+    using CsGraphics.Calc;
     using Microsoft.Maui.Graphics;
     using Microsoft.Maui.Graphics.Platform;
+    using System.Collections.Generic;
     using Color = Microsoft.Maui.Graphics.Color;
     using Point = Microsoft.Maui.Graphics.Point;
-    using CsGraphics.Calc;
-    using System.Numerics;
-    using System.Collections.Generic;
 
     /// <summary>
     /// シーン.

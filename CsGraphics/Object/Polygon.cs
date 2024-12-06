@@ -1,8 +1,7 @@
 ﻿namespace CsGraphics.Object
 {
-    using System;
-    using System.Collections.Generic;
     using CsGraphics.Math;
+    using System.Collections.Generic;
 
     /// <summary>
     /// ポリゴンの情報を保持する.
@@ -20,7 +19,7 @@
             this.ObjectId = objectId;
             this.VertexID = vertexID;
             this.Normal = normal;
-            this.Bounds = new Dictionary < string, double[,]>();
+            this.Bounds = new Dictionary<string, double[,]>();
             this.NormalCalced = normal;
             this.Colors = color;
             this.MtlVertexID = mtlVertexID;

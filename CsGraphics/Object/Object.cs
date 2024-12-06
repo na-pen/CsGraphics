@@ -1,8 +1,5 @@
 ﻿namespace CsGraphics.Object
 {
-    using CsGraphics.Math;
-    using Microsoft.Maui.Controls.Shapes;
-
     /// <summary>
     /// オブジェクトの情報の保持や管理を行う.
     /// </summary>
@@ -42,7 +39,7 @@
                 this.Magnification = scale;
             }
 
-            this.Vertex = new (id, vertexCoord, vertexColor, vt);
+            this.Vertex = new(id, vertexCoord, vertexColor, vt);
 
             if (polygon != null && polygonColor != null)
             {
@@ -169,7 +166,7 @@
         {
             this.IsUpdated = true;
 
-            Math.Matrix temp = new (3, 1);
+            Math.Matrix temp = new(3, 1);
 
             temp[0, 0] = x;
             temp[1, 0] = y;
@@ -202,7 +199,7 @@
             this.Angle = new double[] { this.Angle[0] + x, this.Angle[1] + y, this.Angle[2] + z };
         }
 
-        internal void AddTexture(string matName,string path)
+        internal void AddTexture(string matName, string path)
         {
             if (this.Texture == null)
             {

@@ -1,11 +1,8 @@
-﻿using System;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.InteropServices;
 
 namespace CsGraphics
 {
-    internal class Bitmap
+    public class Bitmap
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         public struct BITMAPFILEHEADER()
@@ -75,9 +72,9 @@ namespace CsGraphics
             }
         }
 
-        internal BITMAPFILEHEADER FileHeader;
-        internal BITMAPINFOHEADER InfoHeader;
-        internal byte[] img;
+        public BITMAPFILEHEADER FileHeader;
+        public BITMAPINFOHEADER InfoHeader;
+        public byte[] img;
 
         public Bitmap(int width, int height, Color[,] data, int bitCount = 32)
         {
@@ -176,7 +173,7 @@ namespace CsGraphics
                         byte blue = pixelData[index++];
                         byte green = pixelData[index++];
                         byte red = pixelData[index++];
-                        colors[x,  y] = new Color(red / 255.0f, green / 255.0f, blue / 255.0f, 1.0f);
+                        colors[x, y] = new Color(red / 255.0f, green / 255.0f, blue / 255.0f, 1.0f);
                     }
                 }
 

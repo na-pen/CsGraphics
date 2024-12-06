@@ -139,7 +139,7 @@
                 throw new InvalidOperationException("Matrix dimensions must match for addition.");
             }
 
-            Matrix result = new (a.Rows, a.Columns);
+            Matrix result = new(a.Rows, a.Columns);
             for (int i = 0; i < a.Rows; i++)
             {
                 for (int j = 0; j < a.Columns; j++)
@@ -159,7 +159,7 @@
         /// <returns>行列と整数の和.</returns>
         public static Matrix operator +(Matrix matrix, double value)
         {
-            Matrix result = new (matrix.Rows, matrix.Columns);
+            Matrix result = new(matrix.Rows, matrix.Columns);
             for (int i = 0; i < matrix.Rows; i++)
             {
                 for (int j = 0; j < matrix.Columns; j++)
@@ -196,7 +196,7 @@
                 throw new InvalidOperationException("Matrix dimensions must match for addition.");
             }
 
-            Matrix result = new (a.Rows, a.Columns);
+            Matrix result = new(a.Rows, a.Columns);
             for (int i = 0; i < a.Rows; i++)
             {
                 for (int j = 0; j < a.Columns; j++)
@@ -483,7 +483,7 @@
                 throw new ArgumentException("The number of rows and columns in the resized matrix must be equal to or greater than before the resizing, respectively.");
             }
 
-            Matrix result = new (row, column);
+            Matrix result = new(row, column);
 
             // 行列のサイズを変更する（n行m列）
             for (int i = 0; i < row; i++)

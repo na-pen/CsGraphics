@@ -1,11 +1,5 @@
 ﻿namespace CsGraphics.Math
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-
     /// <summary>
     /// 虚数の定義.
     /// </summary>

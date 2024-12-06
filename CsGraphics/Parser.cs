@@ -1,11 +1,9 @@
 ﻿namespace CsGraphics
 {
     using CsGraphics.Math;
-    using Microsoft.Maui.Graphics.Platform;
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Reflection;
 
     /// <summary>
     /// 外部ファイルの読み込み.
@@ -51,7 +49,7 @@
                         double y = double.Parse(parts[2]);
 
                         verticesT.Add(new[] { x, y });
-                        
+
                     }
                 }
                 else if (line.StartsWith("f ")) // 面情報のとき
@@ -177,7 +175,7 @@
                 {
                     var parts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                     Color x = new Color((int)(double.Parse(parts[1]) * 255), (int)(double.Parse(parts[2]) * 255), (int)(double.Parse(parts[3]) * 255), (int)(d * 255));
-                    if(!dic.TryAdd(mtlName, (x, string.Empty)))
+                    if (!dic.TryAdd(mtlName, (x, string.Empty)))
                     {
                         dic[mtlName] = (x, dic[mtlName].Item2);
                     }

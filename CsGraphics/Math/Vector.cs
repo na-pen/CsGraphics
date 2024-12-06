@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using CsGraphics.Math;
-
-namespace CsGraphics.Math
+﻿namespace CsGraphics.Math
 {
     internal class Vector
     {
@@ -143,7 +135,7 @@ namespace CsGraphics.Math
         /// <returns>外積の結果.</returns>
         internal static Vector CrossProduct(Vector vectorA, Vector vectorB)
         {
-            Vector result = new (4, 1);
+            Vector result = new(4, 1);
 
             // 外積の計算 (a2 * b3 - a3 * b2, a3 * b1 - a1 * b3, a1 * b2 - a2 * b1)
             result.Data[0, 0] = (vectorA.Data[1, 0] * vectorB.Data[2, 0]) - (vectorA.Data[2, 0] * vectorB.Data[1, 0]);
@@ -162,7 +154,7 @@ namespace CsGraphics.Math
         /// <returns>内積の結果.</returns>
         internal static double DotProduct(Vector vectorA, Vector vectorB)
         {
-            double result = (vectorA.X * vectorB.X) + (vectorA.Y * vectorB.Y) + (vectorA.Z * vectorB.Z) +  (vectorA.W * vectorB.W);
+            double result = (vectorA.X * vectorB.X) + (vectorA.Y * vectorB.Y) + (vectorA.Z * vectorB.Z) + (vectorA.W * vectorB.W);
             return result;
         }
 
