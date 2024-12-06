@@ -20,7 +20,6 @@
             VertexID = vertexID;
             Normal = normal;
             Bounds = new Dictionary<string, double[,]>();
-            NormalCalced = normal;
             Colors = color;
             MtlVertexID = mtlVertexID;
         }
@@ -39,11 +38,6 @@
         /// Gets or sets 法線ベクトル.
         /// </summary>
         internal Matrix[] Normal { get; set; }
-
-        /// <summary>
-        /// Gets or sets 計算後の法線ベクトル.
-        /// </summary>
-        internal Matrix[] NormalCalced { get; set; }
 
         /// <summary>
         /// Gets or sets 各面ごとのScreen座標上のバウンディングボックス.

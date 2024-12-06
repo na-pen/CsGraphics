@@ -111,7 +111,7 @@ namespace CsGraphics.Asset.Image
             }
         }
 
-        public static Color[,] LoadFromFile(string filePath)
+        public static (int, int, byte[]) LoadFromFile(string filePath)
         {
             using FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
             using BinaryReader reader = new BinaryReader(fs);
@@ -153,7 +153,7 @@ namespace CsGraphics.Asset.Image
             byte[] pixelData = reader.ReadBytes(imageSize);
 
             // 4. データをBitmap形式に変換
-            Color[,] colors = new Color[width, height];
+            byte[] colors = new byte[width * height * 4];
             int index = 0;
 
             for (int y = 0; y < height; y++)
@@ -162,18 +162,17 @@ namespace CsGraphics.Asset.Image
                 {
                     if (bitCount == 32)
                     {
-                        byte blue = pixelData[index++];
-                        byte green = pixelData[index++];
-                        byte red = pixelData[index++];
-                        byte alpha = pixelData[index++];
-                        colors[x, y] = new Color(red / 255.0f, green / 255.0f, blue / 255.0f, alpha / 255.0f);
+                        colors[(width * (y * 4)) + (x * 4) + 2] = pixelData[index++];
+                        colors[(width * (y * 4)) + (x * 4) + 1] = pixelData[index++];
+                        colors[(width * (y * 4)) + (x * 4) + 0] = pixelData[index++];
+                        colors[(width * (y * 4)) + (x * 4) + 3] = pixelData[index++];
                     }
                     else if (bitCount == 24)
                     {
-                        byte blue = pixelData[index++];
-                        byte green = pixelData[index++];
-                        byte red = pixelData[index++];
-                        colors[x, y] = new Color(red / 255.0f, green / 255.0f, blue / 255.0f, 1.0f);
+                        colors[(width * (y * 4)) + (x * 4) + 2] = pixelData[index++];
+                        colors[(width * (y * 4)) + (x * 4) + 1] = pixelData[index++];
+                        colors[(width * (y * 4)) + (x * 4) + 0] = pixelData[index++];
+                        colors[(width * (y * 4)) + (x * 4) + 3] = 255;
                     }
                 }
 
@@ -183,7 +182,7 @@ namespace CsGraphics.Asset.Image
                 }
             }
 
-            return colors;
+            return (width, height, colors);
         }
     }
 

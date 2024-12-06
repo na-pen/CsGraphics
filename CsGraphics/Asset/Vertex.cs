@@ -13,37 +13,20 @@
         /// </summary>
         /// <param name="objectId">オブジェクトID.</param>
         /// <param name="coordinate">3次元空間上の座標(オブジェクト基準).</param>
-        /// <param name="color">頂点の色.</param>
         /// <exception cref="ArgumentException">頂点の色を指定する場合は、すべての頂点に対して指定する必要があります.</exception>
-        internal Vertex(int objectId, double[,] coordinate, Color[]? color, double[][]? vt)
+        internal Vertex(int objectId, double[,] coordinate,  double[][]? vt)
         {
             // 初期値の適用
             ObjectId = objectId;
             Coordinate = ConvertMatriix2Calcable(new Matrix(coordinate));
 
-            Color = new Color[coordinate.GetLength(1)];
-            if (color != null)
-            {
-                if (coordinate.GetLength(1) != color.Length) // すべての頂点に対して色指定がされているか
-                {
-                    throw new ArgumentException("頂点の色を指定する場合は、すべての頂点に対して指定する必要があります。");
-                }
-
-                Color = color;
-            }
-            else
-            {
-                Array.Fill(Color, Colors.Black);
-            }
-
             Vt = vt;
         }
 
-        private Vertex(int objectId, Matrix coordinate, Color[] color, double[][] vt)
+        private Vertex(int objectId, Matrix coordinate,  double[][] vt)
         {
             ObjectId = objectId;
             Coordinate = coordinate;
-            Color = color;
             Vt = vt;
         }
 
@@ -57,11 +40,6 @@
         /// </summary>
         internal Matrix Coordinate { get; set; }
 
-        /// <summary>
-        /// Gets or sets 頂点の色.
-        /// </summary>
-        internal Color[] Color { get; set; }
-
         internal double[][]? Vt { get; set; }
 
         /// <summary>
@@ -72,7 +50,6 @@
         {
             string result = string.Empty;
             Matrix coordinate = Coordinate;
-            Color[] color = Color;
 
             result =
                 "ObjectID : " + ObjectId.ToString() + "\n" +
@@ -81,8 +58,7 @@
                     Enumerable.Range(0, coordinate.GetLength(1)) // 各列を対象にする
                         .Select(i =>
                             $"ID : {i}\n" +
-                            $"XYZ : ({coordinate[0, i]}, {coordinate[1, i]}, {coordinate[2, i]})\n" +
-                            $"Color : ({color[i].Red}, {color[i].Green}, {color[i].Blue}, {color[i].Alpha})")
+                            $"XYZ : ({coordinate[0, i]}, {coordinate[1, i]}, {coordinate[2, i]})\n")
                         .ToArray());
 
             return result;
@@ -97,7 +73,6 @@
             return new Vertex(
                 ObjectId,
                 (Matrix)Coordinate.Clone(),
-                (Color[])Color.Clone(),
                 Vt);
         }
 

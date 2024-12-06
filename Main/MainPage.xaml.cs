@@ -127,7 +127,6 @@
                 _ when command.StartsWith("scale") => this.ScaleTest(int.Parse(args[0]), double.Parse(args[1]), double.Parse(args[2]), double.Parse(args[3])),
                 _ when command.StartsWith("rotation") => this.RotationTest(int.Parse(args[0]), double.Parse(args[1]), double.Parse(args[2]), double.Parse(args[3])),
                 _ when command.StartsWith("object") => "ID : " + this.Scene.AddObjectFromObj(args[0].Replace("\"", string.Empty), args[1].Replace("\"", string.Empty)).ToString(),
-                _ when command.StartsWith("texture") => this.Png(),
                 _ when command.StartsWith("test") => sizeof(byte).ToString(),
                 _ => "Unknown command."
             };

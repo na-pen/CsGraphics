@@ -1,7 +1,9 @@
 namespace CsGraphics
 {
+    using CsGraphics.Asset;
     using CsGraphics.Asset.Image;
     using CsGraphics.Calc;
+    using CsGraphics.Math;
     using Microsoft.Maui.Graphics;
     using Microsoft.Maui.Graphics.Platform;
     using System.Collections.Generic;
@@ -87,25 +89,22 @@ namespace CsGraphics
                 if (@object.IsVisible == true)
                 {
                     Point[] points = Array.Empty<Point>();
-                    Color[] color = Array.Empty<Color>();
-                    bool[] isVisiblePolygon = Array.Empty<bool>();
 
                     CsGraphics.Asset.Object obj;
                     double[] pT = Array.Empty<double>();
+                    Matrix coordinate;
 
                     //if (@object.IsUpdated == true) // オブジェクトの情報に更新があれば再計算
                     if (true)
                     {
-                        (points, color, isVisiblePolygon, _, obj) = Calculation.Calc((CsGraphics.Asset.Object)@object.Clone()); // 点や面の計算
+                        (points, _, coordinate) = Calculation.Calc((CsGraphics.Asset.Object)@object); // 点や面の計算
 
                         @object.Points = points;
-                        @object.PointsColor = color;
-                        @object.IsVisiblePolygon = isVisiblePolygon;
                         @object.IsUpdated = false;
                     }
                     else
                     {
-                        (points, color, isVisiblePolygon, obj) = (@object.Points, @object.PointsColor, @object.IsVisiblePolygon, @object);
+                        (points, coordinate) = (@object.Points, @object.Vertex.Coordinate);
                     }
 
                     if (@object.Polygon != null) // ポリゴンが存在する場合のみ描画
@@ -117,17 +116,15 @@ namespace CsGraphics
                             int[][] array = kvp.Value;
 
                             int[][] array2 = ((Asset.Polygon)@object.Polygon).MtlVertexID[key];
+                            string key2 = string.Empty;
+                            if (key != string.Empty)
+                            {
+                                key2 = ((Asset.Polygon)@object.Polygon).Colors[key].Item2;
+                            }
 
                             // 各ポリゴンをチェック
                             for (int i = 0; i < array.GetLength(0); i++)
                             {
-                                /*
-                                if (!isVisiblePolygon[i])
-                                {
-                                    continue; // カメラに向いていないポリゴンは描画しない
-                                }
-                                */
-
                                 // ポリゴンの頂点を取得
                                 int[] polygon = array[i];
                                 Point[] vertex = polygon.Select(p => points[p - 1]).ToArray();
@@ -143,9 +140,9 @@ namespace CsGraphics
 
                                 // 面を描く
                                 Point[] pixels = RasterizeTriangle(vertex); // 描画するPixelの一覧
-                                double[] polygonPointA = new double[3] { obj.Vertex.Coordinate[0, polygon[0] - 1], obj.Vertex.Coordinate[1, polygon[0] - 1], obj.Vertex.Coordinate[2, polygon[0] - 1] }; // ポリゴンの頂点
-                                double[] polygonPointB = new double[3] { obj.Vertex.Coordinate[0, polygon[1] - 1], obj.Vertex.Coordinate[1, polygon[1] - 1], obj.Vertex.Coordinate[2, polygon[1] - 1] }; // 
-                                double[] polygonPointC = new double[3] { obj.Vertex.Coordinate[0, polygon[2] - 1], obj.Vertex.Coordinate[1, polygon[2] - 1], obj.Vertex.Coordinate[2, polygon[2] - 1] }; // 
+                                double[] polygonPointA = new double[3] { coordinate[0, polygon[0] - 1], coordinate[1, polygon[0] - 1], coordinate[2, polygon[0] - 1] }; // ポリゴンの頂点
+                                double[] polygonPointB = new double[3] { coordinate[0, polygon[1] - 1], coordinate[1, polygon[1] - 1], coordinate[2, polygon[1] - 1] }; // 
+                                double[] polygonPointC = new double[3] { coordinate[0, polygon[2] - 1], coordinate[1, polygon[2] - 1], coordinate[2, polygon[2] - 1] }; // 
                                 Math.Vector abP = new Math.Vector(polygonPointA, polygonPointB); // ABベクトル
                                 Math.Vector acP = new Math.Vector(polygonPointA, polygonPointC); // ACベクトル
                                 Math.Vector polygonEquation = Calc.ZDepth.PlaneEquation(abP, acP);
@@ -169,13 +166,12 @@ namespace CsGraphics
                                         {
                                             double texVx = (a * vt[0][0]) + (b * vt[1][0]) + (c * vt[2][0]);
                                             double texVy = (a * vt[0][1]) + (b * vt[1][1]) + (c * vt[2][1]);
-                                            if (@object.Texture != null && @object.Texture.ContainsKey(key))
+                                            if (@object.Texture != null && @object.Texture.ContainsKey(key2))
                                             {
                                                 (Color cl, _) = ((Asset.Polygon)@object.Polygon).Colors[key];
-                                                int x = (int)((texVx % 1) * @object.Texture[key].GetLength(0)) - 1;
-                                                int y = ((int)((texVy % 1) * @object.Texture[key].GetLength(1))) - 1;
-                                                pixelcolor = @object.Texture[key][x, y].MultiplyAlpha(cl.Alpha);
-                                                int m = 0;
+                                                int x = (int)((texVx % 1) * @object.Texture[key2].Item2) - 1;
+                                                int y = ((int)((texVy % 1) * @object.Texture[key2].Item2)) - 1;
+                                                pixelcolor = new Color(@object.Texture[key2].Item3[@object.Texture[key2].Item1 * y * 4 + (x * 4) + 0], @object.Texture[key2].Item3[@object.Texture[key2].Item1 * y * 4 + (x * 4) + 1], @object.Texture[key2].Item3[@object.Texture[key2].Item1 * y * 4 + (x * 4) + 2], @object.Texture[key2].Item3[@object.Texture[key2].Item1 * y * 4 + (x * 4) + 3]).MultiplyAlpha(cl.Alpha);
                                             }
                                         }
                                         // Zバッファを更新 (近いものだけ描画)
@@ -343,20 +339,20 @@ namespace CsGraphics
         /// <param name="scale">拡大率.</param>
         /// <param name="polygon">面を構成する点の情報.</param>
         /// <returns>id.</returns>
-        public int AddObject(string name, double[,] vertexCoord, Dictionary<string, (Color, string)>? polygonColor = null, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null, Dictionary<string, int[][]>? polygon = null)
+        public int AddObject(string name, double[,] vertexCoord, Dictionary<string, (Color, string)>? polygonColor = null,  double[]? origin = null, bool visible = true, double[]? scale = null, Dictionary<string, int[][]>? polygon = null)
         {
             int id = this.Objects.Count;
-            CsGraphics.Asset.Object @object = new(name, vertexCoord, id, polygonColor, vertexColor, origin, visible, scale, polygon);
+            CsGraphics.Asset.Object @object = new(name, vertexCoord, id, polygonColor,  origin, visible, scale, polygon);
             this.Objects.Add(@object);
 
             this.IsUpdated = true;
             return id;
         }
 
-        private int AddObject(string name, double[,] vertexCoord, Dictionary<string, (Color, string)>? polygonColor = null, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null, Dictionary<string, int[][]>? polygon = null, Math.Matrix[]? normal = null, Dictionary<string, int[][]>? mtlV = null, double[][] vt = null)
+        private int AddObject(string name, double[,] vertexCoord, Dictionary<string, (Color, string)>? polygonColor = null,  double[]? origin = null, bool visible = true, double[]? scale = null, Dictionary<string, int[][]>? polygon = null, Math.Matrix[]? normal = null, Dictionary<string, int[][]>? mtlV = null, double[][] vt = null)
         {
             int id = this.Objects.Count;
-            CsGraphics.Asset.Object @object = new(name, vertexCoord, id, polygonColor, vertexColor, origin, visible, scale, polygon, normal, mtlV, vt);
+            CsGraphics.Asset.Object @object = new(name, vertexCoord, id, polygonColor,  origin, visible, scale, polygon, normal, mtlV, vt);
             this.Objects.Add(@object);
 
             this.IsUpdated = true;
@@ -450,6 +446,5 @@ namespace CsGraphics
             this.Objects[id].SetRotation(x, y, z);
             this.IsUpdated = true;
         }
-
     }
 }

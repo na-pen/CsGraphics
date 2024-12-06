@@ -17,7 +17,7 @@ namespace CsGraphics.Asset
         /// <param name="origin">オブジェクトの原点.</param>
         /// <param name="visible">オブジェクトの表示状態.</param>
         /// <param name="scale">オブジェクトの拡大倍率.</param>
-        internal Object(string name, double[,] vertexCoord, int id = -1, Dictionary<string, (Color, string)>? polygonColor = null, Color[]? vertexColor = null, double[]? origin = null, bool visible = true, double[]? scale = null, Dictionary<string, int[][]>? polygon = null, Math.Matrix[] normal = null, Dictionary<string, int[][]>? mtlV = null, double[][] vt = null)
+        internal Object(string name, double[,] vertexCoord, int id = -1, Dictionary<string, (Color, string)>? polygonColor = null, double[]? origin = null, bool visible = true, double[]? scale = null, Dictionary<string, int[][]>? polygon = null, Math.Matrix[] normal = null, Dictionary<string, int[][]>? mtlV = null, double[][] vt = null)
         {
             ID = id;
             Name = name;
@@ -41,7 +41,7 @@ namespace CsGraphics.Asset
                 Magnification = scale;
             }
 
-            Vertex = new(id, vertexCoord, vertexColor, vt);
+            Vertex = new(id, vertexCoord, vt);
 
             if (polygon != null && polygonColor != null)
             {
@@ -49,7 +49,7 @@ namespace CsGraphics.Asset
             }
         }
 
-        private Object(string name, Vertex vertex, int id, Math.Matrix origin, double[] magnification, bool visible, double[] angle, Polygon? polygon, Dictionary<string, Color[,]>? texture)
+        private Object(string name, Vertex vertex, int id, Math.Matrix origin, double[] magnification, bool visible, double[] angle, Polygon? polygon, Dictionary<string, (int, int, byte[])>? texture)
         {
             Name = name;
             IsVisible = visible;
@@ -119,7 +119,7 @@ namespace CsGraphics.Asset
         /// </summary>
         internal bool IsUpdated { get; set; } = true;
 
-        internal Dictionary<string, Color[,]>? Texture { get; set; } = null;
+        internal Dictionary<string, (int, int, byte[])>? Texture { get; set; } = null;
 
         //------------------------------------------------------ ここから 計算済み情報の保持 ------------------------------------------------------/
 
@@ -127,16 +127,6 @@ namespace CsGraphics.Asset
         /// Gets or sets 計算後の画面上の描画座標を保持.
         /// </summary>
         internal Point[] Points { get; set; } = Array.Empty<Point>();
-
-        /// <summary>
-        /// Gets or sets 計算後の画面上の頂点色を保持.
-        /// </summary>
-        internal Color[] PointsColor { get; set; } = Array.Empty<Color>();
-
-        /// <summary>
-        /// Gets or sets 計算後の画面上の面の表示状態の保持.
-        /// </summary>
-        internal bool[] IsVisiblePolygon { get; set; } = Array.Empty<bool>();
 
         /// <summary>
         /// 自身をシャドーコピーする.
@@ -205,12 +195,23 @@ namespace CsGraphics.Asset
         {
             if (Texture == null)
             {
-                Texture = new Dictionary<string, Color[,]>();
+                Texture = new Dictionary<string, (int, int, byte[])>();
             }
             IsUpdated = true;
-            if (path != string.Empty)
+            if (path != string.Empty && !Texture.ContainsKey(path))
             {
-                Texture.Add(matName, Bitmap.LoadFromFile(path));
+                switch(Path.GetExtension(path))
+                {
+                    case ".bmp":
+
+                        Texture.Add(path, Bitmap.LoadFromFile(path));
+                        break;
+
+                    case ".png":
+
+                        Texture.Add(path, Png.LoadFromFile(path));
+                        break;
+                }
             }
         }
 
@@ -220,8 +221,8 @@ namespace CsGraphics.Asset
             int result = 0;
             foreach (var kvp in Texture)
             {
-                Color[,] array = kvp.Value;
-                result += array.GetLength(dimension);
+                (int, int, byte[]) array = kvp.Value;
+                result += array.Item3.GetLength(dimension);
             }
             return result;
         }
