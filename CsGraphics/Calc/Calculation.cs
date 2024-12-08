@@ -15,18 +15,75 @@
         /// </summary>
         /// <param name="object">オブジェクト.</param>
         /// <returns>スクリーン座標のリスト.</returns>
-
-        /* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-        前:
-                internal static (Point[], Color[], bool[], double[], Object.Object) Calc(Object.Object @object)
-                {
-        後:
-                internal static (Point[], Color[], bool[], double[], Object) Calc(Object @object)
-                {
-        */
-        internal static (Point[], double[], Matrix) Calc(CsGraphics.Asset.Object @object)
+        internal static (Point[], double[], Matrix) Calc(CsGraphics.Asset.Object @object, bool mode = true, int[]? windowSize = null)
         {
-            return DrawFromOrigin(@object);
+            if (windowSize == null)
+            {
+                windowSize = new int[2] { 1920, 1080 };
+            }
+            switch (mode)
+            {
+                case true:
+                    return PerspectiveProjectionFromOrigin(@object, windowSize);
+
+                case false:
+                    return ParallelProjectionFromOrigin(@object);
+
+            }
+        }
+
+        private static (Point[], double[], Matrix) PerspectiveProjectionFromOrigin(CsGraphics.Asset.Object @object, int[] windowSize)
+        {
+            double zMax = 1920;
+            double zMin = 0;
+            double[] o = new double[3] { 0, 0, 0 }; // 画面の中心座標
+            float aspect = windowSize[0] / windowSize[1];
+
+            List<double> depthZ = new List<double>(); // z深度 : 使用しない
+
+            List<Point> result = new(); // 画面上の描画座標
+
+            Matrix scale = CalcScale(@object); // 拡大縮小行列
+            Matrix rotate = CalcRotation(@object); // 回転行列
+            Matrix translate = CalcTranslation(@object); // 平行移動行列
+
+            Matrix matrix = translate * rotate * scale; // 拡大縮小 → 回転 → 平行移動 をした変換行列を計算
+
+            Matrix vertex = matrix * @object.Vertex.Coordinate;
+
+            Matrix coordinate = new Matrix(@object.Vertex.Coordinate.GetLength(0), @object.Vertex.Coordinate.GetLength(1));
+
+            Matrix perspectiveMatrix = new Matrix(
+                new double[,]
+                {
+                    {0, 0, 0, 0 },
+                    {0, 0, 0, 0 },
+                    {0, 0, 0, 0 },
+                    {0, 0, 0, 0 },
+                });
+
+            float fovY = float.DegreesToRadians(60);
+            float fovX = 2 * System.MathF.Atan(System.MathF.Tan(fovY / 2) / aspect);
+
+            for (int n = 0; n < @object.Vertex.Coordinate.GetLength(1); n++)
+            {
+                result.Add(new Point(vertex[0, n], vertex[1, n])); // スクリーン上の座標を求める計算 この場合はそのままコピー
+
+                // 計算後の3D頂点座標を代入
+                coordinate[0, n] = vertex[0, n];
+                coordinate[1, n] = vertex[1, n];
+                coordinate[2, n] = vertex[2, n];
+                coordinate[3, n] = vertex[3, n];
+            }
+
+            // ポリゴンの法線がz=0の面とどの向きで交差するかどうか確認する
+            if (@object.Polygon != null)
+            {
+                GetPolygonBounds(result, (Asset.Polygon)@object.Polygon); // 面ごとの画面上の描画範囲を求める
+            }
+
+            return (result.ToArray(), depthZ.ToArray(), coordinate);
+
         }
 
         /// <summary>
@@ -34,16 +91,7 @@
         /// </summary>
         /// <param name="object">オブジェクト.</param>
         /// <returns>スクリーン座標のリスト.</returns>
-
-        /* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-        前:
-                private static (Point[], Color[], bool[], double[], Object.Object) DrawFromOrigin(Object.Object @object)
-                {
-        後:
-                private static (Point[], Color[], bool[], double[], Object) DrawFromOrigin(Object @object)
-                {
-        */
-        private static (Point[], double[], Matrix) DrawFromOrigin(CsGraphics.Asset.Object @object)
+        private static (Point[], double[], Matrix) ParallelProjectionFromOrigin(CsGraphics.Asset.Object @object)
         {
             List<double> depthZ = new List<double>(); // z深度 : 使用しない
 
@@ -114,15 +162,6 @@
         /// オブジェクトの移動を計算する.
         /// </summary>
         /// <returns>移動の行列.</returns>
-
-        /* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-        前:
-                private static Matrix CalcTranslation(Object.Object @object)
-                {
-        後:
-                private static Matrix CalcTranslation(Object @object)
-                {
-        */
         private static Matrix CalcTranslation(CsGraphics.Asset.Object @object)
         {
             Matrix temp = new(4);
@@ -138,15 +177,6 @@
         /// オブジェクトの拡大縮小を計算する.
         /// </summary>
         /// <returns>拡大縮小の行列.</returns>
-
-        /* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-        前:
-                private static Matrix CalcScale(Object.Object @object)
-                {
-        後:
-                private static Matrix CalcScale(Object @object)
-                {
-        */
         private static Matrix CalcScale(CsGraphics.Asset.Object @object)
         {
             Matrix temp = new(4);
@@ -160,15 +190,6 @@
         /// 行列を用いて、YXZの順に回転を計算する.
         /// </summary>
         /// <returns>回転行列.</returns>
-
-        /* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-        前:
-                private static Matrix CalcRotation(Object.Object @object)
-                {
-        後:
-                private static Matrix CalcRotation(Object @object)
-                {
-        */
         private static Matrix CalcRotation(CsGraphics.Asset.Object @object)
         {
             Matrix xAxis = new(4);
