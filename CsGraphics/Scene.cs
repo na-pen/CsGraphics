@@ -35,6 +35,10 @@ namespace CsGraphics
             this.FrameRate = frameRate;
 
             this.Objects = new List<CsGraphics.Asset.Object>(); // 初期化
+
+            this.ViewCamTranslation.Identity();
+
+            this.ViewCamRotation.Identity();
         }
 
         /// <summary>
@@ -46,6 +50,10 @@ namespace CsGraphics
         /// Gets or sets a value indicating whether シーンが更新されたかどうか.
         /// </summary>
         public bool IsUpdated { get; set; } = true;
+
+        internal Math.Matrix ViewCamTranslation { get; set; } = new Matrix(4);
+        internal Math.Matrix ViewCamRotation { get; set; } = new Matrix(4);
+        private double[] camRotate = new double[3] {0,0,0};
 
         public void Draw(ICanvas canvas, RectF dirtyRect)
         {
@@ -97,7 +105,7 @@ namespace CsGraphics
                     //if (@object.IsUpdated == true) // オブジェクトの情報に更新があれば再計算
                     if (true)
                     {
-                        (points, _, coordinate) = Calculation.Calc((CsGraphics.Asset.Object)@object); // 点や面の計算
+                        (points, _, coordinate) = Calculation.Calc((CsGraphics.Asset.Object)@object, ViewCamRotation * ViewCamTranslation); // 点や面の計算
 
                         @object.Points = points;
                         @object.IsUpdated = false;
@@ -139,10 +147,16 @@ namespace CsGraphics
                                 }
 
                                 // 面を描く
-                                Point[] pixels = RasterizeTriangle(vertex); // 描画するPixelの一覧
                                 double[] polygonPointA = new double[3] { coordinate[0, polygon[0] - 1], coordinate[1, polygon[0] - 1], coordinate[2, polygon[0] - 1] }; // ポリゴンの頂点
                                 double[] polygonPointB = new double[3] { coordinate[0, polygon[1] - 1], coordinate[1, polygon[1] - 1], coordinate[2, polygon[1] - 1] }; // 
                                 double[] polygonPointC = new double[3] { coordinate[0, polygon[2] - 1], coordinate[1, polygon[2] - 1], coordinate[2, polygon[2] - 1] }; // 
+
+                                if (polygonPointA[0] < -1 || polygonPointB[0] < 0 || polygonPointC[0] < 0 || polygonPointA[0] > canvasWidth || polygonPointB[0] > canvasWidth || polygonPointC[0] > canvasWidth || polygonPointA[1] < -1 || polygonPointB[1] < 0 || polygonPointC[1] < 0 || polygonPointA[1] > canvasHeight || polygonPointB[1] > canvasHeight || polygonPointC[1] > canvasHeight)
+                                {
+                                    continue;
+                                }
+                                Point[] pixels = RasterizeTriangle(vertex); // 描画するPixelの一覧
+
                                 Math.Vector abP = new Math.Vector(polygonPointA, polygonPointB); // ABベクトル
                                 Math.Vector acP = new Math.Vector(polygonPointA, polygonPointC); // ACベクトル
                                 Math.Vector polygonEquation = Calc.ZDepth.PlaneEquation(abP, acP);
@@ -159,7 +173,7 @@ namespace CsGraphics
                                         double[] pixel = new double[2] { (int)p.X, (int)p.Y };
 
                                         // Z深度を計算
-                                        (double depth, double a, double b, double c) = Calc.ZDepth.ZDepsParallel(pixel, polygonPointA, polygonPointB, polygonPointC, 500, -500);
+                                        (double depth, double a, double b, double c) = Calc.ZDepth.ZDepsParallel(pixel, polygonPointA, polygonPointB, polygonPointC, 1500, 0);
 
                                         // テクスチャ中の座標を計算
                                         if (vt != null)
@@ -230,7 +244,6 @@ namespace CsGraphics
             }
 
             canvas.DrawImage(this.CreateImageFromColors(pixelColors, canvasWidth, canvasHeight), 0, 0, dirtyRect.Width, dirtyRect.Height);
-            this.IsUpdated = false;
         }
 
         private static Point[] RasterizeTriangle(Point[] pt)
@@ -445,6 +458,43 @@ namespace CsGraphics
         {
             this.Objects[id].SetRotation(x, y, z);
             this.IsUpdated = true;
+        }
+
+        public void SetTranslationViewCam(double x, double y, double z)
+        {
+            IsUpdated = true;
+
+            this.ViewCamTranslation[0, 3] += x;
+            this.ViewCamTranslation[1, 3] += y;
+            this.ViewCamTranslation[2, 3] += z;
+        }
+
+        public void SetRotationViewCam(double x, double y, double z)
+        {
+            this.camRotate = new double[3] { camRotate[0] + x, camRotate[1] + y, camRotate[2] + z };
+            IsUpdated = true;
+            Matrix xAxis = new(4);
+            xAxis.Identity();
+            xAxis[1, 1] = System.Math.Cos(camRotate[0] * System.Math.PI / 180f);
+            xAxis[2, 1] = System.Math.Sin(camRotate[0] * System.Math.PI / 180f);
+            xAxis[1, 2] = -1 * System.Math.Sin(camRotate[0] * System.Math.PI / 180f);
+            xAxis[2, 2] = System.Math.Cos(camRotate[0] * System.Math.PI / 180f);
+
+            Matrix yAxis = new(4);
+            yAxis.Identity();
+            yAxis[0, 0] = System.Math.Cos(camRotate[1] * System.Math.PI / 180f);
+            yAxis[2, 0] = -1 * System.Math.Sin(camRotate[1] * System.Math.PI / 180f);
+            yAxis[0, 2] = System.Math.Sin(camRotate[1] * System.Math.PI / 180f);
+            yAxis[2, 2] = System.Math.Cos(camRotate[1] * System.Math.PI / 180f);
+
+            Matrix zAxis = new(4);
+            zAxis.Identity();
+            zAxis[0, 0] = System.Math.Cos(camRotate[2] * System.Math.PI / 180f);
+            zAxis[0, 1] = -1 * System.Math.Sin(camRotate[2] * System.Math.PI / 180f);
+            zAxis[1, 0] = System.Math.Sin(camRotate[2] * System.Math.PI / 180f);
+            zAxis[1, 1] = System.Math.Cos(camRotate[2] * System.Math.PI / 180f);
+
+            this.ViewCamRotation = yAxis * xAxis * zAxis;
         }
     }
 }

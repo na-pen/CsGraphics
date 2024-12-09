@@ -24,9 +24,9 @@
                 internal static (Point[], Color[], bool[], double[], Object) Calc(Object @object)
                 {
         */
-        internal static (Point[], double[], Matrix) Calc(CsGraphics.Asset.Object @object)
+        internal static (Point[], double[], Matrix) Calc(CsGraphics.Asset.Object @object,Matrix matrixCam)
         {
-            return DrawFromOrigin(@object);
+            return DrawFromOrigin(@object, matrixCam);
         }
 
         /// <summary>
@@ -43,7 +43,7 @@
                 private static (Point[], Color[], bool[], double[], Object) DrawFromOrigin(Object @object)
                 {
         */
-        private static (Point[], double[], Matrix) DrawFromOrigin(CsGraphics.Asset.Object @object)
+        private static (Point[], double[], Matrix) DrawFromOrigin(CsGraphics.Asset.Object @object, Matrix matrixCam)
         {
             List<double> depthZ = new List<double>(); // z深度 : 使用しない
 
@@ -55,7 +55,7 @@
 
             Matrix matrix = translate * rotate * scale; // 拡大縮小 → 回転 → 平行移動 をした変換行列を計算
 
-            Matrix vertex = matrix * @object.Vertex.Coordinate;
+            Matrix vertex = matrixCam * matrix * @object.Vertex.Coordinate;
 
             Matrix coordinate = new Matrix(@object.Vertex.Coordinate.GetLength(0), @object.Vertex.Coordinate.GetLength(1));
             for (int n = 0; n < @object.Vertex.Coordinate.GetLength(1); n++)

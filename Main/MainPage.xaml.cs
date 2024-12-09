@@ -20,6 +20,12 @@
         /// </summary>
         private bool isUpdating = false;
 
+        private bool isPointerPressing = false;
+        private bool isPointerLongPressing = false;
+
+        private Point PointerPressed = new Point(0, 0);
+        private bool t = false;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="MainPage"/> class.
         /// </summary>
@@ -31,8 +37,16 @@
             this.graphicsView.Drawable = this.scene;
             this.BindingContext = this;
             this.Scene = this.scene;  // Drawable に設定
-
+            this.initCam();
             this.UpdateLoop();
+        }
+
+        private async void initCam()
+        {
+            await Task.Delay(1500);
+            // レイアウトが変更された後、すべての要素が描画されたタイミングで実行される処理
+            Scene.SetTranslationViewCam((int)graphicsView.Width / 2, (int)graphicsView.Height / 5, 100);
+
         }
 
         /// <summary>
@@ -70,6 +84,7 @@
                 {
                     // 画面を更新
                     this.graphicsView.Invalidate();
+                    this.scene.IsUpdated = false;
                 }
 
                 // 次のフレームまで待機
@@ -80,6 +95,7 @@
                     await Task.Delay(delay);
                 }
             }
+
         }
 
         // コマンドが入力された時の処理
@@ -117,7 +133,7 @@
         }
 
         // コマンド処理ロジック
-        private unsafe string ProcessCommand(string command)
+        private string ProcessCommand(string command)
         {
             string pattern = @"\((.*?)\)";
             string[] args = Regex.Match(command, pattern).Groups[1].Value.Split(',');
@@ -127,7 +143,6 @@
                 _ when command.StartsWith("scale") => this.ScaleTest(int.Parse(args[0]), double.Parse(args[1]), double.Parse(args[2]), double.Parse(args[3])),
                 _ when command.StartsWith("rotation") => this.RotationTest(int.Parse(args[0]), double.Parse(args[1]), double.Parse(args[2]), double.Parse(args[3])),
                 _ when command.StartsWith("object") => "ID : " + this.Scene.AddObjectFromObj(args[0].Replace("\"", string.Empty), args[1].Replace("\"", string.Empty)).ToString(),
-                _ when command.StartsWith("test") => sizeof(byte).ToString(),
                 _ => "Unknown command."
             };
         }
@@ -154,6 +169,38 @@
             this.Scene.RotationObject(id, x, y, z);
 
             return "Done!";
+        }
+
+        private async void PointerGestureRecognizer_PointerPressed(object sender, PointerEventArgs e)
+        {
+            this.PointerPressed = (Point)e.GetPosition(this.graphicsView);
+            this.isPointerPressing = true;
+            await WaitForLongPress();
+        }
+
+        private async Task WaitForLongPress()
+        {
+            // 0.5秒(500ミリ秒)待機
+            await Task.Delay(200);
+
+            // マウスがまだ押されているか確認
+            if (this.isPointerPressing)
+            {
+                this.isPointerLongPressing = true;
+            }
+        }
+
+        private void PointerGestureRecognizer_PointerReleased(object sender, PointerEventArgs e)
+        {
+            this.isPointerPressing = false;
+            if (this.isPointerLongPressing)
+            {
+                this.isPointerLongPressing = false;
+                var t = (Point)e.GetPosition(this.graphicsView) - this.PointerPressed;
+                Scene.SetTranslationViewCam(t.Width, -1 * t.Height, 0);
+                //double x =  * 180) * Math.PI / 180f;
+                //Scene.SetRotationViewCam(t.Height / graphicsView.Height * 360, t.Width / graphicsView.Width * 360, 0);
+            }
         }
 
         /*

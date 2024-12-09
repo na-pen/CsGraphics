@@ -34,7 +34,7 @@ namespace CsGraphics.Asset
 
             if (scale == null)
             {
-                Magnification = new double[] { 1, 1, 1 };
+                Magnification = new double[] { 500, 500, 500 };
             }
             else
             {

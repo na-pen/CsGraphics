@@ -19,7 +19,13 @@
             x:Name="graphicsView"
             Grid.Row="0"
             Grid.Column="0"
-            Grid.ColumnSpan="2" />
+            Grid.ColumnSpan="2">
+            <GraphicsView.GestureRecognizers>
+                <PointerGestureRecognizer 
+                    PointerPressed="PointerGestureRecognizer_PointerPressed"
+                    PointerReleased="PointerGestureRecognizer_PointerReleased"/>
+            </GraphicsView.GestureRecognizers>
+        </GraphicsView>
 
 
         <ScrollView
