@@ -91,7 +91,6 @@
                 {
                     // 画面を更新
                     this.graphicsView.Invalidate();
-                    this.scene.IsUpdated = false;
                 }
 
                 // 次のフレームまで待機

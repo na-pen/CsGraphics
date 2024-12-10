@@ -102,13 +102,13 @@ namespace CsGraphics
                     double[] pT = Array.Empty<double>();
                     Matrix coordinate;
 
-                    //if (@object.IsUpdated == true) // オブジェクトの情報に更新があれば再計算
-                    if (true)
+                    if (@object.IsUpdated == true || this.IsUpdated) // オブジェクトの情報に更新があれば再計算
                     {
                         (points, _, coordinate) = Calculation.Calc((CsGraphics.Asset.Object)@object, ViewCamRotation * ViewCamTranslation, canvasWidth, canvasHeight); // 点や面の計算
 
                         @object.Points = points;
                         @object.IsUpdated = false;
+                        this.IsUpdated = false;
                     }
                     else
                     {
@@ -151,9 +151,9 @@ namespace CsGraphics
                                 double[] polygonPointB = new double[3] { coordinate[0, polygon[1] - 1], coordinate[1, polygon[1] - 1], coordinate[2, polygon[1] - 1] }; // 
                                 double[] polygonPointC = new double[3] { coordinate[0, polygon[2] - 1], coordinate[1, polygon[2] - 1], coordinate[2, polygon[2] - 1] }; // 
 
-                                // if (((0 < polygonPointA[0] && polygonPointA[0] < canvasWidth) && (0 < polygonPointA[1] && polygonPointA[1] < canvasHeight)) || ((0 < polygonPointB[0] && polygonPointB[0] < canvasWidth) && (0 < polygonPointB[1] && polygonPointB[1] < canvasHeight)) || ((0 < polygonPointC[0] && polygonPointC[0] < canvasWidth) && (0 < polygonPointC[1] && polygonPointC[1] < canvasHeight)))
-                                //if (((-1 < polygonPointA[0] && polygonPointA[0] < c) && (0 < polygonPointA[1] && polygonPointA[1] < canvasHeight)) || ((0 < polygonPointB[0] && polygonPointB[0] < canvasWidth) && (0 < polygonPointB[1] && polygonPointB[1] < canvasHeight)) || ((0 < polygonPointC[0] && polygonPointC[0] < canvasWidth) && (0 < polygonPointC[1] && polygonPointC[1] < canvasHeight)))
-                                if (true)
+                                if (((0 < polygonPointA[0] && polygonPointA[0] < canvasWidth) && (0 < polygonPointA[1] && polygonPointA[1] < canvasHeight)) || ((0 < polygonPointB[0] && polygonPointB[0] < canvasWidth) && (0 < polygonPointB[1] && polygonPointB[1] < canvasHeight)) || ((0 < polygonPointC[0] && polygonPointC[0] < canvasWidth) && (0 < polygonPointC[1] && polygonPointC[1] < canvasHeight)))
+                                // if (((-1 < polygonPointA[0] && polygonPointA[0] < 1) && (-1 < polygonPointA[1] && polygonPointA[1] < 1)) || ((-1 < polygonPointB[0] && polygonPointB[0] < 1) && (-1 < polygonPointB[1] && polygonPointB[1] < 1)) || ((-1 < polygonPointC[0] && polygonPointC[0] < 1) && (-1 < polygonPointC[1] && polygonPointC[1] < 1)))
+
                                 {
 
                                     Point[] pixels = RasterizeTriangle(vertex); // 描画するPixelの一覧
@@ -184,13 +184,13 @@ namespace CsGraphics
                                                 if (@object.Texture != null && @object.Texture.ContainsKey(key2))
                                                 {
                                                     (Color cl, _) = ((Asset.Polygon)@object.Polygon).Colors[key];
-                                                    int x = (int)((texVx % 1) * @object.Texture[key2].Item2) - 1;
-                                                    int y = ((int)((texVy % 1) * @object.Texture[key2].Item2)) - 1;
+                                                    int x = (int)((texVx % 1) * @object.Texture[key2].Item2);
+                                                    int y = ((int)((texVy % 1) * @object.Texture[key2].Item2));
                                                     pixelcolor = new Color(@object.Texture[key2].Item3[@object.Texture[key2].Item1 * y * 4 + (x * 4) + 0], @object.Texture[key2].Item3[@object.Texture[key2].Item1 * y * 4 + (x * 4) + 1], @object.Texture[key2].Item3[@object.Texture[key2].Item1 * y * 4 + (x * 4) + 2], @object.Texture[key2].Item3[@object.Texture[key2].Item1 * y * 4 + (x * 4) + 3]).MultiplyAlpha(cl.Alpha);
                                                 }
                                             }
                                             // Zバッファを更新 (近いものだけ描画)
-                                            if (depth < zBuffer[(int)p.X, (int)p.Y] && depth >= 0)
+                                            if (depth < zBuffer[(int)p.X, (int)p.Y] && depth >= -1)
                                             {
                                                 zBuffer[(int)p.X, (int)p.Y] = depth;
 

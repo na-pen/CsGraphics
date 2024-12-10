@@ -46,7 +46,7 @@ namespace CsGraphics.Calc
             result = A * polygonPointA[2] + B * polygonPointB[2] + C * polygonPointC[2];
 
 
-            return (MinMaxNormalization(result, zMax, zMin), A, B, C);
+            return (result, A, B, C);
         }
 
         internal static double TriangleArea(double x1, double y1, double x2, double y2, double x3, double y3)
