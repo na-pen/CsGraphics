@@ -53,7 +53,7 @@ namespace CsGraphics
 
         internal Math.Matrix ViewCamTranslation { get; set; } = new Matrix(4);
         internal Math.Matrix ViewCamRotation { get; set; } = new Matrix(4);
-        private double[] camRotate = new double[3] {0,0,0};
+        private double[] camRotate = new double[3] { 0, 0, 0 };
 
         public void Draw(ICanvas canvas, RectF dirtyRect)
         {
@@ -105,7 +105,7 @@ namespace CsGraphics
                     //if (@object.IsUpdated == true) // オブジェクトの情報に更新があれば再計算
                     if (true)
                     {
-                        (points, _, coordinate) = Calculation.Calc((CsGraphics.Asset.Object)@object, ViewCamRotation * ViewCamTranslation); // 点や面の計算
+                        (points, _, coordinate) = Calculation.Calc((CsGraphics.Asset.Object)@object, ViewCamRotation * ViewCamTranslation, canvasWidth, canvasHeight); // 点や面の計算
 
                         @object.Points = points;
                         @object.IsUpdated = false;
@@ -151,88 +151,91 @@ namespace CsGraphics
                                 double[] polygonPointB = new double[3] { coordinate[0, polygon[1] - 1], coordinate[1, polygon[1] - 1], coordinate[2, polygon[1] - 1] }; // 
                                 double[] polygonPointC = new double[3] { coordinate[0, polygon[2] - 1], coordinate[1, polygon[2] - 1], coordinate[2, polygon[2] - 1] }; // 
 
-                                if (polygonPointA[0] < -1 || polygonPointB[0] < 0 || polygonPointC[0] < 0 || polygonPointA[0] > canvasWidth || polygonPointB[0] > canvasWidth || polygonPointC[0] > canvasWidth || polygonPointA[1] < -1 || polygonPointB[1] < 0 || polygonPointC[1] < 0 || polygonPointA[1] > canvasHeight || polygonPointB[1] > canvasHeight || polygonPointC[1] > canvasHeight)
+                                // if (((0 < polygonPointA[0] && polygonPointA[0] < canvasWidth) && (0 < polygonPointA[1] && polygonPointA[1] < canvasHeight)) || ((0 < polygonPointB[0] && polygonPointB[0] < canvasWidth) && (0 < polygonPointB[1] && polygonPointB[1] < canvasHeight)) || ((0 < polygonPointC[0] && polygonPointC[0] < canvasWidth) && (0 < polygonPointC[1] && polygonPointC[1] < canvasHeight)))
+                                //if (((-1 < polygonPointA[0] && polygonPointA[0] < c) && (0 < polygonPointA[1] && polygonPointA[1] < canvasHeight)) || ((0 < polygonPointB[0] && polygonPointB[0] < canvasWidth) && (0 < polygonPointB[1] && polygonPointB[1] < canvasHeight)) || ((0 < polygonPointC[0] && polygonPointC[0] < canvasWidth) && (0 < polygonPointC[1] && polygonPointC[1] < canvasHeight)))
+                                if (true)
                                 {
-                                    continue;
-                                }
-                                Point[] pixels = RasterizeTriangle(vertex); // 描画するPixelの一覧
 
-                                Math.Vector abP = new Math.Vector(polygonPointA, polygonPointB); // ABベクトル
-                                Math.Vector acP = new Math.Vector(polygonPointA, polygonPointC); // ACベクトル
-                                Math.Vector polygonEquation = Calc.ZDepth.PlaneEquation(abP, acP);
+                                    Point[] pixels = RasterizeTriangle(vertex); // 描画するPixelの一覧
 
-                                foreach (Point p in pixels)
-                                {
-                                    if ((int)p.X < 0 || (int)p.Y < 0 || (int)p.Y > canvasHeight - 1 || (int)p.X > canvasWidth - 1)
+                                    Math.Vector abP = new Math.Vector(polygonPointA, polygonPointB); // ABベクトル
+                                    Math.Vector acP = new Math.Vector(polygonPointA, polygonPointC); // ACベクトル
+                                    Math.Vector polygonEquation = Calc.ZDepth.PlaneEquation(abP, acP);
+
+                                    foreach (Point p in pixels)
                                     {
-                                        continue;
-                                    }
-                                    else
-                                    {
-                                        Color? pixelcolor = null;
-                                        double[] pixel = new double[2] { (int)p.X, (int)p.Y };
-
-                                        // Z深度を計算
-                                        (double depth, double a, double b, double c) = Calc.ZDepth.ZDepsParallel(pixel, polygonPointA, polygonPointB, polygonPointC, 1500, 0);
-
-                                        // テクスチャ中の座標を計算
-                                        if (vt != null)
+                                        if ((int)p.X < 0 || (int)p.Y < 0 || (int)p.Y > canvasHeight - 1 || (int)p.X > canvasWidth - 1)
                                         {
-                                            double texVx = (a * vt[0][0]) + (b * vt[1][0]) + (c * vt[2][0]);
-                                            double texVy = (a * vt[0][1]) + (b * vt[1][1]) + (c * vt[2][1]);
-                                            if (@object.Texture != null && @object.Texture.ContainsKey(key2))
-                                            {
-                                                (Color cl, _) = ((Asset.Polygon)@object.Polygon).Colors[key];
-                                                int x = (int)((texVx % 1) * @object.Texture[key2].Item2) - 1;
-                                                int y = ((int)((texVy % 1) * @object.Texture[key2].Item2)) - 1;
-                                                pixelcolor = new Color(@object.Texture[key2].Item3[@object.Texture[key2].Item1 * y * 4 + (x * 4) + 0], @object.Texture[key2].Item3[@object.Texture[key2].Item1 * y * 4 + (x * 4) + 1], @object.Texture[key2].Item3[@object.Texture[key2].Item1 * y * 4 + (x * 4) + 2], @object.Texture[key2].Item3[@object.Texture[key2].Item1 * y * 4 + (x * 4) + 3]).MultiplyAlpha(cl.Alpha);
-                                            }
+                                            continue;
                                         }
-                                        // Zバッファを更新 (近いものだけ描画)
-                                        if (depth < zBuffer[(int)p.X, (int)p.Y] && depth >= 0)
+                                        else
                                         {
-                                            zBuffer[(int)p.X, (int)p.Y] = depth;
+                                            Color? pixelcolor = null;
+                                            double[] pixel = new double[2] { (int)p.X, (int)p.Y };
 
-                                            if (pixelcolor == null)
+                                            // Z深度を計算
+                                            (double depth, double a, double b, double c) = Calc.ZDepth.ZDepsParallel(pixel, polygonPointA, polygonPointB, polygonPointC, 1500, 0);
+
+                                            // テクスチャ中の座標を計算
+                                            if (vt != null)
                                             {
-                                                (Color cl, _) = ((Asset.Polygon)@object.Polygon).Colors[key];
-                                                pixelColors[(int)p.X, (int)p.Y] = cl; // 色を設定
+                                                double texVx = (a * vt[0][0]) + (b * vt[1][0]) + (c * vt[2][0]);
+                                                double texVy = (a * vt[0][1]) + (b * vt[1][1]) + (c * vt[2][1]);
+                                                if (@object.Texture != null && @object.Texture.ContainsKey(key2))
+                                                {
+                                                    (Color cl, _) = ((Asset.Polygon)@object.Polygon).Colors[key];
+                                                    int x = (int)((texVx % 1) * @object.Texture[key2].Item2) - 1;
+                                                    int y = ((int)((texVy % 1) * @object.Texture[key2].Item2)) - 1;
+                                                    pixelcolor = new Color(@object.Texture[key2].Item3[@object.Texture[key2].Item1 * y * 4 + (x * 4) + 0], @object.Texture[key2].Item3[@object.Texture[key2].Item1 * y * 4 + (x * 4) + 1], @object.Texture[key2].Item3[@object.Texture[key2].Item1 * y * 4 + (x * 4) + 2], @object.Texture[key2].Item3[@object.Texture[key2].Item1 * y * 4 + (x * 4) + 3]).MultiplyAlpha(cl.Alpha);
+                                                }
                                             }
-                                            else if (pixelcolor.Alpha != 1)
+                                            // Zバッファを更新 (近いものだけ描画)
+                                            if (depth < zBuffer[(int)p.X, (int)p.Y] && depth >= 0)
                                             {
-                                                pixelColors[(int)p.X, (int)p.Y] = BlendColors(pixelcolor, pixelColors[(int)p.X, (int)p.Y]);
+                                                zBuffer[(int)p.X, (int)p.Y] = depth;
 
+                                                if (pixelcolor == null)
+                                                {
+                                                    (Color cl, _) = ((Asset.Polygon)@object.Polygon).Colors[key];
+                                                    pixelColors[(int)p.X, (int)p.Y] = cl; // 色を設定
+                                                }
+                                                else if (pixelcolor.Alpha != 1)
+                                                {
+                                                    pixelColors[(int)p.X, (int)p.Y] = BlendColors(pixelcolor, pixelColors[(int)p.X, (int)p.Y]);
+
+                                                }
+                                                else
+                                                {
+                                                    pixelColors[(int)p.X, (int)p.Y] = pixelcolor;
+
+                                                }
                                             }
-                                            else
-                                            {
-                                                pixelColors[(int)p.X, (int)p.Y] = pixelcolor;
 
-                                            }
-                                        }
-                                    }
-                                }
-
-                                /*
-                                // 頂点を描く
-                                foreach (Point v in vertex)
-                                {
-                                    double[] pixel = new double[2] { (int)v.X, (int)v.Y };
-                                    if ((int)v.X < 0 || (int)v.Y < 0 || (int)v.Y > canvasHeight - 1 || (int)v.X > canvasWidth)
-                                    {
-                                        continue;
-                                    }
-                                    else
-                                    {
-                                        // Z深度を計算
-                                        (double depth, double a, double b, double c) = Calc.ZDepth.ZDepsParallel(pixel, polygonPointA, polygonPointB, polygonPointC, 500, -500);
-                                        if (depth <= zBuffer[(int)v.X, (int)v.Y] && depth >= 0)
-                                        {
-                                            zBuffer[(int)v.X, (int)v.Y] = depth;
-                                            pixelColors[(int)v.X, (int)v.Y] = this.GetColorForPolygon(0, 0, 0); // 色を設定
                                         }
                                     }
+
+                                    /*
+                                    // 頂点を描く
+                                    foreach (Point v in vertex)
+                                    {
+                                        double[] pixel = new double[2] { (int)v.X, (int)v.Y };
+                                        if ((int)v.X < 0 || (int)v.Y < 0 || (int)v.Y > canvasHeight - 1 || (int)v.X > canvasWidth)
+                                        {
+                                            continue;
+                                        }
+                                        else
+                                        {
+                                            // Z深度を計算
+                                            (double depth, double a, double b, double c) = Calc.ZDepth.ZDepsParallel(pixel, polygonPointA, polygonPointB, polygonPointC, 500, -500);
+                                            if (depth <= zBuffer[(int)v.X, (int)v.Y] && depth >= 0)
+                                            {
+                                                zBuffer[(int)v.X, (int)v.Y] = depth;
+                                                pixelColors[(int)v.X, (int)v.Y] = this.GetColorForPolygon(0, 0, 0); // 色を設定
+                                            }
+                                        }
+                                    }
+                                    */
                                 }
-                                */
                             }
                         }
                     }
@@ -352,20 +355,20 @@ namespace CsGraphics
         /// <param name="scale">拡大率.</param>
         /// <param name="polygon">面を構成する点の情報.</param>
         /// <returns>id.</returns>
-        public int AddObject(string name, double[,] vertexCoord, Dictionary<string, (Color, string)>? polygonColor = null,  double[]? origin = null, bool visible = true, double[]? scale = null, Dictionary<string, int[][]>? polygon = null)
+        public int AddObject(string name, double[,] vertexCoord, Dictionary<string, (Color, string)>? polygonColor = null, double[]? origin = null, bool visible = true, double[]? scale = null, Dictionary<string, int[][]>? polygon = null)
         {
             int id = this.Objects.Count;
-            CsGraphics.Asset.Object @object = new(name, vertexCoord, id, polygonColor,  origin, visible, scale, polygon);
+            CsGraphics.Asset.Object @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon);
             this.Objects.Add(@object);
 
             this.IsUpdated = true;
             return id;
         }
 
-        private int AddObject(string name, double[,] vertexCoord, Dictionary<string, (Color, string)>? polygonColor = null,  double[]? origin = null, bool visible = true, double[]? scale = null, Dictionary<string, int[][]>? polygon = null, Math.Matrix[]? normal = null, Dictionary<string, int[][]>? mtlV = null, double[][] vt = null)
+        private int AddObject(string name, double[,] vertexCoord, Dictionary<string, (Color, string)>? polygonColor = null, double[]? origin = null, bool visible = true, double[]? scale = null, Dictionary<string, int[][]>? polygon = null, Math.Matrix[]? normal = null, Dictionary<string, int[][]>? mtlV = null, double[][] vt = null)
         {
             int id = this.Objects.Count;
-            CsGraphics.Asset.Object @object = new(name, vertexCoord, id, polygonColor,  origin, visible, scale, polygon, normal, mtlV, vt);
+            CsGraphics.Asset.Object @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon, normal, mtlV, vt);
             this.Objects.Add(@object);
 
             this.IsUpdated = true;

@@ -24,9 +24,9 @@
                 internal static (Point[], Color[], bool[], double[], Object) Calc(Object @object)
                 {
         */
-        internal static (Point[], double[], Matrix) Calc(CsGraphics.Asset.Object @object,Matrix matrixCam)
+        internal static (Point[], double[], Matrix) Calc(CsGraphics.Asset.Object @object,Matrix matrixCam, float width, float height)
         {
-            return DrawFromOrigin(@object, matrixCam);
+            return DrawFromOrigin(@object, matrixCam, width, height);
         }
 
         /// <summary>
@@ -43,7 +43,7 @@
                 private static (Point[], Color[], bool[], double[], Object) DrawFromOrigin(Object @object)
                 {
         */
-        private static (Point[], double[], Matrix) DrawFromOrigin(CsGraphics.Asset.Object @object, Matrix matrixCam)
+        private static (Point[], double[], Matrix) DrawFromOrigin(CsGraphics.Asset.Object @object, Matrix matrixCam, float width, float height)
         {
             List<double> depthZ = new List<double>(); // z深度 : 使用しない
 
@@ -55,12 +55,22 @@
 
             Matrix matrix = translate * rotate * scale; // 拡大縮小 → 回転 → 平行移動 をした変換行列を計算
 
-            Matrix vertex = matrixCam * matrix * @object.Vertex.Coordinate;
+            int far = 1500;
+            int near = 0;
+            
+            Matrix cam2view = new(new double[,]{
+                {2/width, 0, 0, -1},
+                {0, 2/height, 0, -1 },
+                {0, 0, -2/(far - near), -(far + near)/(far-near)},
+                {0, 0, 0, 1 },
+            });
+            
+            Matrix vertex = cam2view * matrixCam * matrix * @object.Vertex.Coordinate;
 
             Matrix coordinate = new Matrix(@object.Vertex.Coordinate.GetLength(0), @object.Vertex.Coordinate.GetLength(1));
             for (int n = 0; n < @object.Vertex.Coordinate.GetLength(1); n++)
             {
-                result.Add(new Point(vertex[0, n], vertex[1, n])); // スクリーン上の座標を求める計算 この場合はそのままコピー
+                result.Add(new Point(vertex[0, n]*(width/2)+ (width / 2), vertex[1, n] * (height / 2) + (height / 2))); // スクリーン上の座標を求める計算 この場合はそのままコピー
 
                 // 計算後の3D頂点座標を代入
                 coordinate[0, n] = vertex[0, n];

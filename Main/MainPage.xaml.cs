@@ -37,7 +37,7 @@
             this.graphicsView.Drawable = this.scene;
             this.BindingContext = this;
             this.Scene = this.scene;  // Drawable に設定
-            this.initCam();
+            // this.initCam();
             this.UpdateLoop();
         }
 
@@ -45,7 +45,14 @@
         {
             await Task.Delay(1500);
             // レイアウトが変更された後、すべての要素が描画されたタイミングで実行される処理
-            Scene.SetTranslationViewCam((int)graphicsView.Width / 2, (int)graphicsView.Height / 5, 100);
+            if (graphicsView.Width != -1)
+            {
+                Scene.SetTranslationViewCam((int)graphicsView.Width / 2, (int)graphicsView.Height / 5, 100);
+            }
+            else
+            {
+                initCam();
+            }
 
         }
 
