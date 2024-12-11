@@ -34,7 +34,7 @@ namespace CsGraphics.Asset
 
             if (scale == null)
             {
-                Magnification = new double[] { 500, 500, 500 };
+                Magnification = new double[] { 20, 20, 20 };
             }
             else
             {
@@ -107,7 +107,7 @@ namespace CsGraphics.Asset
         /// <summary>
         /// Gets or sets オブジェクトの傾き.
         /// </summary>
-        internal double[] Angle { get; set; } = { 0, 0, 0 };
+        internal double[] Angle { get; set; } = { 0, 3.14, 0 };
 
         /// <summary>
         /// Gets or sets 多角形面の情報.

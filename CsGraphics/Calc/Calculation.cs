@@ -15,15 +15,6 @@
         /// </summary>
         /// <param name="object">オブジェクト.</param>
         /// <returns>スクリーン座標のリスト.</returns>
-
-        /* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-        前:
-                internal static (Point[], Color[], bool[], double[], Object.Object) Calc(Object.Object @object)
-                {
-        後:
-                internal static (Point[], Color[], bool[], double[], Object) Calc(Object @object)
-                {
-        */
         internal static (Point[], double[], Matrix) Calc(CsGraphics.Asset.Object @object,Matrix matrixCam, float width, float height)
         {
             return DrawFromOrigin(@object, matrixCam, width, height);
@@ -34,15 +25,6 @@
         /// </summary>
         /// <param name="object">オブジェクト.</param>
         /// <returns>スクリーン座標のリスト.</returns>
-
-        /* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-        前:
-                private static (Point[], Color[], bool[], double[], Object.Object) DrawFromOrigin(Object.Object @object)
-                {
-        後:
-                private static (Point[], Color[], bool[], double[], Object) DrawFromOrigin(Object @object)
-                {
-        */
         private static (Point[], double[], Matrix) DrawFromOrigin(CsGraphics.Asset.Object @object, Matrix matrixCam, float width, float height)
         {
             List<double> depthZ = new List<double>(); // z深度 : 使用しない
@@ -55,31 +37,44 @@
 
             Matrix matrix = translate * rotate * scale; // 拡大縮小 → 回転 → 平行移動 をした変換行列を計算
 
-            int far = 1500;
-            int near = 0;
+            int far = -5000;
+            float near = -1f;
             float left = -width / 2;
             float right = width / 2;
-            float bottom = -height / 2;
-            float top = height / 2;
-            
-            Matrix cam2view = new(new double[,]{
-                {2f/(right - left), 0, 0, -(right+left)/(right-left)},
-                {0, 2f/(top-bottom), 0, -(top+bottom)/(top-bottom) },
-                {0, 0, -2f/(far - near), -(far + near)/(far-near)},
-                {0, 0, 0, 1 },
+            float bottom = height / 2;
+            float top = -height / 2;
+            float aspect = width / height;
+            float fovY = float.DegreesToRadians(60);
+            float f = (float)(1f / System.Math.Tan(fovY / 2f));
+
+            Matrix cam2view2 = new (new double[,]
+            {
+                { 2f / (right - left), 0, 0, -(right + left) / (right - left) },
+                { 0, 2f / (top - bottom), 0, -(top + bottom) / (top - bottom) },
+                { 0, 0, -2f / (far - near), -(far + near) / (far - near)},
+                { 0, 0, 0, 1 },
             });
-            
+
+            Matrix cam2view = new (new double[,]
+            {
+                { -f / aspect, 0, 0, 0 },
+                { 0, f, 0, 0 },
+                { 0, 0, -1f * (far + near) / (far - near), -2f * (far * near) / (far - near) },
+                { 0, 0, -1f, 0 },
+            });
+
             Matrix vertex = cam2view * matrixCam * matrix * @object.Vertex.Coordinate;
 
             Matrix coordinate = new Matrix(@object.Vertex.Coordinate.GetLength(0), @object.Vertex.Coordinate.GetLength(1));
             for (int n = 0; n < @object.Vertex.Coordinate.GetLength(1); n++)
             {
-                result.Add(new Point((vertex[0, n]+1)*(width/2), (1 -vertex[1, n]) * (height / 2))); // スクリーン上の座標を求める計算 この場合はそのままコピー
+                Matrix t = new(new double[] { vertex[0, n], vertex[1, n], vertex[2, n], vertex[3, n] });
+                result.Add(new Point((vertex[0, n] / vertex[3, n] + 1)*(width/2), (1 -vertex[1, n] / vertex[3, n]) * (height / 2))); // スクリーン上の座標を求める計算 この場合はそのままコピー
 
                 // 計算後の3D頂点座標を代入
-                coordinate[0, n] = (vertex[0, n] + 1) * (width / 2);
-                coordinate[1, n] = (1 - vertex[1, n]) * (height / 2);
-                coordinate[2, n] = vertex[2, n];
+                coordinate[0, n] = (vertex[0, n] / vertex[3, n] + 1) * (width / 2) ;
+                coordinate[1, n] = (1 - vertex[1, n] / vertex[3, n]) * (height / 2);
+                coordinate[2, n] = vertex[2, n] / vertex[3, n];
                 coordinate[3, n] = vertex[3, n];
             }
 
@@ -128,15 +123,6 @@
         /// オブジェクトの移動を計算する.
         /// </summary>
         /// <returns>移動の行列.</returns>
-
-        /* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-        前:
-                private static Matrix CalcTranslation(Object.Object @object)
-                {
-        後:
-                private static Matrix CalcTranslation(Object @object)
-                {
-        */
         private static Matrix CalcTranslation(CsGraphics.Asset.Object @object)
         {
             Matrix temp = new(4);
@@ -152,15 +138,6 @@
         /// オブジェクトの拡大縮小を計算する.
         /// </summary>
         /// <returns>拡大縮小の行列.</returns>
-
-        /* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-        前:
-                private static Matrix CalcScale(Object.Object @object)
-                {
-        後:
-                private static Matrix CalcScale(Object @object)
-                {
-        */
         private static Matrix CalcScale(CsGraphics.Asset.Object @object)
         {
             Matrix temp = new(4);
@@ -174,15 +151,6 @@
         /// 行列を用いて、YXZの順に回転を計算する.
         /// </summary>
         /// <returns>回転行列.</returns>
-
-        /* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-        前:
-                private static Matrix CalcRotation(Object.Object @object)
-                {
-        後:
-                private static Matrix CalcRotation(Object @object)
-                {
-        */
         private static Matrix CalcRotation(CsGraphics.Asset.Object @object)
         {
             Matrix xAxis = new(4);

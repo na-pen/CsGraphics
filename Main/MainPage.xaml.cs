@@ -38,6 +38,7 @@
             this.BindingContext = this;
             this.Scene = this.scene;  // Drawable に設定
             // this.initCam();
+
             this.UpdateLoop();
         }
 
@@ -47,7 +48,7 @@
             // レイアウトが変更された後、すべての要素が描画されたタイミングで実行される処理
             if (graphicsView.Width != -1)
             {
-                Scene.SetTranslationViewCam((int)graphicsView.Width / 2, (int)graphicsView.Height / 5, 100);
+                Scene.SetTranslationViewCam((int)graphicsView.Width / 2, (int)graphicsView.Height / 5, 0);
             }
             else
             {
@@ -203,7 +204,7 @@
             {
                 this.isPointerLongPressing = false;
                 var t = (Point)e.GetPosition(this.graphicsView) - this.PointerPressed;
-                Scene.SetTranslationViewCam(t.Width, -1 * t.Height, 0);
+                Scene.SetTranslationViewCam(t.Width / 20f, -1 * t.Height / 20f, 0);
                 //double x =  * 180) * Math.PI / 180f;
                 //Scene.SetRotationViewCam(t.Height / graphicsView.Height * 360, t.Width / graphicsView.Width * 360, 0);
             }
