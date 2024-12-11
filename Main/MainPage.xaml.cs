@@ -24,7 +24,6 @@
         private bool isPointerLongPressing = false;
 
         private Point PointerPressed = new Point(0, 0);
-        private bool t = false;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainPage"/> class.

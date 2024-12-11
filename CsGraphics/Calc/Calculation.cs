@@ -15,7 +15,7 @@
         /// </summary>
         /// <param name="object">オブジェクト.</param>
         /// <returns>スクリーン座標のリスト.</returns>
-        internal static (Point[], double[], Matrix) Calc(CsGraphics.Asset.Object @object,Matrix matrixCam, float width, float height)
+        internal static (Point[], double[], Matrix) Calc(CsGraphics.Asset.Object @object, Matrix matrixCam, float width, float height)
         {
             return DrawFromOrigin(@object, matrixCam, width, height);
         }
@@ -25,7 +25,7 @@
         /// </summary>
         /// <param name="object">オブジェクト.</param>
         /// <returns>スクリーン座標のリスト.</returns>
-        private static (Point[], double[], Matrix) DrawFromOrigin(CsGraphics.Asset.Object @object, Matrix matrixCam, float width, float height)
+        private static (Point[], double[], Matrix) DrawFromOrigin(CsGraphics.Asset.Object @object, Matrix matrixCam, float width, float height, bool mode = true, float fov = 60)
         {
             List<double> depthZ = new List<double>(); // z深度 : 使用しない
 
@@ -44,24 +44,34 @@
             float bottom = height / 2;
             float top = -height / 2;
             float aspect = width / height;
-            float fovY = float.DegreesToRadians(60);
+            float fovY = float.DegreesToRadians(fov);
             float f = (float)(1f / System.Math.Tan(fovY / 2f));
 
-            Matrix cam2view2 = new (new double[,]
-            {
-                { 2f / (right - left), 0, 0, -(right + left) / (right - left) },
-                { 0, 2f / (top - bottom), 0, -(top + bottom) / (top - bottom) },
-                { 0, 0, -2f / (far - near), -(far + near) / (far - near)},
-                { 0, 0, 0, 1 },
-            });
+            Matrix cam2view;
 
-            Matrix cam2view = new (new double[,]
+            if (mode) // 透視投影のとき
             {
-                { -f / aspect, 0, 0, 0 },
-                { 0, f, 0, 0 },
-                { 0, 0, -1f * (far + near) / (far - near), -2f * (far * near) / (far - near) },
-                { 0, 0, -1f, 0 },
-            });
+                cam2view = new (new double[,]
+                {
+                    { -f / aspect, 0, 0, 0 },
+                    { 0, f, 0, 0 },
+                    { 0, 0, -1f * (far + near) / (far - near), -2f * (far * near) / (far - near) },
+                    { 0, 0, -1f, 0 },
+                });
+            }
+            else // 平行投影のとき
+            {
+                cam2view = new (new double[,]
+                {
+                    { 2f / (right - left), 0, 0, -(right + left) / (right - left) },
+                    { 0, 2f / (top - bottom), 0, -(top + bottom) / (top - bottom) },
+                    { 0, 0, -2f / (far - near), -(far + near) / (far - near)},
+                    { 0, 0, 0, 1 },
+                });
+            }
+
+
+
 
             Matrix vertex = cam2view * matrixCam * matrix * @object.Vertex.Coordinate;
 
@@ -69,10 +79,10 @@
             for (int n = 0; n < @object.Vertex.Coordinate.GetLength(1); n++)
             {
                 Matrix t = new(new double[] { vertex[0, n], vertex[1, n], vertex[2, n], vertex[3, n] });
-                result.Add(new Point((vertex[0, n] / vertex[3, n] + 1)*(width/2), (1 -vertex[1, n] / vertex[3, n]) * (height / 2))); // スクリーン上の座標を求める計算 この場合はそのままコピー
+                result.Add(new Point((vertex[0, n] / vertex[3, n] + 1) * (width / 2), (1 - vertex[1, n] / vertex[3, n]) * (height / 2))); // スクリーン上の座標を求める計算 この場合はそのままコピー
 
                 // 計算後の3D頂点座標を代入
-                coordinate[0, n] = (vertex[0, n] / vertex[3, n] + 1) * (width / 2) ;
+                coordinate[0, n] = (vertex[0, n] / vertex[3, n] + 1) * (width / 2);
                 coordinate[1, n] = (1 - vertex[1, n] / vertex[3, n]) * (height / 2);
                 coordinate[2, n] = vertex[2, n] / vertex[3, n];
                 coordinate[3, n] = vertex[3, n];

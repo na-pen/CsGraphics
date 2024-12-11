@@ -255,6 +255,7 @@ namespace CsGraphics
                 }
 
                 canvas.DrawImage(this.CreateImageFromColors(pixelColors, canvasWidth, canvasHeight), 0, 0, dirtyRect.Width, dirtyRect.Height);
+                this.IsUpdated = false;
             }
         }
 
