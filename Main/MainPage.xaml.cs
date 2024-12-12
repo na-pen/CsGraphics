@@ -36,7 +36,6 @@
             this.graphicsView.Drawable = this.scene;
             this.BindingContext = this;
             this.Scene = this.scene;  // Drawable に設定
-            // this.initCam();
 
             this.UpdateLoop();
         }
