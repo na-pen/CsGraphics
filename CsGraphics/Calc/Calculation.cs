@@ -15,17 +15,7 @@
         /// </summary>
         /// <param name="object">オブジェクト.</param>
         /// <returns>スクリーン座標のリスト.</returns>
-        internal static (Point[], double[], Matrix) Calc(CsGraphics.Asset.Object @object, Matrix matrixCam, float width, float height)
-        {
-            return DrawFromOrigin(@object, matrixCam, width, height);
-        }
-
-        /// <summary>
-        /// 原点から平行投影で真横に見て描画したとき.
-        /// </summary>
-        /// <param name="object">オブジェクト.</param>
-        /// <returns>スクリーン座標のリスト.</returns>
-        private static (Point[], double[], Matrix) DrawFromOrigin(CsGraphics.Asset.Object @object, Matrix matrixCam, float width, float height, bool mode = true, float fov = 60)
+        internal static (Point[], double[], Matrix) Calc(CsGraphics.Asset.Object @object, Matrix matrixCam, float width, float height, bool mode = true, float fov = 60)
         {
             List<double> depthZ = new List<double>(); // z深度 : 使用しない
 

@@ -13,6 +13,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="70" />
+            <ColumnDefinition Width="40" />
         </Grid.ColumnDefinitions>
 
         <GraphicsView
@@ -21,11 +22,22 @@
             Grid.Column="0"
             Grid.ColumnSpan="2">
             <GraphicsView.GestureRecognizers>
-                <PointerGestureRecognizer 
-                    PointerPressed="PointerGestureRecognizer_PointerPressed"
-                    PointerReleased="PointerGestureRecognizer_PointerReleased"/>
+                <PointerGestureRecognizer PointerPressed="PointerGestureRecognizer_PointerPressed" PointerReleased="PointerGestureRecognizer_PointerReleased" />
             </GraphicsView.GestureRecognizers>
         </GraphicsView>
+
+
+        <ImageButton
+            Grid.Row="0"
+            Grid.Column="2"
+            BackgroundColor="#00000000"
+            Clicked="SwitchingProjection"
+            HeightRequest="20"
+            HorizontalOptions="Center"
+            Source="grid.png"
+            VerticalOptions="Start"
+            WidthRequest="20" />
+
 
 
         <ScrollView

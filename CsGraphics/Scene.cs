@@ -61,6 +61,7 @@ namespace CsGraphics
 
         private int canvasHeight = 0;
         private int canvasWidth = 0;
+        public bool IsPerspectiveProjection = true;
 
         public void Draw(ICanvas canvas, RectF dirtyRect)
         {
@@ -112,7 +113,7 @@ namespace CsGraphics
 
                         if (@object.IsUpdated == true || this.IsUpdated) // オブジェクトの情報に更新があれば再計算
                         {
-                            (points, _, coordinate) = Calculation.Calc((CsGraphics.Asset.Object)@object, ViewCamRotation * ViewCamTranslation, canvasWidth, canvasHeight); // 点や面の計算
+                            (points, _, coordinate) = Calculation.Calc((CsGraphics.Asset.Object)@object, ViewCamRotation * ViewCamTranslation, canvasWidth, canvasHeight,IsPerspectiveProjection); // 点や面の計算
 
                             @object.Points = points;
                             @object.IsUpdated = false;

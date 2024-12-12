@@ -196,6 +196,12 @@
             }
         }
 
+        private void SwitchingProjection(object sender, EventArgs e)
+        {
+            Scene.IsPerspectiveProjection = !Scene.IsPerspectiveProjection;
+            Scene.IsUpdated = true;
+        }
+
         private void PointerGestureRecognizer_PointerReleased(object sender, PointerEventArgs e)
         {
             this.isPointerPressing = false;
