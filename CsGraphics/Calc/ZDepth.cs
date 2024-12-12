@@ -27,7 +27,7 @@ namespace CsGraphics.Calc
         /// 平行投影時のz深度を求める.
         /// </summary>
         /// <returns>[z深度,重心A,y重心B,重心C].</returns>
-        internal static (double, double, double, double) ZDepsParallel(double[] pixel, double[] polygonPointA, double[] polygonPointB, double[] polygonPointC, int zMax, int zMin)
+        internal static (double, double, double, double) ZDepsParallel(float[] pixel, float[] polygonPointA, float[] polygonPointB, float[] polygonPointC, int zMax, int zMin)
         {
             double result = 0;
 
@@ -52,7 +52,7 @@ namespace CsGraphics.Calc
         internal static double TriangleArea(double x1, double y1, double x2, double y2, double x3, double y3)
         {
             // 三角形の面積を計算 (符号付き)
-            return System.Math.Abs((x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2.0);
+            return System.Math.Abs((x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2.0f);
         }
 
         /// <summary>

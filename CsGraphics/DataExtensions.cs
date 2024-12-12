@@ -25,7 +25,7 @@
             =>
             Enumerable.Range(0, vertex.GetLength(1))
             .Select(i =>
-                new Math.Matrix(new double[] { vertex.Coordinate[0, i], vertex.Coordinate[1, i], vertex.Coordinate[2, i], vertex.Coordinate[3, i] }))
+                new Math.Matrix(new float[] { vertex.Coordinate[0, i], vertex.Coordinate[1, i], vertex.Coordinate[2, i], vertex.Coordinate[3, i] }))
             .GetEnumerator();
 
         /// <summary>
@@ -37,7 +37,7 @@
             =>
             Enumerable.Range(0, matrix.GetLength(1))
             .Select(i =>
-                new Math.Matrix(new double[] { matrix[0, i], matrix[1, i], matrix[2, i], matrix[3, i] }))
+                new Math.Matrix(new float[] { matrix[0, i], matrix[1, i], matrix[2, i], matrix[3, i] }))
             .GetEnumerator();
 
     }

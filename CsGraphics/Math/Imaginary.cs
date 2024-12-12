@@ -5,13 +5,13 @@
     /// </summary>
     internal class Imaginary
     {
-        private double value = 0;
+        private float value = 0;
 
         /// <summary>
         /// Imaginary im = 0 の形で代入できるようにする.
         /// </summary>
         /// <param name="val">虚数.</param>
-        public static implicit operator Imaginary(double val)
+        public static implicit operator Imaginary(float val)
         {
             return new Imaginary { value = val };
         }
@@ -34,7 +34,7 @@
         /// <param name="a">虚数.</param>
         /// <param name="b">実数.</param>
         /// <returns>虚数と実数の和.</returns>
-        public static Complex operator +(Imaginary a, double b)
+        public static Complex operator +(Imaginary a, float b)
         {
             Complex result = (b, a);
             return result;
@@ -46,7 +46,7 @@
         /// <param name="a">実数.</param>
         /// <param name="b">虚数.</param>
         /// <returns>実数と虚数の和.</returns>
-        public static Complex operator +(double a, Imaginary b)
+        public static Complex operator +(float a, Imaginary b)
         {
             return b + a; // 順序を統一して処理
         }
@@ -69,7 +69,7 @@
         /// <param name="a">虚数.</param>
         /// <param name="b">実数.</param>
         /// <returns>虚数と実数の差.</returns>
-        public static Complex operator -(Imaginary a, double b)
+        public static Complex operator -(Imaginary a, float b)
         {
             Complex result = (-1 * b, a);
             return result;
@@ -81,7 +81,7 @@
         /// <param name="a">実数.</param>
         /// <param name="b">虚数.</param>
         /// <returns>虚数と実数の差.</returns>
-        public static Complex operator -(double a, Imaginary b)
+        public static Complex operator -(float a, Imaginary b)
         {
             return b + a; // 順序を統一して処理
         }
@@ -92,9 +92,9 @@
         /// <param name="a">１つ目の虚数.</param>
         /// <param name="b">２つ目の虚数.</param>
         /// <returns>２つの虚数の積.</returns>
-        public static double operator *(Imaginary a, Imaginary b)
+        public static float operator *(Imaginary a, Imaginary b)
         {
-            double result = -1 * a.value * b.value;
+            float result = -1 * a.value * b.value;
             return result;
         }
 
@@ -104,7 +104,7 @@
         /// <param name="a">虚数.</param>
         /// <param name="b">実数.</param>
         /// <returns>虚数と実数の積.</returns>
-        public static Imaginary operator *(Imaginary a, double b)
+        public static Imaginary operator *(Imaginary a, float b)
         {
             Imaginary result = new Imaginary();
             result.value = a.value * b;
@@ -117,7 +117,7 @@
         /// <param name="a">実数.</param>
         /// <param name="b">虚数.</param>
         /// <returns>虚数と実数の積.</returns>
-        public static Imaginary operator *(double a, Imaginary b)
+        public static Imaginary operator *(float a, Imaginary b)
         {
             return b * a; // 順序を統一して処理
         }
@@ -128,9 +128,9 @@
         /// <param name="a">１つ目の虚数.</param>
         /// <param name="b">２つ目の虚数.</param>
         /// <returns>２つの虚数の積.</returns>
-        public static double operator /(Imaginary a, Imaginary b)
+        public static float operator /(Imaginary a, Imaginary b)
         {
-            double result = -1 * a.value / b.value;
+            float result = -1 * a.value / b.value;
             return result;
         }
 
@@ -140,7 +140,7 @@
         /// <param name="a">虚数.</param>
         /// <param name="b">実数.</param>
         /// <returns>虚数と実数の商.</returns>
-        public static Imaginary operator /(Imaginary a, double b)
+        public static Imaginary operator /(Imaginary a, float b)
         {
             Imaginary result = new Imaginary();
             result.value = a.value / b;
@@ -153,7 +153,7 @@
         /// <param name="a">実数.</param>
         /// <param name="b">虚数.</param>
         /// <returns>虚数と実数の商.</returns>
-        public static Imaginary operator /(double a, Imaginary b)
+        public static Imaginary operator /(float a, Imaginary b)
         {
             return b / a; // 順序を統一して処理
         }

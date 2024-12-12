@@ -10,10 +10,10 @@
     /// </summary>
     internal static class Parser
     {
-        internal static (double[,], Dictionary<string, int[][]>, Matrix[], Dictionary<string, (Color, string)>, Dictionary<string, int[][]>, double[][]) ObjParseVerticesV2(string filePath)
+        internal static (float[,], Dictionary<string, int[][]>, Matrix[], Dictionary<string, (Color, string)>, Dictionary<string, int[][]>, float[][]) ObjParseVerticesV2(string filePath)
         {
-            var vertices = new List<double[]>(); // 動的リストで頂点情報を一時的に格納
-            List<double[]> verticesT = new List<double[]>(); // 動的リストでテクスチャ座標情報を一時的に格納
+            var vertices = new List<float[]>(); // 動的リストで頂点情報を一時的に格納
+            List<float[]> verticesT = new List<float[]>(); // 動的リストでテクスチャ座標情報を一時的に格納
             Dictionary<string, List<List<int>>> polygon = new Dictionary<string, List<List<int>>>(); // 動的リストで面を構成する頂点のIDを一時的に格納
             Dictionary<string, List<List<int>>> mtlV = new Dictionary<string, List<List<int>>>();
             List<Matrix> normal = new List<Matrix>(); // 動的リストで面の法線ベクトルを一時的に格納
@@ -33,9 +33,9 @@
                     var parts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                     if (parts.Length >= 4) // 頂点座標が存在する場合
                     {
-                        double x = double.Parse(parts[1]);
-                        double y = double.Parse(parts[2]);
-                        double z = double.Parse(parts[3]);
+                        float x = float.Parse(parts[1]);
+                        float y = float.Parse(parts[2]);
+                        float z = float.Parse(parts[3]);
                         vertices.Add(new[] { -x, y, z });
                     }
                 }
@@ -45,8 +45,8 @@
                     var parts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                     if (parts.Length >= 3) // テクスチャ頂点座標が存在する場合
                     {
-                        double x = double.Parse(parts[1]);
-                        double y = double.Parse(parts[2]);
+                        float x = float.Parse(parts[1]);
+                        float y = float.Parse(parts[2]);
 
                         verticesT.Add(new[] { x, y });
 
@@ -95,9 +95,9 @@
                 }
             }
 
-            // List<double[]> を double[,] に変換
+            // List<float[]> を float[,] に変換
             int vertexCount = vertices.Count;
-            double[,] vertexArray = new double[3, vertexCount];
+            float[,] vertexArray = new float[3, vertexCount];
 
             for (int i = 0; i < vertexCount; i++)
             {
@@ -112,26 +112,26 @@
                 foreach (List<int> indices in ply.Value)
                 {
                     CsGraphics.Math.Vector ab = new(
-                        new double[]
+                        new float[]
                         {
                         vertices[indices[0] - 1][0],
                         vertices[indices[0] - 1][1],
                         vertices[indices[0] - 1][2],
                         },
-                        new double[]
+                        new float[]
                         {
                         vertices[indices[1] - 1][0],
                         vertices[indices[1] - 1][1],
                         vertices[indices[1] - 1][2],
                         });
 
-                    CsGraphics.Math.Vector bc = new(new double[]
+                    CsGraphics.Math.Vector bc = new(new float[]
                         {
                         vertices[indices[1] - 1][0],
                         vertices[indices[1] - 1][1],
                         vertices[indices[1] - 1][2],
                         },
-                        new double[]
+                        new float[]
                         {
                         vertices[indices[2] - 1][0],
                         vertices[indices[2] - 1][1],
@@ -162,7 +162,7 @@
             Dictionary<string, (Color, string)> dic = new Dictionary<string, (Color, string)>();
 
             string mtlName = string.Empty;
-            double d = 1;
+            float d = 1;
             foreach (var line in File.ReadLines(path))
             {
                 if (line.StartsWith("newmtl ")) // 頂点情報の場合
@@ -174,7 +174,7 @@
                 else if (line.StartsWith("Kd ")) // 面情報のとき
                 {
                     var parts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                    Color x = new Color((int)(double.Parse(parts[1]) * 255), (int)(double.Parse(parts[2]) * 255), (int)(double.Parse(parts[3]) * 255), (int)(d * 255));
+                    Color x = new Color((int)(float.Parse(parts[1]) * 255), (int)(float.Parse(parts[2]) * 255), (int)(float.Parse(parts[3]) * 255), (int)(d * 255));
                     if (!dic.TryAdd(mtlName, (x, string.Empty)))
                     {
                         dic[mtlName] = (x, dic[mtlName].Item2);
@@ -188,7 +188,7 @@
                 else if (line.StartsWith("d ")) // テクスチャ透過率のとき
                 {
                     var parts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                    d = double.Parse(parts[1]);
+                    d = float.Parse(parts[1]);
                     string lastKey = dic.Keys.Last();
                     dic[lastKey] = (new Color(dic[lastKey].Item1.Red, dic[lastKey].Item1.Green, dic[lastKey].Item1.Blue, (int)(d * 255)), dic[lastKey].Item2);
                 }

@@ -7,7 +7,7 @@
     /// </summary>
     internal class Matrix : ICloneable
     {
-        private double[,] data; // 行列データ
+        private float[,] data; // 行列データ
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Matrix"/> class.
@@ -30,7 +30,7 @@
 
             this.Rows = rows;
             this.Columns = columns;
-            this.data = new double[rows, columns];
+            this.data = new float[rows, columns];
         }
 
         /// <summary>
@@ -38,9 +38,9 @@
         /// 1行の配列から行列を作成.
         /// </summary>
         /// <param name="array">配列.</param>
-        internal Matrix(double[] array)
+        internal Matrix(float[] array)
         {
-            double[,] result = new double[array.Length, 1];
+            float[,] result = new float[array.Length, 1];
 
             // 1次元配列の各要素を2次元配列にコピー
             for (int i = 0; i < array.Length; i++)
@@ -50,7 +50,7 @@
 
             this.Rows = array.Length;
             this.Columns = 1;
-            this.data = new double[this.Rows, this.Columns];
+            this.data = new float[this.Rows, this.Columns];
 
             this.Initialize(result);
         }
@@ -60,11 +60,11 @@
         /// 2次元配列から行列を作成.
         /// </summary>
         /// <param name="array">配列.</param>
-        internal Matrix(double[,] array)
+        internal Matrix(float[,] array)
         {
             this.Rows = array.GetLength(0);
             this.Columns = array.GetLength(1);
-            this.data = new double[this.Rows, this.Columns];
+            this.data = new float[this.Rows, this.Columns];
 
             this.Initialize(array);
         }
@@ -76,7 +76,7 @@
         /// <param name="data">行列のデータ.</param>
         /// <param name="rows">行数.</param>
         /// <param name="columns">列数.</param>
-        private Matrix(double[,] data, int rows, int columns)
+        private Matrix(float[,] data, int rows, int columns)
         {
             this.data = data;
             this.Rows = rows;
@@ -102,7 +102,7 @@
         /// <param name="column">列.</param>
         /// <returns>値.</returns>
         /// <exception cref="IndexOutOfRangeException">インデックスがアクセス範囲外の場合.</exception>
-        internal double this[int row, int column]
+        internal float this[int row, int column]
         {
             get
             {
@@ -157,7 +157,7 @@
         /// <param name="matrix">行列.</param>
         /// <param name="value">整数.</param>
         /// <returns>行列と整数の和.</returns>
-        public static Matrix operator +(Matrix matrix, double value)
+        public static Matrix operator +(Matrix matrix, float value)
         {
             Matrix result = new(matrix.Rows, matrix.Columns);
             for (int i = 0; i < matrix.Rows; i++)
@@ -177,7 +177,7 @@
         /// <param name="value">整数.</param>
         /// <param name="matrix">行列.</param>
         /// <returns>行列と整数の和.</returns>
-        public static Matrix operator +(double value, Matrix matrix)
+        public static Matrix operator +(float value, Matrix matrix)
         {
             return matrix + value; // 順序を統一して処理
         }
@@ -214,7 +214,7 @@
         /// <param name="matrix">行列.</param>
         /// <param name="value">整数.</param>
         /// <returns>行列と整数の差.</returns>
-        public static Matrix operator -(Matrix matrix, double value)
+        public static Matrix operator -(Matrix matrix, float value)
         {
             Matrix result = new Matrix(matrix.Rows, matrix.Columns);
             for (int i = 0; i < matrix.Rows; i++)
@@ -234,7 +234,7 @@
         /// <param name="value">整数.</param>
         /// <param name="matrix">行列.</param>
         /// <returns>行列と整数の差.</returns>
-        public static Matrix operator -(double value, Matrix matrix)
+        public static Matrix operator -(float value, Matrix matrix)
         {
             return matrix - value; // 順序を統一して処理
         }
@@ -258,7 +258,7 @@
             {
                 for (int j = 0; j < b.Columns; j++)
                 {
-                    double sum = 0;
+                    float sum = 0;
                     for (int k = 0; k < a.Columns; k++)
                     {
                         sum += a[i, k] * b[k, j];
@@ -298,7 +298,7 @@
         public object Clone()
         {
             return new Matrix(
-                (double[,])this.data.Clone(),
+                (float[,])this.data.Clone(),
                 this.Rows,
                 this.Columns);
         }
@@ -307,7 +307,7 @@
         /// 行列を初期値で埋める.
         /// </summary>
         /// <param name="initializer">initializer.</param>
-        internal void Initialize(Func<int, int, double> initializer)
+        internal void Initialize(Func<int, int, float> initializer)
         {
             for (int i = 0; i < this.Rows; i++)
             {
@@ -322,7 +322,7 @@
         /// 2次元配列で行列を初期化する.
         /// </summary>
         /// <param name="array">array.</param>
-        internal void Initialize(double[,] array)
+        internal void Initialize(float[,] array)
         {
             for (int i = 0; i < this.Rows; i++)
             {
@@ -389,7 +389,7 @@
                 {
                     augmented[i, j] = this[i, j];
                 }
-                augmented[i, n + i] = 1.0; // 単位行列部分
+                augmented[i, n + i] = 1.0f; // 単位行列部分
             }
 
             // ガウス・ジョルダン法で逆行列を計算
@@ -415,7 +415,7 @@
                 }
 
                 // ピボットを1に正規化
-                double pivot = augmented[i, i];
+                float pivot = augmented[i, i];
                 for (int j = 0; j < 2 * n; j++)
                 {
                     augmented[i, j] /= pivot;
@@ -425,7 +425,7 @@
                 for (int k = 0; k < n; k++)
                 {
                     if (k == i) continue;
-                    double factor = augmented[k, i];
+                    float factor = augmented[k, i];
                     for (int j = 0; j < 2 * n; j++)
                     {
                         augmented[k, j] -= factor * augmented[i, j];
@@ -451,7 +451,7 @@
             int columns = matrix.Columns;
             for (int j = 0; j < columns; j++)
             {
-                double temp = matrix[row1, j];
+                float temp = matrix[row1, j];
                 matrix[row1, j] = matrix[row2, j];
                 matrix[row2, j] = temp;
             }
@@ -464,12 +464,12 @@
         /// <param name="column">列数.</param>
         /// <param name="value">追加する行に代入したい値.</param>
         /// <exception cref="ArgumentException">The number of rows and columns in the resized matrix must be equal to or greater than before the resizing, respectively.</exception>
-        internal void Resize(int row, int column = 0, double[]? value = null)
+        internal void Resize(int row, int column = 0, float[]? value = null)
         {
             int temp = -1;
             if (value == null)
             {
-                value = new double[row - this.Rows - 1];
+                value = new float[row - this.Rows - 1];
                 Array.Fill(value, 0, 0, row - this.Rows - 1);
             }
 

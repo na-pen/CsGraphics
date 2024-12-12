@@ -23,7 +23,7 @@
         private bool isPointerPressing = false;
         private bool isPointerLongPressing = false;
 
-        private Point PointerPressed = new Point(0, 0);
+        private PointF PointerPressed = new PointF(0, 0);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainPage"/> class.
@@ -145,15 +145,15 @@
             string[] args = Regex.Match(command, pattern).Groups[1].Value.Split(',');
             return command.ToLower() switch
             {
-                _ when command.StartsWith("translation") => this.TranslationTest(int.Parse(args[0]), double.Parse(args[1]), double.Parse(args[2]), double.Parse(args[3])),
-                _ when command.StartsWith("scale") => this.ScaleTest(int.Parse(args[0]), double.Parse(args[1]), double.Parse(args[2]), double.Parse(args[3])),
-                _ when command.StartsWith("rotation") => this.RotationTest(int.Parse(args[0]), double.Parse(args[1]), double.Parse(args[2]), double.Parse(args[3])),
+                _ when command.StartsWith("translation") => this.TranslationTest(int.Parse(args[0]), float.Parse(args[1]), float.Parse(args[2]), float.Parse(args[3])),
+                _ when command.StartsWith("scale") => this.ScaleTest(int.Parse(args[0]), float.Parse(args[1]), float.Parse(args[2]), float.Parse(args[3])),
+                _ when command.StartsWith("rotation") => this.RotationTest(int.Parse(args[0]), float.Parse(args[1]), float.Parse(args[2]), float.Parse(args[3])),
                 _ when command.StartsWith("object") => "ID : " + this.Scene.AddObjectFromObj(args[0].Replace("\"", string.Empty), args[1].Replace("\"", string.Empty)).ToString(),
                 _ => "Unknown command."
             };
         }
 
-        private string TranslationTest(int id, double x, double y, double z)
+        private string TranslationTest(int id, float x, float y, float z)
         {
             // 平行移動
             this.Scene.TranslationObject(id, x, y, z);
@@ -161,7 +161,7 @@
             return "Done!";
         }
 
-        private string ScaleTest(int id, double x, double y, double z)
+        private string ScaleTest(int id, float x, float y, float z)
         {
             // 拡大
             this.Scene.ScaleObject(id, x, y, z);
@@ -169,7 +169,7 @@
             return "Done!";
         }
 
-        private string RotationTest(int id, double x, double y, double z)
+        private string RotationTest(int id, float x, float y, float z)
         {
             // 回転
             this.Scene.RotationObject(id, x, y, z);
@@ -179,7 +179,7 @@
 
         private async void PointerGestureRecognizer_PointerPressed(object sender, PointerEventArgs e)
         {
-            this.PointerPressed = (Point)e.GetPosition(this.graphicsView);
+            this.PointerPressed = (PointF)e.GetPosition(this.graphicsView);
             this.isPointerPressing = true;
             await WaitForLongPress();
         }
@@ -208,9 +208,9 @@
             if (this.isPointerLongPressing)
             {
                 this.isPointerLongPressing = false;
-                var t = (Point)e.GetPosition(this.graphicsView) - this.PointerPressed;
+                var t = (PointF)e.GetPosition(this.graphicsView) - this.PointerPressed;
                 Scene.SetTranslationViewCam(t.Width / 20f, -1 * t.Height / 20f, 0);
-                //double x =  * 180) * Math.PI / 180f;
+                //float x =  * 180) * Math.PI / 180f;
                 //Scene.SetRotationViewCam(t.Height / graphicsView.Height * 360, t.Width / graphicsView.Width * 360, 0);
             }
         }
@@ -219,41 +219,14 @@
         {
             Scene.IsUpdated = true;
             Scene.SetTranslationViewCam(0, 0, -10);
+            Scene.ScaleParallelProjection *= 1.25f;
         }
 
         private void ReductionCam(object sender, EventArgs e)
         {
             Scene.IsUpdated = true;
             Scene.SetTranslationViewCam(0, 0, 10);
+            Scene.ScaleParallelProjection *= 0.8f;
         }
-
-        /*
-        private string Png()
-        {
-            string filePath = "C:\\Users\\mail\\OneDrive\\tx\\服1.png";
-            Color[,] tex = Asset(filePath);
-
-            using (var stream = new MemoryStream())
-            {
-                Bitmap bitmap = new(2048, 2048, colors);
-                // ストリームに画像データを書き込む
-                stream.Write(bitmap.FileHeader.Bytes);
-                stream.Write(bitmap.InfoHeader.Bytes);
-                stream.Write(bitmap.img);
-                stream.Position = 0;
-                IImage image = PlatformImage.FromStream(stream, ImageFormat.Bmp);
-                // PlatformImage をストリームから読み込んで画像を作成
-
-
-                using (FileStream fs = new FileStream("C:\\Users\\mail\\Documents\\CsGraphics\\Main\\test.bmp", FileMode.Create))
-                {
-                    fs.Write(bitmap.FileHeader.Bytes);
-                    fs.Write(bitmap.InfoHeader.Bytes);
-                    fs.Write(bitmap.img);
-                }
-            }
-            return "Done";
-        }
-        */
     }
 }

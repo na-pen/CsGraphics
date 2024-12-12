@@ -18,7 +18,7 @@ namespace CsGraphics
         /// <summary>
         /// 重力加速度.
         /// </summary>
-        public const double Gravity = 9.80665;
+        public const float Gravity = 9.80665f;
 
         /// <summary>
         /// シーンに含まれるオブジェクト.
@@ -57,11 +57,12 @@ namespace CsGraphics
 
         internal Math.Matrix ViewCamRotation { get; set; } = new Matrix(4);
 
-        private double[] camRotate = new double[3] { 0, 0, 0 };
+        private float[] camRotate = new float[3] { 0, 0, 0 };
 
         private int canvasHeight = 0;
         private int canvasWidth = 0;
         public bool IsPerspectiveProjection = true;
+        public float ScaleParallelProjection = 32;
 
         public void Draw(ICanvas canvas, RectF dirtyRect)
         {
@@ -74,9 +75,9 @@ namespace CsGraphics
                 canvas.FillColor = Colors.White;
                 canvas.FillRectangle(dirtyRect);
 
-                double[] viewPlanePointA = new double[3] { 0, 0, 0 }; // 描画面の左下の座標
-                double[] viewPlanePointB = new double[3] { 0, canvasHeight, 0 }; // 描画面の左上の座標
-                double[] viewPlanePointC = new double[3] { canvasWidth, 0, 0 }; // 描画面の右下の座標
+                float[] viewPlanePointA = new float[3] { 0, 0, 0 }; // 描画面の左下の座標
+                float[] viewPlanePointB = new float[3] { 0, canvasHeight, 0 }; // 描画面の左上の座標
+                float[] viewPlanePointC = new float[3] { canvasWidth, 0, 0 }; // 描画面の右下の座標
                 Math.Vector ab = new Math.Vector(viewPlanePointA, viewPlanePointB); // ABベクトル
                 Math.Vector ac = new Math.Vector(viewPlanePointA, viewPlanePointC); // ACベクトル
                 Math.Vector viewPlaneEquation = Calc.ZDepth.PlaneEquation(ab, ac); // 描画面の平面方程式
@@ -108,12 +109,12 @@ namespace CsGraphics
                         Point[] points = Array.Empty<Point>();
 
                         CsGraphics.Asset.Object obj;
-                        double[] pT = Array.Empty<double>();
+                        float[] pT = Array.Empty<float>();
                         Matrix coordinate;
 
                         if (@object.IsUpdated == true || this.IsUpdated) // オブジェクトの情報に更新があれば再計算
                         {
-                            (points, _, coordinate) = Calculation.Calc((CsGraphics.Asset.Object)@object, ViewCamRotation * ViewCamTranslation, canvasWidth, canvasHeight,IsPerspectiveProjection); // 点や面の計算
+                            (points, _, coordinate) = Calculation.Calc((CsGraphics.Asset.Object)@object, ViewCamRotation * ViewCamTranslation, canvasWidth, canvasHeight,IsPerspectiveProjection,scaleParallelProjection:ScaleParallelProjection); // 点や面の計算
 
                             @object.Points = points;
                             @object.IsUpdated = false;
@@ -149,16 +150,16 @@ namespace CsGraphics
                                     // テクスチャ頂点番号の取得
 
                                     int[] vTId = array2[i];
-                                    double[][] vt = null;
+                                    float[][] vt = null;
                                     if (@object.Vertex.Vt != null)
                                     {
                                         vt = vTId.Select(p => @object.Vertex.Vt[p - 1]).ToArray();
                                     }
 
                                     // 面を描く
-                                    double[] polygonPointA = new double[3] { coordinate[0, polygon[0] - 1], coordinate[1, polygon[0] - 1], coordinate[2, polygon[0] - 1] }; // ポリゴンの頂点
-                                    double[] polygonPointB = new double[3] { coordinate[0, polygon[1] - 1], coordinate[1, polygon[1] - 1], coordinate[2, polygon[1] - 1] }; // 
-                                    double[] polygonPointC = new double[3] { coordinate[0, polygon[2] - 1], coordinate[1, polygon[2] - 1], coordinate[2, polygon[2] - 1] }; // 
+                                    float[] polygonPointA = new float[3] { coordinate[0, polygon[0] - 1], coordinate[1, polygon[0] - 1], coordinate[2, polygon[0] - 1] }; // ポリゴンの頂点
+                                    float[] polygonPointB = new float[3] { coordinate[0, polygon[1] - 1], coordinate[1, polygon[1] - 1], coordinate[2, polygon[1] - 1] }; // 
+                                    float[] polygonPointC = new float[3] { coordinate[0, polygon[2] - 1], coordinate[1, polygon[2] - 1], coordinate[2, polygon[2] - 1] }; // 
 
                                     if (((0 < polygonPointA[0] && polygonPointA[0] < canvasWidth) && (0 < polygonPointA[1] && polygonPointA[1] < canvasHeight)) || ((0 < polygonPointB[0] && polygonPointB[0] < canvasWidth) && (0 < polygonPointB[1] && polygonPointB[1] < canvasHeight)) || ((0 < polygonPointC[0] && polygonPointC[0] < canvasWidth) && (0 < polygonPointC[1] && polygonPointC[1] < canvasHeight)))
                                     // if (((-1 < polygonPointA[0] && polygonPointA[0] < 1) && (-1 < polygonPointA[1] && polygonPointA[1] < 1)) || ((-1 < polygonPointB[0] && polygonPointB[0] < 1) && (-1 < polygonPointB[1] && polygonPointB[1] < 1)) || ((-1 < polygonPointC[0] && polygonPointC[0] < 1) && (-1 < polygonPointC[1] && polygonPointC[1] < 1)))
@@ -180,7 +181,7 @@ namespace CsGraphics
                                             else
                                             {
                                                 Color? pixelcolor = null;
-                                                double[] pixel = new double[2] { (int)p.X, (int)p.Y };
+                                                float[] pixel = new float[2] { (int)p.X, (int)p.Y };
 
                                                 // Z深度を計算
                                                 (double depth, double a, double b, double c) = Calc.ZDepth.ZDepsParallel(pixel, polygonPointA, polygonPointB, polygonPointC, 1500, 0);
@@ -227,7 +228,7 @@ namespace CsGraphics
                                         // 頂点を描く
                                         foreach (Point v in vertex)
                                         {
-                                            double[] pixel = new double[2] { (int)v.X, (int)v.Y };
+                                            float[] pixel = new float[2] { (int)v.X, (int)v.Y };
                                             if ((int)v.X < 0 || (int)v.Y < 0 || (int)v.Y > canvasHeight - 1 || (int)v.X > canvasWidth)
                                             {
                                                 continue;
@@ -235,7 +236,7 @@ namespace CsGraphics
                                             else
                                             {
                                                 // Z深度を計算
-                                                (double depth, double a, double b, double c) = Calc.ZDepth.ZDepsParallel(pixel, polygonPointA, polygonPointB, polygonPointC, 500, -500);
+                                                (float depth, float a, float b, float c) = Calc.ZDepth.ZDepsParallel(pixel, polygonPointA, polygonPointB, polygonPointC, 500, -500);
                                                 if (depth <= zBuffer[(int)v.X, (int)v.Y] && depth >= 0)
                                                 {
                                                     zBuffer[(int)v.X, (int)v.Y] = depth;
@@ -295,10 +296,10 @@ namespace CsGraphics
             double cy = pt[2].Y;
 
             // バリューコーディネート法による内外判定
-            double denominator = (double)(((bx - ax) * (cy - ay)) - ((cx - ax) * (by - ay)));
+            double denominator = (((bx - ax) * (cy - ay)) - ((cx - ax) * (by - ay)));
             double lambda1 = (((bx - px) * (cy - py)) - ((cx - px) * (by - py))) / denominator;
             double lambda2 = (((cx - px) * (ay - py)) - ((ax - px) * (cy - py))) / denominator;
-            double lambda3 = 1.0 - lambda1 - lambda2;
+            double lambda3 = 1.0f - lambda1 - lambda2;
 
             return lambda1 >= 0 && lambda2 >= 0 && lambda3 >= 0;
         }
@@ -366,7 +367,7 @@ namespace CsGraphics
         /// <param name="scale">拡大率.</param>
         /// <param name="polygon">面を構成する点の情報.</param>
         /// <returns>id.</returns>
-        public int AddObject(string name, double[,] vertexCoord, Dictionary<string, (Color, string)>? polygonColor = null, double[]? origin = null, bool visible = true, double[]? scale = null, Dictionary<string, int[][]>? polygon = null)
+        public int AddObject(string name, float[,] vertexCoord, Dictionary<string, (Color, string)>? polygonColor = null, float[]? origin = null, bool visible = true, float[]? scale = null, Dictionary<string, int[][]>? polygon = null)
         {
             int id = this.Objects.Count;
             CsGraphics.Asset.Object @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon);
@@ -376,7 +377,7 @@ namespace CsGraphics
             return id;
         }
 
-        private int AddObject(string name, double[,] vertexCoord, Dictionary<string, (Color, string)>? polygonColor = null, double[]? origin = null, bool visible = true, double[]? scale = null, Dictionary<string, int[][]>? polygon = null, Math.Matrix[]? normal = null, Dictionary<string, int[][]>? mtlV = null, double[][] vt = null)
+        private int AddObject(string name, float[,] vertexCoord, Dictionary<string, (Color, string)>? polygonColor = null, float[]? origin = null, bool visible = true, float[]? scale = null, Dictionary<string, int[][]>? polygon = null, Math.Matrix[]? normal = null, Dictionary<string, int[][]>? mtlV = null, float[][] vt = null)
         {
             int id = this.Objects.Count;
             CsGraphics.Asset.Object @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon, normal, mtlV, vt);
@@ -394,7 +395,7 @@ namespace CsGraphics
         /// <returns>ID.</returns>
         public int AddObjectFromObj(string name, string filePath, string texturePath = null)
         {
-            (double[,] vertices, Dictionary<string, int[][]> polygon, Math.Matrix[] normal, Dictionary<string, (Color, string)>? polygonColor, Dictionary<string, int[][]> mtlV, double[][] vt) = Parser.ObjParseVerticesV2(filePath);
+            (float[,] vertices, Dictionary<string, int[][]> polygon, Math.Matrix[] normal, Dictionary<string, (Color, string)>? polygonColor, Dictionary<string, int[][]> mtlV, float[][] vt) = Parser.ObjParseVerticesV2(filePath);
             int id = this.AddObject(name, vertices, polygon: polygon, normal: normal, polygonColor: polygonColor, mtlV: mtlV, vt: vt);
             foreach (var kvp in polygonColor)
             {
@@ -442,7 +443,7 @@ namespace CsGraphics
         /// <param name="x">x軸移動量.</param>
         /// <param name="y">y軸移動量.</param>
         /// <param name="z">z軸移動量.</param>
-        public void TranslationObject(int id, double x, double y, double z)
+        public void TranslationObject(int id, float x, float y, float z)
         {
             this.Objects[id].SetTranslation(x, y, z);
             this.IsUpdated = true;
@@ -455,7 +456,7 @@ namespace CsGraphics
         /// <param name="x">x軸移動量.</param>
         /// <param name="y">y軸移動量.</param>
         /// <param name="z">z軸移動量.</param>
-        public void ScaleObject(int id, double x, double y, double z)
+        public void ScaleObject(int id, float x, float y, float z)
         {
             this.Objects[id].SetScale(x, y, z);
             this.IsUpdated = true;
@@ -468,13 +469,13 @@ namespace CsGraphics
         /// <param name="x">x軸移動量.</param>
         /// <param name="y">y軸移動量.</param>
         /// <param name="z">z軸移動量.</param>
-        public void RotationObject(int id, double x, double y, double z)
+        public void RotationObject(int id, float x, float y, float z)
         {
             this.Objects[id].SetRotation(x, y, z);
             this.IsUpdated = true;
         }
 
-        public void SetTranslationViewCam(double x, double y, double z)
+        public void SetTranslationViewCam(float x, float y, float z)
         {
             IsUpdated = true;
 
@@ -483,30 +484,30 @@ namespace CsGraphics
             this.ViewCamTranslation[2, 3] += z;
         }
 
-        public void SetRotationViewCam(double x, double y, double z)
+        public void SetRotationViewCam(float x, float y, float z)
         {
-            this.camRotate = new double[3] { camRotate[0] + x, camRotate[1] + y, camRotate[2] + z };
+            this.camRotate = new float[3] { camRotate[0] + x, camRotate[1] + y, camRotate[2] + z };
             IsUpdated = true;
             Matrix xAxis = new(4);
             xAxis.Identity();
-            xAxis[1, 1] = System.Math.Cos(camRotate[0] * System.Math.PI / 180f);
-            xAxis[2, 1] = System.Math.Sin(camRotate[0] * System.Math.PI / 180f);
-            xAxis[1, 2] = -1 * System.Math.Sin(camRotate[0] * System.Math.PI / 180f);
-            xAxis[2, 2] = System.Math.Cos(camRotate[0] * System.Math.PI / 180f);
+            xAxis[1, 1] = System.MathF.Cos(camRotate[0] * System.MathF.PI / 180f);
+            xAxis[2, 1] = System.MathF.Sin(camRotate[0] * System.MathF.PI / 180f);
+            xAxis[1, 2] = -1 * System.MathF.Sin(camRotate[0] * System.MathF.PI / 180f);
+            xAxis[2, 2] = System.MathF.Cos(camRotate[0] * System.MathF.PI / 180f);
 
             Matrix yAxis = new(4);
             yAxis.Identity();
-            yAxis[0, 0] = System.Math.Cos(camRotate[1] * System.Math.PI / 180f);
-            yAxis[2, 0] = -1 * System.Math.Sin(camRotate[1] * System.Math.PI / 180f);
-            yAxis[0, 2] = System.Math.Sin(camRotate[1] * System.Math.PI / 180f);
-            yAxis[2, 2] = System.Math.Cos(camRotate[1] * System.Math.PI / 180f);
+            yAxis[0, 0] = System.MathF.Cos(camRotate[1] * System.MathF.PI / 180f);
+            yAxis[2, 0] = -1 * System.MathF.Sin(camRotate[1] * System.MathF.PI / 180f);
+            yAxis[0, 2] = System.MathF.Sin(camRotate[1] * System.MathF.PI / 180f);
+            yAxis[2, 2] = System.MathF.Cos(camRotate[1] * System.MathF.PI / 180f);
 
             Matrix zAxis = new(4);
             zAxis.Identity();
-            zAxis[0, 0] = System.Math.Cos(camRotate[2] * System.Math.PI / 180f);
-            zAxis[0, 1] = -1 * System.Math.Sin(camRotate[2] * System.Math.PI / 180f);
-            zAxis[1, 0] = System.Math.Sin(camRotate[2] * System.Math.PI / 180f);
-            zAxis[1, 1] = System.Math.Cos(camRotate[2] * System.Math.PI / 180f);
+            zAxis[0, 0] = System.MathF.Cos(camRotate[2] * System.MathF.PI / 180f);
+            zAxis[0, 1] = -1 * System.MathF.Sin(camRotate[2] * System.MathF.PI / 180f);
+            zAxis[1, 0] = System.MathF.Sin(camRotate[2] * System.MathF.PI / 180f);
+            zAxis[1, 1] = System.MathF.Cos(camRotate[2] * System.MathF.PI / 180f);
 
             this.ViewCamRotation = yAxis * xAxis * zAxis;
         }

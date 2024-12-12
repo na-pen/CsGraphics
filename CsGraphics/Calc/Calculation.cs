@@ -15,9 +15,9 @@
         /// </summary>
         /// <param name="object">オブジェクト.</param>
         /// <returns>スクリーン座標のリスト.</returns>
-        internal static (Point[], double[], Matrix) Calc(CsGraphics.Asset.Object @object, Matrix matrixCam, float width, float height, bool mode = true, float fov = 60)
+        internal static (Point[], float[], Matrix) Calc(CsGraphics.Asset.Object @object, Matrix matrixCam, float width, float height, bool mode = true, float fov = 60,float scaleParallelProjection = 32)
         {
-            List<double> depthZ = new List<double>(); // z深度 : 使用しない
+            List<float> depthZ = new List<float>(); // z深度 : 使用しない
 
             List<Point> result = new(); // 画面上の描画座標
 
@@ -35,13 +35,13 @@
             float top = -height / 2;
             float aspect = width / height;
             float fovY = float.DegreesToRadians(fov);
-            float f = (float)(1f / System.Math.Tan(fovY / 2f));
+            float f = (float)(1f / System.MathF.Tan(fovY / 2f));
 
             Matrix cam2view;
 
             if (mode) // 透視投影のとき
             {
-                cam2view = new (new double[,]
+                cam2view = new (new float[,]
                 {
                     { -f / aspect, 0, 0, 0 },
                     { 0, f, 0, 0 },
@@ -51,12 +51,12 @@
             }
             else // 平行投影のとき
             {
-                left = -width / 32;
-                right = width / 32;
-                bottom = height / 32;
-                top = -height / 32;
+                left = -width / scaleParallelProjection;
+                right = width / scaleParallelProjection;
+                bottom = height / scaleParallelProjection;
+                top = -height / scaleParallelProjection;
 
-                cam2view = new (new double[,]
+                cam2view = new (new float[,]
                 {
                     { 2f / (right - left), 0, 0, -(right + left) / (right - left) },
                     { 0, 2f / (top - bottom), 0, -(top + bottom) / (top - bottom) },
@@ -73,7 +73,7 @@
             Matrix coordinate = new Matrix(@object.Vertex.Coordinate.GetLength(0), @object.Vertex.Coordinate.GetLength(1));
             for (int n = 0; n < @object.Vertex.Coordinate.GetLength(1); n++)
             {
-                Matrix t = new(new double[] { vertex[0, n], vertex[1, n], vertex[2, n], vertex[3, n] });
+                Matrix t = new(new float[] { vertex[0, n], vertex[1, n], vertex[2, n], vertex[3, n] });
                 result.Add(new Point((vertex[0, n] / vertex[3, n] + 1) * (width / 2), (1 - vertex[1, n] / vertex[3, n]) * (height / 2))); // スクリーン上の座標を求める計算 この場合はそのままコピー
 
                 // 計算後の3D頂点座標を代入
@@ -160,24 +160,24 @@
         {
             Matrix xAxis = new(4);
             xAxis.Identity();
-            xAxis[1, 1] = System.Math.Cos(@object.Angle[0]);
-            xAxis[2, 1] = System.Math.Sin(@object.Angle[0]);
-            xAxis[1, 2] = -1 * System.Math.Sin(@object.Angle[0]);
-            xAxis[2, 2] = System.Math.Cos(@object.Angle[0]);
+            xAxis[1, 1] = System.MathF.Cos(@object.Angle[0]);
+            xAxis[2, 1] = System.MathF.Sin(@object.Angle[0]);
+            xAxis[1, 2] = -1f * System.MathF.Sin(@object.Angle[0]);
+            xAxis[2, 2] = System.MathF.Cos(@object.Angle[0]);
 
             Matrix yAxis = new(4);
             yAxis.Identity();
-            yAxis[0, 0] = System.Math.Cos(@object.Angle[1]);
-            yAxis[2, 0] = -1 * System.Math.Sin(@object.Angle[1]);
-            yAxis[0, 2] = System.Math.Sin(@object.Angle[1]);
-            yAxis[2, 2] = System.Math.Cos(@object.Angle[1]);
+            yAxis[0, 0] = System.MathF.Cos(@object.Angle[1]);
+            yAxis[2, 0] = -1f * System.MathF.Sin(@object.Angle[1]);
+            yAxis[0, 2] = System.MathF.Sin(@object.Angle[1]);
+            yAxis[2, 2] = System.MathF.Cos(@object.Angle[1]);
 
             Matrix zAxis = new(4);
             zAxis.Identity();
-            zAxis[0, 0] = System.Math.Cos(@object.Angle[2]);
-            zAxis[0, 1] = -1 * System.Math.Sin(@object.Angle[2]);
-            zAxis[1, 0] = System.Math.Sin(@object.Angle[2]);
-            zAxis[1, 1] = System.Math.Cos(@object.Angle[2]);
+            zAxis[0, 0] = System.MathF.Cos(@object.Angle[2]);
+            zAxis[0, 1] = -1f * System.MathF.Sin(@object.Angle[2]);
+            zAxis[1, 0] = System.MathF.Sin(@object.Angle[2]);
+            zAxis[1, 1] = System.MathF.Cos(@object.Angle[2]);
 
             return yAxis * xAxis * zAxis;
         }
