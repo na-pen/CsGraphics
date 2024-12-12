@@ -51,6 +51,11 @@
             }
             else // 平行投影のとき
             {
+                left = -width / 32;
+                right = width / 32;
+                bottom = height / 32;
+                top = -height / 32;
+
                 cam2view = new (new double[,]
                 {
                     { 2f / (right - left), 0, 0, -(right + left) / (right - left) },

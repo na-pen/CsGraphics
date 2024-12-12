@@ -215,6 +215,18 @@
             }
         }
 
+        private void EnlargementCam(object sender, EventArgs e)
+        {
+            Scene.IsUpdated = true;
+            Scene.SetTranslationViewCam(0, 0, -10);
+        }
+
+        private void ReductionCam(object sender, EventArgs e)
+        {
+            Scene.IsUpdated = true;
+            Scene.SetTranslationViewCam(0, 0, 10);
+        }
+
         /*
         private string Png()
         {
