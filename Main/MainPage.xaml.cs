@@ -20,6 +20,11 @@
         /// </summary>
         private bool isUpdating = false;
 
+        private bool isPointerPressing = false;
+        private bool isPointerLongPressing = false;
+
+        private PointF PointerPressed = new PointF(0, 0);
+
         /// <summary>
         /// Initializes a new instance of the <see cref="MainPage"/> class.
         /// </summary>
@@ -33,6 +38,21 @@
             this.Scene = this.scene;  // Drawable に設定
 
             this.UpdateLoop();
+        }
+
+        private async void initCam()
+        {
+            await Task.Delay(1500);
+            // レイアウトが変更された後、すべての要素が描画されたタイミングで実行される処理
+            if (graphicsView.Width != -1)
+            {
+                Scene.SetTranslationViewCam((int)graphicsView.Width / 2, (int)graphicsView.Height / 5, 0);
+            }
+            else
+            {
+                initCam();
+            }
+
         }
 
         /// <summary>
@@ -80,6 +100,7 @@
                     await Task.Delay(delay);
                 }
             }
+
         }
 
         // コマンドが入力された時の処理
@@ -117,22 +138,21 @@
         }
 
         // コマンド処理ロジック
-        private unsafe string ProcessCommand(string command)
+        private string ProcessCommand(string command)
         {
             string pattern = @"\((.*?)\)";
             string[] args = Regex.Match(command, pattern).Groups[1].Value.Split(',');
             return command.ToLower() switch
             {
-                _ when command.StartsWith("translation") => this.TranslationTest(int.Parse(args[0]), double.Parse(args[1]), double.Parse(args[2]), double.Parse(args[3])),
-                _ when command.StartsWith("scale") => this.ScaleTest(int.Parse(args[0]), double.Parse(args[1]), double.Parse(args[2]), double.Parse(args[3])),
-                _ when command.StartsWith("rotation") => this.RotationTest(int.Parse(args[0]), double.Parse(args[1]), double.Parse(args[2]), double.Parse(args[3])),
+                _ when command.StartsWith("translation") => this.TranslationTest(int.Parse(args[0]), float.Parse(args[1]), float.Parse(args[2]), float.Parse(args[3])),
+                _ when command.StartsWith("scale") => this.ScaleTest(int.Parse(args[0]), float.Parse(args[1]), float.Parse(args[2]), float.Parse(args[3])),
+                _ when command.StartsWith("rotation") => this.RotationTest(int.Parse(args[0]), float.Parse(args[1]), float.Parse(args[2]), float.Parse(args[3])),
                 _ when command.StartsWith("object") => "ID : " + this.Scene.AddObjectFromObj(args[0].Replace("\"", string.Empty), args[1].Replace("\"", string.Empty)).ToString(),
-                _ when command.StartsWith("test") => sizeof(byte).ToString(),
                 _ => "Unknown command."
             };
         }
 
-        private string TranslationTest(int id, double x, double y, double z)
+        private string TranslationTest(int id, float x, float y, float z)
         {
             // 平行移動
             this.Scene.TranslationObject(id, x, y, z);
@@ -140,7 +160,7 @@
             return "Done!";
         }
 
-        private string ScaleTest(int id, double x, double y, double z)
+        private string ScaleTest(int id, float x, float y, float z)
         {
             // 拡大
             this.Scene.ScaleObject(id, x, y, z);
@@ -148,7 +168,7 @@
             return "Done!";
         }
 
-        private string RotationTest(int id, double x, double y, double z)
+        private string RotationTest(int id, float x, float y, float z)
         {
             // 回転
             this.Scene.RotationObject(id, x, y, z);
@@ -156,33 +176,56 @@
             return "Done!";
         }
 
-        /*
-        private string Png()
+        private async void PointerGestureRecognizer_PointerPressed(object sender, PointerEventArgs e)
         {
-            string filePath = "C:\\Users\\mail\\OneDrive\\tx\\服1.png";
-            Color[,] tex = Asset(filePath);
-
-            using (var stream = new MemoryStream())
-            {
-                Bitmap bitmap = new(2048, 2048, colors);
-                // ストリームに画像データを書き込む
-                stream.Write(bitmap.FileHeader.Bytes);
-                stream.Write(bitmap.InfoHeader.Bytes);
-                stream.Write(bitmap.img);
-                stream.Position = 0;
-                IImage image = PlatformImage.FromStream(stream, ImageFormat.Bmp);
-                // PlatformImage をストリームから読み込んで画像を作成
-
-
-                using (FileStream fs = new FileStream("C:\\Users\\mail\\Documents\\CsGraphics\\Main\\test.bmp", FileMode.Create))
-                {
-                    fs.Write(bitmap.FileHeader.Bytes);
-                    fs.Write(bitmap.InfoHeader.Bytes);
-                    fs.Write(bitmap.img);
-                }
-            }
-            return "Done";
+            this.PointerPressed = (PointF)e.GetPosition(this.graphicsView);
+            this.isPointerPressing = true;
+            await WaitForLongPress();
         }
-        */
+
+        private async Task WaitForLongPress()
+        {
+            // 0.5秒(500ミリ秒)待機
+            await Task.Delay(200);
+
+            // マウスがまだ押されているか確認
+            if (this.isPointerPressing)
+            {
+                this.isPointerLongPressing = true;
+            }
+        }
+
+        private void SwitchingProjection(object sender, EventArgs e)
+        {
+            Scene.IsPerspectiveProjection = !Scene.IsPerspectiveProjection;
+            Scene.IsUpdated = true;
+        }
+
+        private void PointerGestureRecognizer_PointerReleased(object sender, PointerEventArgs e)
+        {
+            this.isPointerPressing = false;
+            if (this.isPointerLongPressing)
+            {
+                this.isPointerLongPressing = false;
+                var t = (PointF)e.GetPosition(this.graphicsView) - this.PointerPressed;
+                Scene.SetTranslationViewCam(t.Width / 20f, -1 * t.Height / 20f, 0);
+                //float x =  * 180) * Math.PI / 180f;
+                //Scene.SetRotationViewCam(t.Height / graphicsView.Height * 360, t.Width / graphicsView.Width * 360, 0);
+            }
+        }
+
+        private void EnlargementCam(object sender, EventArgs e)
+        {
+            Scene.IsUpdated = true;
+            Scene.SetTranslationViewCam(0, 0, -10);
+            Scene.ScaleParallelProjection *= 1.25f;
+        }
+
+        private void ReductionCam(object sender, EventArgs e)
+        {
+            Scene.IsUpdated = true;
+            Scene.SetTranslationViewCam(0, 0, 10);
+            Scene.ScaleParallelProjection *= 0.8f;
+        }
     }
 }

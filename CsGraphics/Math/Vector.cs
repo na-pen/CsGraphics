@@ -4,25 +4,25 @@
     {
         internal Matrix Data = new Matrix(4, 1);
 
-        public double X
+        public float X
         {
             get => this.Data[0, 0];
             set => this.Data[0, 0] = value;
         }
 
-        public double Y
+        public float Y
         {
             get => this.Data[1, 0];
             set => this.Data[1, 0] = value;
         }
 
-        public double Z
+        public float Z
         {
             get => this.Data[2, 0];
             set => this.Data[2, 0] = value;
         }
 
-        public double W
+        public float W
         {
             get => this.Data[3, 0];
             set => this.Data[3, 0] = value;
@@ -34,7 +34,7 @@
         /// <param name="x">x成分.</param>
         /// <param name="y">y成分.</param>
         /// <param name="z">z成分.</param>
-        public Vector(double x = 0, double y = 0, double z = 0)
+        public Vector(float x = 0, float y = 0, float z = 0)
         {
             this.Data[0, 0] = x;
             this.Data[1, 0] = y;
@@ -50,7 +50,7 @@
         /// <param name="b">点B[x,y,z].</param>
         /// <returns>ベクトルAB.</returns>
         /// <exception cref="ArgumentException">各頂点は3次元である必要があります.</exception>
-        public Vector(double[] a, double[] b)
+        public Vector(float[] a, float[] b)
         {
             if (a.Length != 3 || b.Length != 3)
             {
@@ -70,7 +70,7 @@
         /// <param name="arr">点AB[[xa,xb],[ya,yb],[za,zb]].</param>
         /// <returns>ベクトルAB.</returns>
         /// <exception cref="ArgumentException">各頂点は3次元である必要があります.</exception>
-        public Vector(double[,] arr)
+        public Vector(float[,] arr)
         {
             if (arr.GetLength(0) != 3)
             {
@@ -111,7 +111,7 @@
             return result;
         }
 
-        public static Vector operator *(double a, Vector b)
+        public static Vector operator *(float a, Vector b)
         {
             Vector result = new Vector();
             result.X = a * b.X;
@@ -121,7 +121,7 @@
             return result;
         }
 
-        public static Vector operator *(Vector b, double a)
+        public static Vector operator *(Vector b, float a)
         {
             return a * b;
         }
@@ -152,15 +152,15 @@
         /// <param name="vectorA">a</param>
         /// <param name="vectorB">b</param>
         /// <returns>内積の結果.</returns>
-        internal static double DotProduct(Vector vectorA, Vector vectorB)
+        internal static float DotProduct(Vector vectorA, Vector vectorB)
         {
-            double result = (vectorA.X * vectorB.X) + (vectorA.Y * vectorB.Y) + (vectorA.Z * vectorB.Z) + (vectorA.W * vectorB.W);
+            float result = (vectorA.X * vectorB.X) + (vectorA.Y * vectorB.Y) + (vectorA.Z * vectorB.Z) + (vectorA.W * vectorB.W);
             return result;
         }
 
-        public static double Size(Vector vector)
+        public static float Size(Vector vector)
         {
-            double result = System.Math.Sqrt(System.Math.Pow(vector.X, 2) + System.Math.Pow(vector.Y, 2) + System.Math.Pow(vector.Z, 2));
+            float result = System.MathF.Sqrt(System.MathF.Pow(vector.X, 2) + System.MathF.Pow(vector.Y, 2) + System.MathF.Pow(vector.Z, 2));
             return result;
         }
     }

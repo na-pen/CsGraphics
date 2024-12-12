@@ -14,7 +14,7 @@
         /// <param name="objectId">オブジェクトID.</param>
         /// <param name="coordinate">3次元空間上の座標(オブジェクト基準).</param>
         /// <exception cref="ArgumentException">頂点の色を指定する場合は、すべての頂点に対して指定する必要があります.</exception>
-        internal Vertex(int objectId, double[,] coordinate,  double[][]? vt)
+        internal Vertex(int objectId, float[,] coordinate,  float[][]? vt)
         {
             // 初期値の適用
             ObjectId = objectId;
@@ -23,7 +23,7 @@
             Vt = vt;
         }
 
-        private Vertex(int objectId, Matrix coordinate,  double[][] vt)
+        private Vertex(int objectId, Matrix coordinate,  float[][] vt)
         {
             ObjectId = objectId;
             Coordinate = coordinate;
@@ -40,13 +40,13 @@
         /// </summary>
         internal Matrix Coordinate { get; set; }
 
-        internal double[][]? Vt { get; set; }
+        internal float[][]? Vt { get; set; }
 
         /// <summary>
         /// 頂点情報をStringにする.
         /// </summary>
         /// <returns>頂点情報.</returns>
-        public override string ToString() // Vertex test = new(0, new double[] { 0, 0, 0 });
+        public override string ToString() // Vertex test = new(0, new float[] { 0, 0, 0 });
         {
             string result = string.Empty;
             Matrix coordinate = Coordinate;
@@ -97,11 +97,11 @@
             switch (matrix.GetLength(0))
             {
                 case 2:
-                    matrix.Resize(4, value: new double[] { 0, 1 });
+                    matrix.Resize(4, value: new float[] { 0, 1 });
                     break;
 
                 case 3:
-                    matrix.Resize(4, value: new double[] { 1 });
+                    matrix.Resize(4, value: new float[] { 1 });
                     break;
 
                 default:

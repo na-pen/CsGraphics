@@ -5,14 +5,14 @@
     /// </summary>
     internal class Complex
     {
-        private double real = 0;
+        private float real = 0;
         private Imaginary imaginary = 0;
 
         /// <summary>
         /// Complex cp = (3,4)  //3+4i の形で代入できるようにする.
         /// </summary>
         /// <param name="val">複素数.</param>
-        public static implicit operator Complex((double, Imaginary) val)
+        public static implicit operator Complex((float, Imaginary) val)
         {
             return new Complex { real = val.Item1, imaginary = val.Item2 };
         }
@@ -49,7 +49,7 @@
         /// <returns>２つの複素数の積.</returns>
         public static Complex operator *(Complex a, Complex b)
         {
-            double real = (a.real * b.real) - (a.imaginary * b.imaginary);
+            float real = (a.real * b.real) - (a.imaginary * b.imaginary);
             Imaginary imaginary = (a.imaginary * b.real) + (a.real * b.imaginary);
             Complex result = (real, imaginary);
             return result;
@@ -63,7 +63,7 @@
         /// <returns>２つの複素数の商.</returns>
         public static Complex operator /(Complex a, Complex b)
         {
-            double real = ((a.real * b.real) + (a.imaginary * b.imaginary)) / ((b.real * b.real) + (b.imaginary * b.imaginary));
+            float real = ((a.real * b.real) + (a.imaginary * b.imaginary)) / ((b.real * b.real) + (b.imaginary * b.imaginary));
             Imaginary imaginary = ((a.imaginary * b.real) - (a.real * b.imaginary)) / ((b.real * b.real) + (b.imaginary * b.imaginary));
 
             Complex result = (real, imaginary);

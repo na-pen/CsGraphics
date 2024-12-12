@@ -17,7 +17,7 @@ namespace CsGraphics.Asset
         /// <param name="origin">オブジェクトの原点.</param>
         /// <param name="visible">オブジェクトの表示状態.</param>
         /// <param name="scale">オブジェクトの拡大倍率.</param>
-        internal Object(string name, double[,] vertexCoord, int id = -1, Dictionary<string, (Color, string)>? polygonColor = null, double[]? origin = null, bool visible = true, double[]? scale = null, Dictionary<string, int[][]>? polygon = null, Math.Matrix[] normal = null, Dictionary<string, int[][]>? mtlV = null, double[][] vt = null)
+        internal Object(string name, float[,] vertexCoord, int id = -1, Dictionary<string, (Color, string)>? polygonColor = null, float[]? origin = null, bool visible = true, float[]? scale = null, Dictionary<string, int[][]>? polygon = null, Math.Matrix[] normal = null, Dictionary<string, int[][]>? mtlV = null, float[][] vt = null)
         {
             ID = id;
             Name = name;
@@ -25,7 +25,7 @@ namespace CsGraphics.Asset
 
             if (origin == null)
             {
-                Origin = new(new double[,] { { 0 }, { 0 }, { 0 } });
+                Origin = new(new float[,] { { 0 }, { 0 }, { 0 } });
             }
             else
             {
@@ -34,7 +34,7 @@ namespace CsGraphics.Asset
 
             if (scale == null)
             {
-                Magnification = new double[] { 1, 1, 1 };
+                Magnification = new float[] { 20, 20, 20 };
             }
             else
             {
@@ -49,7 +49,7 @@ namespace CsGraphics.Asset
             }
         }
 
-        private Object(string name, Vertex vertex, int id, Math.Matrix origin, double[] magnification, bool visible, double[] angle, Polygon? polygon, Dictionary<string, (int, int, byte[])>? texture)
+        private Object(string name, Vertex vertex, int id, Math.Matrix origin, float[] magnification, bool visible, float[] angle, Polygon? polygon, Dictionary<string, (int, int, byte[])>? texture)
         {
             Name = name;
             IsVisible = visible;
@@ -97,7 +97,7 @@ namespace CsGraphics.Asset
         /// <summary>
         /// Gets or sets オブジェクトの拡大倍数.
         /// </summary>
-        internal double[] Magnification { get; set; }
+        internal float[] Magnification { get; set; }
 
         /// <summary>
         /// Gets or sets 頂点情報.
@@ -107,7 +107,7 @@ namespace CsGraphics.Asset
         /// <summary>
         /// Gets or sets オブジェクトの傾き.
         /// </summary>
-        internal double[] Angle { get; set; } = { 0, 0, 0 };
+        internal float[] Angle { get; set; } = { 0, 3.14f, 0 };
 
         /// <summary>
         /// Gets or sets 多角形面の情報.
@@ -139,7 +139,7 @@ namespace CsGraphics.Asset
                 (Vertex)Vertex.Clone(),
                 ID,
                 (Math.Matrix)Origin.Clone(),
-                (double[])Magnification.Clone(),
+                (float[])Magnification.Clone(),
                 IsVisible,
                 Angle,
                 Polygon,
@@ -154,7 +154,7 @@ namespace CsGraphics.Asset
         /// <param name="x">x軸の移動量.</param>
         /// <param name="y">y軸の移動量.</param>
         /// <param name="z">z軸の移動量.</param>
-        internal void SetTranslation(double x, double y, double z)
+        internal void SetTranslation(float x, float y, float z)
         {
             IsUpdated = true;
 
@@ -173,10 +173,10 @@ namespace CsGraphics.Asset
         /// <param name="x">x軸の拡大率.</param>
         /// <param name="y">y軸の拡大率.</param>
         /// <param name="z">z軸の拡大率.</param>
-        internal void SetScale(double x, double y, double z)
+        internal void SetScale(float x, float y, float z)
         {
             IsUpdated = true;
-            Magnification = new double[] { Magnification[0] * x, Magnification[1] * y, Magnification[2] * z };
+            Magnification = new float[] { Magnification[0] * x, Magnification[1] * y, Magnification[2] * z };
         }
 
         /// <summary>
@@ -185,10 +185,10 @@ namespace CsGraphics.Asset
         /// <param name="x">x軸の回転角度.</param>
         /// <param name="y">y軸の回転角度.</param>
         /// <param name="z">z軸の回転角度.</param>
-        internal void SetRotation(double x, double y, double z)
+        internal void SetRotation(float x, float y, float z)
         {
             IsUpdated = true;
-            Angle = new double[] { Angle[0] + x, Angle[1] + y, Angle[2] + z };
+            Angle = new float[] { Angle[0] + x, Angle[1] + y, Angle[2] + z };
         }
 
         internal void AddTexture(string matName, string path)
