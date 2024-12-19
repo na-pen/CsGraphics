@@ -81,24 +81,8 @@ namespace CsGraphics
                 Math.Vector ac = new Math.Vector(viewPlanePointA, viewPlanePointC); // ACベクトル
                 Math.Vector viewPlaneEquation = Calc.ZDepth.PlaneEquation(ab, ac); // 描画面の平面方程式
 
-                Color[,] pixelColors = new Color[canvasWidth, canvasHeight];
-                for (int x = 0; x < canvasWidth; x++)
-                {
-                    for (int y = 0; y < canvasHeight; y++)
-                    {
-                        pixelColors[x, y] = Colors.White;
-                    }
-                }
-
-                // Zバッファの初期化 (全て無限大で初期化)
-                double[,] zBuffer = new double[canvasWidth, canvasHeight];
-                for (int x = 0; x < canvasWidth; x++)
-                {
-                    for (int y = 0; y < canvasHeight; y++)
-                    {
-                        zBuffer[x, y] = 1;
-                    }
-                }
+                byte[] pixelColorsBytes = Enumerable.Repeat<Byte>(255, canvasWidth * canvasHeight * 4).ToArray();
+                double[] zBufferList = Enumerable.Repeat<double>(1, canvasWidth * canvasHeight).ToArray();
 
                 // 各点を指定された色で描画
                 foreach (Asset.Object3D @object in this.Objects)
@@ -113,7 +97,7 @@ namespace CsGraphics
 
                         if (@object.IsUpdated == true || this.IsUpdated) // オブジェクトの情報に更新があれば再計算
                         {
-                            (points, _, coordinate) = Calculation.Calc((Asset.Object3D)@object, ViewCamRotation * ViewCamTranslation, canvasWidth, canvasHeight,IsPerspectiveProjection,scaleParallelProjection:ScaleParallelProjection); // 点や面の計算
+                            (points, _, coordinate) = Calculation.Calc((Asset.Object3D)@object, ViewCamRotation * ViewCamTranslation, canvasWidth, canvasHeight, IsPerspectiveProjection, scaleParallelProjection: ScaleParallelProjection); // 点や面の計算
 
                             @object.Points = points;
                             @object.IsUpdated = false;
@@ -197,24 +181,35 @@ namespace CsGraphics
                                                     }
                                                 }
                                                 // Zバッファを更新 (近いものだけ描画)
-                                                if (depth < zBuffer[(int)p.X, (int)p.Y] && depth >= -1)
+                                                //if (depth < zBuffer[(int)p.X, (int)p.Y] && depth >= -1)
+                                                if (depth < zBufferList[(int)p.X + canvasWidth * (int)p.Y] && depth >= -1)
                                                 {
-                                                    zBuffer[(int)p.X, (int)p.Y] = depth;
+                                                    zBufferList[(int)p.X + canvasWidth * (int)p.Y] = depth;
 
                                                     if (pixelcolor == null)
                                                     {
 
                                                         (Color cl, _) = ((Asset.Object3d.Polygon)@object.Polygon).Colors[key];
-                                                        pixelColors[(int)p.X, (int)p.Y] = cl; // 色を設定
+                                                        pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 0] = (byte)(int)(cl.Blue * 255);
+                                                        pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 1] = (byte)(int)(cl.Green * 255);
+                                                        pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 2] = (byte)(int)(cl.Red * 255);
+                                                        pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 3] = (byte)(int)(cl.Alpha * 255);
                                                     }
-                                                    else if (pixelcolor.Alpha != 1)
+                                                    else if (pixelcolor.Alpha != 1 || pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 3] != 1)
                                                     {
-                                                        pixelColors[(int)p.X, (int)p.Y] = BlendColors(pixelcolor, pixelColors[(int)p.X, (int)p.Y]);
+                                                        Color t = BlendColors(pixelcolor, new Color((int)pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 2], (int)pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 1], (int)pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 0], (int)pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 3]));
+                                                        pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 0] = (byte)(int)(t.Blue * 255);
+                                                        pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 1] = (byte)(int)(t.Green * 255);
+                                                        pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 2] = (byte)(int)(t.Red * 255);
+                                                        pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 3] = (byte)(int)(t.Alpha * 255);
 
                                                     }
                                                     else
                                                     {
-                                                        pixelColors[(int)p.X, (int)p.Y] = pixelcolor;
+                                                        pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 0] = (byte)(int)(pixelcolor.Blue * 255);
+                                                        pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 1] = (byte)(int)(pixelcolor.Green * 255);
+                                                        pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 2] = (byte)(int)(pixelcolor.Red * 255);
+                                                        pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 3] = (byte)(int)(pixelcolor.Alpha * 255);
 
                                                     }
                                                 }
@@ -254,7 +249,8 @@ namespace CsGraphics
                     }
                 }
 
-                canvas.DrawImage(this.CreateImageFromColors(pixelColors, canvasWidth, canvasHeight), 0, 0, dirtyRect.Width, dirtyRect.Height);
+                canvas.DrawImage(this.CreateImageFromColors(pixelColorsBytes, canvasWidth, canvasHeight), 0, 0, dirtyRect.Width, dirtyRect.Height);
+
                 this.IsUpdated = false;
             }
         }
@@ -302,7 +298,7 @@ namespace CsGraphics
             return lambda1 >= 0 && lambda2 >= 0 && lambda3 >= 0;
         }
 
-        private IImage CreateImageFromColors(Color[,] colors, int width, int height)
+        private IImage CreateImageFromColors(Byte[] colors, int width, int height)
         {
             // メモリストリームを使用して画像データを作成
             using (var stream = new MemoryStream())

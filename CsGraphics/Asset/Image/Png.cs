@@ -161,7 +161,6 @@
                         byte b = data[dataIndex++];
                         byte a = data[dataIndex++];
 
-                        
                         r += (byte)(int)(bytes[(width * (height - y) * 4) + (x * 4) + 0]);
                         g += (byte)(int)(bytes[(width * (height - y) * 4) + (x * 4) + 1]);
                         b += (byte)(int)(bytes[(width * (height - y) * 4) + (x * 4) + 2]);
