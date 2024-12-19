@@ -5,10 +5,10 @@ namespace CsGraphics.Asset
     /// <summary>
     /// オブジェクトの情報の保持や管理を行う.
     /// </summary>
-    internal class Object : ICloneable
+    internal class Object3D : ICloneable
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Object"/> class.
+        /// Initializes a new instance of the <see cref="object"/> class.
         /// </summary>
         /// <param name="id">オブジェクトID.</param>
         /// <param name="name">オブジェクト名.</param>
@@ -17,7 +17,7 @@ namespace CsGraphics.Asset
         /// <param name="origin">オブジェクトの原点.</param>
         /// <param name="visible">オブジェクトの表示状態.</param>
         /// <param name="scale">オブジェクトの拡大倍率.</param>
-        internal Object(string name, float[,] vertexCoord, int id = -1, Dictionary<string, (Color, string)>? polygonColor = null, float[]? origin = null, bool visible = true, float[]? scale = null, Dictionary<string, int[][]>? polygon = null, Math.Matrix[] normal = null, Dictionary<string, int[][]>? mtlV = null, float[][] vt = null)
+        internal Object3D(string name, float[,] vertexCoord, int id = -1, Dictionary<string, (Color, string)>? polygonColor = null, float[]? origin = null, bool visible = true, float[]? scale = null, Dictionary<string, int[][]>? polygon = null, Math.Matrix[] normal = null, Dictionary<string, int[][]>? mtlV = null, float[][] vt = null)
         {
             ID = id;
             Name = name;
@@ -45,11 +45,11 @@ namespace CsGraphics.Asset
 
             if (polygon != null && polygonColor != null)
             {
-                Polygon = new Polygon(ID, polygon, normal, polygonColor, mtlV);
+                Polygon = new Object3d.Polygon(ID, polygon, normal, polygonColor, mtlV);
             }
         }
 
-        private Object(string name, Vertex vertex, int id, Math.Matrix origin, float[] magnification, bool visible, float[] angle, Polygon? polygon, Dictionary<string, (int, int, byte[])>? texture)
+        private Object3D(string name, Object3d.Vertex vertex, int id, Math.Matrix origin, float[] magnification, bool visible, float[] angle, Object3d.Polygon? polygon, Dictionary<string, (int, int, byte[])>? texture)
         {
             Name = name;
             IsVisible = visible;
@@ -62,7 +62,7 @@ namespace CsGraphics.Asset
             Texture = texture;
         }
 
-        internal Object(Object obj)
+        internal Object3D(Object3D obj)
         {
             Name = obj.Name;
             IsVisible = obj.IsVisible;
@@ -102,7 +102,7 @@ namespace CsGraphics.Asset
         /// <summary>
         /// Gets or sets 頂点情報.
         /// </summary>
-        internal Vertex Vertex { get; set; }
+        internal Object3d.Vertex Vertex { get; set; }
 
         /// <summary>
         /// Gets or sets オブジェクトの傾き.
@@ -112,7 +112,7 @@ namespace CsGraphics.Asset
         /// <summary>
         /// Gets or sets 多角形面の情報.
         /// </summary>
-        internal Polygon? Polygon { get; set; } = null;
+        internal Object3d.Polygon? Polygon { get; set; } = null;
 
         /// <summary>
         /// Gets or sets a value indicating whether gets or sets オブジェクトが更新されたかどうか.
@@ -134,9 +134,9 @@ namespace CsGraphics.Asset
         /// <returns>Clone.</returns>
         public object Clone()
         {
-            return new Object(
+            return new Object3D(
                 Name,
-                (Vertex)Vertex.Clone(),
+                (Object3d.Vertex)Vertex.Clone(),
                 ID,
                 (Math.Matrix)Origin.Clone(),
                 (float[])Magnification.Clone(),
@@ -200,7 +200,7 @@ namespace CsGraphics.Asset
             IsUpdated = true;
             if (path != string.Empty && !Texture.ContainsKey(path))
             {
-                switch(Path.GetExtension(path))
+                switch (Path.GetExtension(path))
                 {
                     case ".bmp":
 

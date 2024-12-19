@@ -3,6 +3,7 @@ namespace CsGraphics
     using System.Collections.Generic;
     using CsGraphics.Asset;
     using CsGraphics.Asset.Image;
+
     using CsGraphics.Calc;
     using CsGraphics.Math;
     using Microsoft.Maui.Graphics;
@@ -23,8 +24,7 @@ namespace CsGraphics
         /// <summary>
         /// シーンに含まれるオブジェクト.
         /// </summary>
-
-        internal List<CsGraphics.Asset.Object> Objects;
+        internal List<Asset.Object3D> Objects;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Scene"/> class.
@@ -33,8 +33,7 @@ namespace CsGraphics
         public Scene(int frameRate)
         {
             this.FrameRate = frameRate;
-
-            this.Objects = new List<CsGraphics.Asset.Object>(); // 初期化
+            this.Objects = new List<Asset.Object3D>(); // 初期化
 
             this.ViewCamTranslation.Identity();
 
@@ -102,19 +101,19 @@ namespace CsGraphics
                 }
 
                 // 各点を指定された色で描画
-                foreach (CsGraphics.Asset.Object @object in this.Objects)
+                foreach (Asset.Object3D @object in this.Objects)
                 {
                     if (@object.IsVisible == true)
                     {
                         Point[] points = Array.Empty<Point>();
 
-                        CsGraphics.Asset.Object obj;
+                        Asset.Object3D obj;
                         float[] pT = Array.Empty<float>();
                         Matrix coordinate;
 
                         if (@object.IsUpdated == true || this.IsUpdated) // オブジェクトの情報に更新があれば再計算
                         {
-                            (points, _, coordinate) = Calculation.Calc((CsGraphics.Asset.Object)@object, ViewCamRotation * ViewCamTranslation, canvasWidth, canvasHeight,IsPerspectiveProjection,scaleParallelProjection:ScaleParallelProjection); // 点や面の計算
+                            (points, _, coordinate) = Calculation.Calc((Asset.Object3D)@object, ViewCamRotation * ViewCamTranslation, canvasWidth, canvasHeight,IsPerspectiveProjection,scaleParallelProjection:ScaleParallelProjection); // 点や面の計算
 
                             @object.Points = points;
                             @object.IsUpdated = false;
@@ -127,17 +126,15 @@ namespace CsGraphics
 
                         if (@object.Polygon != null) // ポリゴンが存在する場合のみ描画
                         {
-                            // polygonのグループごとに処理
-                            foreach (var kvp in ((Asset.Polygon)@object.Polygon).VertexID)
+                            foreach (var kvp in ((Asset.Object3d.Polygon)@object.Polygon).VertexID)
                             {
                                 string key = kvp.Key;
                                 int[][] array = kvp.Value;
-
-                                int[][] array2 = ((Asset.Polygon)@object.Polygon).MtlVertexID[key];
+                                int[][] array2 = ((Asset.Object3d.Polygon)@object.Polygon).MtlVertexID[key];
                                 string key2 = string.Empty;
                                 if (key != string.Empty)
                                 {
-                                    key2 = ((Asset.Polygon)@object.Polygon).Colors[key].Item2;
+                                    key2 = ((Asset.Object3d.Polygon)@object.Polygon).Colors[key].Item2;
                                 }
 
                                 // 各ポリゴンをチェック
@@ -193,7 +190,7 @@ namespace CsGraphics
                                                     double texVy = (a * vt[0][1]) + (b * vt[1][1]) + (c * vt[2][1]);
                                                     if (@object.Texture != null && @object.Texture.ContainsKey(key2))
                                                     {
-                                                        (Color cl, _) = ((Asset.Polygon)@object.Polygon).Colors[key];
+                                                        (Color cl, _) = ((Asset.Object3d.Polygon)@object.Polygon).Colors[key];
                                                         int x = (int)((texVx % 1) * @object.Texture[key2].Item2);
                                                         int y = ((int)((texVy % 1) * @object.Texture[key2].Item2));
                                                         pixelcolor = new Color(@object.Texture[key2].Item3[@object.Texture[key2].Item1 * y * 4 + (x * 4) + 0], @object.Texture[key2].Item3[@object.Texture[key2].Item1 * y * 4 + (x * 4) + 1], @object.Texture[key2].Item3[@object.Texture[key2].Item1 * y * 4 + (x * 4) + 2], @object.Texture[key2].Item3[@object.Texture[key2].Item1 * y * 4 + (x * 4) + 3]).MultiplyAlpha(cl.Alpha);
@@ -206,7 +203,8 @@ namespace CsGraphics
 
                                                     if (pixelcolor == null)
                                                     {
-                                                        (Color cl, _) = ((Asset.Polygon)@object.Polygon).Colors[key];
+
+                                                        (Color cl, _) = ((Asset.Object3d.Polygon)@object.Polygon).Colors[key];
                                                         pixelColors[(int)p.X, (int)p.Y] = cl; // 色を設定
                                                     }
                                                     else if (pixelcolor.Alpha != 1)
@@ -370,7 +368,8 @@ namespace CsGraphics
         public int AddObject(string name, float[,] vertexCoord, Dictionary<string, (Color, string)>? polygonColor = null, float[]? origin = null, bool visible = true, float[]? scale = null, Dictionary<string, int[][]>? polygon = null)
         {
             int id = this.Objects.Count;
-            CsGraphics.Asset.Object @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon);
+
+            Asset.Object3D @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon);
             this.Objects.Add(@object);
 
             this.IsUpdated = true;
@@ -380,7 +379,8 @@ namespace CsGraphics
         private int AddObject(string name, float[,] vertexCoord, Dictionary<string, (Color, string)>? polygonColor = null, float[]? origin = null, bool visible = true, float[]? scale = null, Dictionary<string, int[][]>? polygon = null, Math.Matrix[]? normal = null, Dictionary<string, int[][]>? mtlV = null, float[][] vt = null)
         {
             int id = this.Objects.Count;
-            CsGraphics.Asset.Object @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon, normal, mtlV, vt);
+
+            Asset.Object3D @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon, normal, mtlV, vt);
             this.Objects.Add(@object);
 
             this.IsUpdated = true;
@@ -395,7 +395,7 @@ namespace CsGraphics
         /// <returns>ID.</returns>
         public int AddObjectFromObj(string name, string filePath, string texturePath = null)
         {
-            (float[,] vertices, Dictionary<string, int[][]> polygon, Math.Matrix[] normal, Dictionary<string, (Color, string)>? polygonColor, Dictionary<string, int[][]> mtlV, float[][] vt) = Parser.ObjParseVerticesV2(filePath);
+            (float[,] vertices, Dictionary<string, int[][]> polygon, Math.Matrix[] normal, Dictionary<string, (Color, string)>? polygonColor, Dictionary<string, int[][]> mtlV, float[][] vt) = Asset.Object3d.Parser.ObjParseVerticesV2(filePath);
             int id = this.AddObject(name, vertices, polygon: polygon, normal: normal, polygonColor: polygonColor, mtlV: mtlV, vt: vt);
             foreach (var kvp in polygonColor)
             {
@@ -422,7 +422,7 @@ namespace CsGraphics
                 throw new ArgumentOutOfRangeException($"Object ID {id} does not exist in this scene.");
             }
 
-            CsGraphics.Asset.Object @object = this.Objects[id];
+            Asset.Object3D @object = this.Objects[id];
 
             string result =
                 "ObjectID : " + id + "\n" +

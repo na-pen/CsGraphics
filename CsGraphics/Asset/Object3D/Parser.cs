@@ -1,4 +1,4 @@
-﻿namespace CsGraphics.Asset
+﻿namespace CsGraphics.Asset.Object3d
 {
     using CsGraphics.Math;
     using System;
@@ -111,7 +111,7 @@
             {
                 foreach (List<int> indices in ply.Value)
                 {
-                    CsGraphics.Math.Vector ab = new(
+                    Vector ab = new(
                         new float[]
                         {
                         vertices[indices[0] - 1][0],
@@ -125,7 +125,7 @@
                         vertices[indices[1] - 1][2],
                         });
 
-                    CsGraphics.Math.Vector bc = new(new float[]
+                    Vector bc = new(new float[]
                         {
                         vertices[indices[1] - 1][0],
                         vertices[indices[1] - 1][1],
@@ -138,7 +138,7 @@
                         vertices[indices[2] - 1][2]
                         });
 
-                    CsGraphics.Math.Vector temp = Vector.CrossProduct(ab, bc);
+                    Vector temp = Vector.CrossProduct(ab, bc);
                     normal.Add(temp.Data);
                 }
             }

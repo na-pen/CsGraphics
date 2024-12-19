@@ -1,6 +1,5 @@
 ﻿namespace CsGraphics.Calc
 {
-    using CsGraphics.Asset;
     using CsGraphics.Math;
     using System.Collections.Generic;
 
@@ -15,7 +14,7 @@
         /// </summary>
         /// <param name="object">オブジェクト.</param>
         /// <returns>スクリーン座標のリスト.</returns>
-        internal static (Point[], float[], Matrix) Calc(CsGraphics.Asset.Object @object, Matrix matrixCam, float width, float height, bool mode = true, float fov = 60,float scaleParallelProjection = 32)
+        internal static (Point[], float[], Matrix) Calc(Asset.Object3D @object, Matrix matrixCam, float width, float height, bool mode = true, float fov = 60,float scaleParallelProjection = 32)
         {
             List<float> depthZ = new List<float>(); // z深度 : 使用しない
 
@@ -86,13 +85,12 @@
             // ポリゴンの法線がz=0の面とどの向きで交差するかどうか確認する
             if (@object.Polygon != null)
             {
-                GetPolygonBounds(result, (Asset.Polygon)@object.Polygon); // 面ごとの画面上の描画範囲を求める
+                GetPolygonBounds(result, (Asset.Object3d.Polygon)@object.Polygon); // 面ごとの画面上の描画範囲を求める
             }
 
             return (result.ToArray(), depthZ.ToArray(), coordinate);
         }
-
-        private static void GetPolygonBounds(List<Point> points, Asset.Polygon polygon)
+        private static void GetPolygonBounds(List<Point> points, Asset.Object3d.Polygon polygon)
         {
             foreach (var kvp in polygon.VertexID)
             {
@@ -128,7 +126,7 @@
         /// オブジェクトの移動を計算する.
         /// </summary>
         /// <returns>移動の行列.</returns>
-        private static Matrix CalcTranslation(CsGraphics.Asset.Object @object)
+        private static Matrix CalcTranslation(Asset.Object3D @object)
         {
             Matrix temp = new(4);
             temp.Identity();
@@ -143,7 +141,7 @@
         /// オブジェクトの拡大縮小を計算する.
         /// </summary>
         /// <returns>拡大縮小の行列.</returns>
-        private static Matrix CalcScale(CsGraphics.Asset.Object @object)
+        private static Matrix CalcScale(Asset.Object3D @object)
         {
             Matrix temp = new(4);
             temp.Identity();
@@ -156,7 +154,7 @@
         /// 行列を用いて、YXZの順に回転を計算する.
         /// </summary>
         /// <returns>回転行列.</returns>
-        private static Matrix CalcRotation(CsGraphics.Asset.Object @object)
+        private static Matrix CalcRotation(Asset.Object3D @object)
         {
             Matrix xAxis = new(4);
             xAxis.Identity();

@@ -12,16 +12,7 @@
         /// </summary>
         /// <param name="vertex">頂点情報.</param>
         /// <returns>System.Collections.IEnumerator.</returns>
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-        public static System.Collections.IEnumerator GetEnumerator(this Object.Vertex vertex)
-            =>
-後:
-        public static System.Collections.IEnumerator GetEnumerator(this Vertex vertex)
-            =>
-*/
-        public static System.Collections.IEnumerator GetEnumerator(this Asset.Vertex vertex)
+        public static System.Collections.IEnumerator GetEnumerator(this Asset.Object3d.Vertex vertex)
             =>
             Enumerable.Range(0, vertex.GetLength(1))
             .Select(i =>

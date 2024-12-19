@@ -1,4 +1,4 @@
-﻿namespace CsGraphics.Asset
+﻿namespace CsGraphics.Asset.Object3d
 {
     using CsGraphics.Math;
     using System.Collections.Generic;
