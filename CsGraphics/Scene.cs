@@ -163,7 +163,6 @@ namespace CsGraphics
 
                                     if (((0 < polygonPointA[0] && polygonPointA[0] < canvasWidth) && (0 < polygonPointA[1] && polygonPointA[1] < canvasHeight)) || ((0 < polygonPointB[0] && polygonPointB[0] < canvasWidth) && (0 < polygonPointB[1] && polygonPointB[1] < canvasHeight)) || ((0 < polygonPointC[0] && polygonPointC[0] < canvasWidth) && (0 < polygonPointC[1] && polygonPointC[1] < canvasHeight)))
                                     // if (((-1 < polygonPointA[0] && polygonPointA[0] < 1) && (-1 < polygonPointA[1] && polygonPointA[1] < 1)) || ((-1 < polygonPointB[0] && polygonPointB[0] < 1) && (-1 < polygonPointB[1] && polygonPointB[1] < 1)) || ((-1 < polygonPointC[0] && polygonPointC[0] < 1) && (-1 < polygonPointC[1] && polygonPointC[1] < 1)))
-
                                     {
 
                                         Point[] pixels = RasterizeTriangle(vertex); // 描画するPixelの一覧
@@ -269,7 +268,7 @@ namespace CsGraphics
             double ymin = System.Math.Min(pt[0].Y, System.Math.Min(pt[1].Y, pt[2].Y));
             double ymax = System.Math.Max(pt[0].Y, System.Math.Max(pt[1].Y, pt[2].Y));
 
-            List<Point> pixels = new();
+            List<Point> pixels = new ();
 
             // 境界ボックス内のピクセルを調べる
             for (int x = (int)System.Math.Floor(xmin); x <= System.Math.Ceiling(xmax); x++)
@@ -296,7 +295,7 @@ namespace CsGraphics
             double cy = pt[2].Y;
 
             // バリューコーディネート法による内外判定
-            double denominator = (((bx - ax) * (cy - ay)) - ((cx - ax) * (by - ay)));
+            double denominator = ((bx - ax) * (cy - ay)) - ((cx - ax) * (by - ay));
             double lambda1 = (((bx - px) * (cy - py)) - ((cx - px) * (by - py))) / denominator;
             double lambda2 = (((cx - px) * (ay - py)) - ((ax - px) * (cy - py))) / denominator;
             double lambda3 = 1.0f - lambda1 - lambda2;
@@ -488,21 +487,21 @@ namespace CsGraphics
         {
             this.camRotate = new float[3] { camRotate[0] + x, camRotate[1] + y, camRotate[2] + z };
             IsUpdated = true;
-            Matrix xAxis = new(4);
+            Matrix xAxis = new (4);
             xAxis.Identity();
             xAxis[1, 1] = System.MathF.Cos(camRotate[0] * System.MathF.PI / 180f);
             xAxis[2, 1] = System.MathF.Sin(camRotate[0] * System.MathF.PI / 180f);
             xAxis[1, 2] = -1 * System.MathF.Sin(camRotate[0] * System.MathF.PI / 180f);
             xAxis[2, 2] = System.MathF.Cos(camRotate[0] * System.MathF.PI / 180f);
 
-            Matrix yAxis = new(4);
+            Matrix yAxis = new (4);
             yAxis.Identity();
             yAxis[0, 0] = System.MathF.Cos(camRotate[1] * System.MathF.PI / 180f);
             yAxis[2, 0] = -1 * System.MathF.Sin(camRotate[1] * System.MathF.PI / 180f);
             yAxis[0, 2] = System.MathF.Sin(camRotate[1] * System.MathF.PI / 180f);
             yAxis[2, 2] = System.MathF.Cos(camRotate[1] * System.MathF.PI / 180f);
 
-            Matrix zAxis = new(4);
+            Matrix zAxis = new (4);
             zAxis.Identity();
             zAxis[0, 0] = System.MathF.Cos(camRotate[2] * System.MathF.PI / 180f);
             zAxis[0, 1] = -1 * System.MathF.Sin(camRotate[2] * System.MathF.PI / 180f);
