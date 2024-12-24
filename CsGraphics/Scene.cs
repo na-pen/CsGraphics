@@ -81,18 +81,16 @@ namespace CsGraphics
                 Math.Vector ac = new Math.Vector(viewPlanePointA, viewPlanePointC); // ACベクトル
                 Math.Vector viewPlaneEquation = Calc.ZDepth.PlaneEquation(ab, ac); // 描画面の平面方程式
 
-                byte[] pixelColorsBytes = Enumerable.Repeat<Byte>(255, canvasWidth * canvasHeight * 4).ToArray();
+                byte[] pixelColorsBytes = Enumerable.Repeat<byte>(255, canvasWidth * canvasHeight * 4).ToArray();
                 double[] zBufferList = Enumerable.Repeat<double>(1, canvasWidth * canvasHeight).ToArray();
 
                 // 各点を指定された色で描画
                 foreach (Asset.Object3D @object in this.Objects)
                 {
-                    if (@object.IsVisible == true)
+                    //if (@object.IsVisible == true)
+                    if (true)
                     {
                         Point[] points = Array.Empty<Point>();
-
-                        Asset.Object3D obj;
-                        float[] pT = Array.Empty<float>();
                         Matrix coordinate;
 
                         if (@object.IsUpdated == true || this.IsUpdated) // オブジェクトの情報に更新があれば再計算
@@ -126,7 +124,8 @@ namespace CsGraphics
                                 {
                                     // ポリゴンの頂点を取得
                                     int[] polygon = array[i];
-                                    Point[] vertex = polygon.Select(p => points[p - 1]).ToArray();
+                                    Point[] vertex = new Point[3] { points[polygon[0] -1] , points[polygon[1] - 1], points[polygon[2] - 1] };
+                                    //Point[] vertex = polygon.Select(p => points[p - 1]).ToArray();
 
                                     // テクスチャ頂点番号の取得
 
@@ -134,7 +133,8 @@ namespace CsGraphics
                                     float[][] vt = null;
                                     if (@object.Vertex.Vt != null)
                                     {
-                                        vt = vTId.Select(p => @object.Vertex.Vt[p - 1]).ToArray();
+                                        vt = new float[3][] { @object.Vertex.Vt[vTId[0] - 1], @object.Vertex.Vt[vTId[1] - 1], @object.Vertex.Vt[vTId[2] - 1] };
+                                        //vt = vTId.Select(p => @object.Vertex.Vt[p - 1]).ToArray();
                                     }
 
                                     // 面を描く
@@ -290,7 +290,7 @@ namespace CsGraphics
             double cy = pt[2].Y;
 
             // バリューコーディネート法による内外判定
-            double denominator = (((bx - ax) * (cy - ay)) - ((cx - ax) * (by - ay)));
+            double denominator = ((bx - ax) * (cy - ay)) - ((cx - ax) * (by - ay));
             double lambda1 = (((bx - px) * (cy - py)) - ((cx - px) * (by - py))) / denominator;
             double lambda2 = (((cx - px) * (ay - py)) - ((ax - px) * (cy - py))) / denominator;
             double lambda3 = 1.0f - lambda1 - lambda2;

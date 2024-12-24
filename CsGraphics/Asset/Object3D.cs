@@ -5,7 +5,7 @@ namespace CsGraphics.Asset
     /// <summary>
     /// オブジェクトの情報の保持や管理を行う.
     /// </summary>
-    internal class Object3D : ICloneable
+    internal class Object3D // : ICloneable
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="object"/> class.
@@ -132,6 +132,7 @@ namespace CsGraphics.Asset
         /// 自身をシャドーコピーする.
         /// </summary>
         /// <returns>Clone.</returns>
+        /*
         public object Clone()
         {
             return new Object3D(
@@ -146,7 +147,7 @@ namespace CsGraphics.Asset
                 Texture)
             {
             };
-        }
+        }*/
 
         /// <summary>
         /// 平行移動(オブジェクトの原点を移動).

@@ -6,7 +6,7 @@
     /// <summary>
     /// オブジェクトのすべての頂点の情報の保持や管理を行う.
     /// </summary>
-    internal struct Vertex : ICloneable
+    internal struct Vertex // : ICloneable
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Vertex"/> struct.
@@ -68,13 +68,14 @@
         /// Cloneをするための実装.
         /// </summary>
         /// <returns>object.</returns>
+        /*
         public object Clone()
         {
             return new Vertex(
                 ObjectId,
                 (Matrix)Coordinate.Clone(),
                 Vt);
-        }
+        }*/
 
         /// <summary>
         /// 頂点の行列長を取得.
@@ -94,7 +95,7 @@
         /// <exception cref="ArgumentException">データの次元数が誤っています.</exception>
         private Matrix ConvertMatriix2Calcable(Matrix matrix)
         {
-            switch (matrix.GetLength(0))
+            switch (matrix.Rows)
             {
                 case 2:
                     matrix.Resize(4, value: new float[] { 0, 1 });
