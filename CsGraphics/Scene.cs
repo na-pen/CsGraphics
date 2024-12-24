@@ -133,7 +133,7 @@ namespace CsGraphics
                                     float[][] vt = null;
                                     if (@object.Vertex.Vt != null)
                                     {
-                                        vt = new float[3][] { @object.Vertex.Vt[vTId[0] - 1], @object.Vertex.Vt[vTId[1] - 1], @object.Vertex.Vt[vTId[2] - 1] };
+                                        vt = new float[3][] { new float[] { @object.Vertex.Vt[(vTId[0] - 1) * 2 + 0], @object.Vertex.Vt[(vTId[0] - 1) * 2 + 1] }, new float[] { @object.Vertex.Vt[(vTId[1] - 1) * 2 + 0], @object.Vertex.Vt[(vTId[1] - 1) * 2 + 1] }, new float[] { @object.Vertex.Vt[(vTId[2] - 1) * 2 + 0], @object.Vertex.Vt[(vTId[2] - 1) * 2 + 1] }, };
                                         //vt = vTId.Select(p => @object.Vertex.Vt[p - 1]).ToArray();
                                     }
 
@@ -372,7 +372,7 @@ namespace CsGraphics
             return id;
         }
 
-        private int AddObject(string name, float[,] vertexCoord, Dictionary<string, (Color, string)>? polygonColor = null, float[]? origin = null, bool visible = true, float[]? scale = null, Dictionary<string, int[][]>? polygon = null, Math.Matrix[]? normal = null, Dictionary<string, int[][]>? mtlV = null, float[][] vt = null)
+        private int AddObject(string name, float[,] vertexCoord, Dictionary<string, (Color, string)>? polygonColor = null, float[]? origin = null, bool visible = true, float[]? scale = null, Dictionary<string, int[][]>? polygon = null, Math.Matrix? normal = null, Dictionary<string, int[][]>? mtlV = null, float[] vt = null)
         {
             int id = this.Objects.Count;
 
@@ -391,7 +391,7 @@ namespace CsGraphics
         /// <returns>ID.</returns>
         public int AddObjectFromObj(string name, string filePath, string texturePath = null)
         {
-            (float[,] vertices, Dictionary<string, int[][]> polygon, Math.Matrix[] normal, Dictionary<string, (Color, string)>? polygonColor, Dictionary<string, int[][]> mtlV, float[][] vt) = Asset.Object3d.Parser.ObjParseVerticesV2(filePath);
+            (float[,] vertices, Dictionary<string, int[][]> polygon, Math.Matrix normal, Dictionary<string, (Color, string)>? polygonColor, Dictionary<string, int[][]> mtlV, float[] vt) = Asset.Object3d.Parser.ObjParseVerticesV2(filePath);
             int id = this.AddObject(name, vertices, polygon: polygon, normal: normal, polygonColor: polygonColor, mtlV: mtlV, vt: vt);
             foreach (var kvp in polygonColor)
             {

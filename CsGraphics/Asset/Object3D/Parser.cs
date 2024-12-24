@@ -10,16 +10,17 @@
     /// </summary>
     internal static class Parser
     {
-        internal static (float[,], Dictionary<string, int[][]>, Matrix[], Dictionary<string, (Color, string)>, Dictionary<string, int[][]>, float[][]) ObjParseVerticesV2(string filePath)
+        internal static (float[,], Dictionary<string, int[][]>, Matrix, Dictionary<string, (Color, string)>, Dictionary<string, int[][]>, float[]) ObjParseVerticesV2(string filePath)
         {
             var vertices = new List<float[]>(); // 動的リストで頂点情報を一時的に格納
-            List<float[]> verticesT = new List<float[]>(); // 動的リストでテクスチャ座標情報を一時的に格納
+            List<float> verticesT = new List<float>(); // 動的リストでテクスチャ座標情報を一時的に格納
             Dictionary<string, List<List<int>>> polygon = new Dictionary<string, List<List<int>>>(); // 動的リストで面を構成する頂点のIDを一時的に格納
             Dictionary<string, List<List<int>>> mtlV = new Dictionary<string, List<List<int>>>();
-            List<Matrix> normal = new List<Matrix>(); // 動的リストで面の法線ベクトルを一時的に格納
+            Matrix normal = new Matrix(4,0); // 動的リストで面の法線ベクトルを一時的に格納
             List<Color> color = new List<Color>(); // ポリゴンカラー
             Dictionary<string, (Color, string)> dic = new Dictionary<string, (Color, string)>();
             string mtlNow = string.Empty;
+            List<float> verticesN = new List<float>(); // 動的リストで頂点法線情報を一時的に格納
 
             polygon.Add(mtlNow, new List<List<int>> { });
             mtlV.Add(mtlNow, new List<List<int>> { });
@@ -48,8 +49,21 @@
                         float x = float.Parse(parts[1]);
                         float y = float.Parse(parts[2]);
 
-                        verticesT.Add(new[] { x, y });
+                        verticesT.AddRange(new[] { x, y });
 
+                    }
+                }
+                else if (line.StartsWith("vn ")) // 頂点法線情報の場合
+                {
+                    // "vn x y z" を解析
+                    var parts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (parts.Length >= 4) // 頂点法線が存在する場合
+                    {
+                        float x = float.Parse(parts[1]);
+                        float y = float.Parse(parts[2]);
+                        float z = float.Parse(parts[3]);
+
+                        verticesN.AddRange(new[] { x, y, z });
                     }
                 }
                 else if (line.StartsWith("f ")) // 面情報のとき
@@ -138,8 +152,7 @@
                         vertices[indices[2] - 1][2]
                         });
 
-                    Vector temp = Vector.CrossProduct(ab, bc);
-                    normal.Add(temp.Data);
+                    normal.Append(Vector.CrossProduct(ab, bc).Data);
                 }
             }
 
@@ -148,7 +161,7 @@
                     kvp => kvp.Key,
                     kvp => kvp.Value.Select(innerList => innerList.ToArray()).ToArray()
                 ),
-                normal.ToArray(),
+                normal,
                 dic,
                 mtlV.ToDictionary(
                     kvp => kvp.Key,

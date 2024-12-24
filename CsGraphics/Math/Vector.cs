@@ -39,7 +39,7 @@
             this.Data[0, 0] = x;
             this.Data[1, 0] = y;
             this.Data[2, 0] = z;
-            this.Data[3, 0] = 0;
+            this.Data[3, 0] = 1;
         }
 
         /// <summary>
@@ -60,7 +60,7 @@
             this.Data[0, 0] = b[0] - a[0];
             this.Data[1, 0] = b[1] - a[1];
             this.Data[2, 0] = b[2] - a[2];
-            this.Data[3, 0] = 0;
+            this.Data[3, 0] = 1;
         }
 
         /// <summary>
@@ -80,7 +80,7 @@
             this.Data[0, 0] = arr[0, 1] - arr[0, 0];
             this.Data[1, 0] = arr[1, 1] - arr[1, 0];
             this.Data[2, 0] = arr[2, 1] - arr[2, 0];
-            this.Data[3, 0] = 0;
+            this.Data[3, 0] = 1;
         }
 
         public Vector(Vector vector)
@@ -141,7 +141,7 @@
             result.Data[0, 0] = (vectorA.Data[1, 0] * vectorB.Data[2, 0]) - (vectorA.Data[2, 0] * vectorB.Data[1, 0]);
             result.Data[1, 0] = (vectorA.Data[2, 0] * vectorB.Data[0, 0]) - (vectorA.Data[0, 0] * vectorB.Data[2, 0]);
             result.Data[2, 0] = (vectorA.Data[0, 0] * vectorB.Data[1, 0]) - (vectorA.Data[1, 0] * vectorB.Data[0, 0]);
-            result.Data[3, 0] = 0;
+            result.Data[3, 0] = 1;
 
             return result;
         }

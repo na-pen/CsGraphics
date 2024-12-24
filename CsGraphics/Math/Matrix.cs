@@ -2,6 +2,7 @@
 {
     using System;
     using System.Data.Common;
+    using static System.Runtime.InteropServices.JavaScript.JSType;
 
     /// <summary>
     /// 行列の定義.
@@ -17,16 +18,16 @@
         /// </summary>
         /// <param name="rows">行数.</param>
         /// <param name="columns">列数.</param>
-        internal Matrix(int rows, int columns = 0)
+        internal Matrix(int rows, int columns = -1)
         {
-            if (columns == 0)
+            if (columns == -1)
             {
                 columns = rows;
             }
 
-            if (rows <= 0 || columns <= 0)
+            if (rows < 0 || columns < 0)
             {
-                throw new ArgumentException("Rows and columns must be positive integers.");
+                throw new ArgumentException("Rows and columns must be zero or positive integers.");
             }
 
             this.Rows = rows;
@@ -510,6 +511,20 @@
             this.Columns = result.Columns;
             this.Rows = result.Rows;
             this.data = result.data;
+        }
+
+        internal void Append(Matrix matrix)
+        {
+            if (this.Rows != matrix.Rows)
+            {
+                throw new ArgumentException("The source and destination matrices must each have the same number of rows");
+            }
+
+            this.Columns = this.Columns + matrix.Columns;
+            float[] temp = new float[this.data.Length + matrix.data.Length];
+            this.data.CopyTo(temp, 0);
+            matrix.data.CopyTo(temp, this.data.Length);
+            this.data = temp;
         }
 
         /// <summary>
