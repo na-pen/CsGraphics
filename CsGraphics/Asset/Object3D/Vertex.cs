@@ -14,13 +14,14 @@
         /// <param name="objectId">オブジェクトID.</param>
         /// <param name="coordinate">3次元空間上の座標(オブジェクト基準).</param>
         /// <exception cref="ArgumentException">頂点の色を指定する場合は、すべての頂点に対して指定する必要があります.</exception>
-        internal Vertex(int objectId, float[,] coordinate, float[]? vt)
+        internal Vertex(int objectId, float[,] coordinate, float[]? vt, float[]? vn)
         {
             // 初期値の適用
             ObjectId = objectId;
             Coordinate = ConvertMatriix2Calcable(new Matrix(coordinate));
 
             Vt = vt;
+            Vn = vn;
         }
 
         private Vertex(int objectId, Matrix coordinate, float[] vt)
@@ -41,6 +42,8 @@
         internal Matrix Coordinate { get; set; }
 
         internal float[]? Vt { get; set; }
+
+        internal float[]? Vn { get; set; }
 
         /// <summary>
         /// 頂点情報をStringにする.

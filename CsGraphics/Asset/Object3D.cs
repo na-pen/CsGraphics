@@ -17,7 +17,7 @@ namespace CsGraphics.Asset
         /// <param name="origin">オブジェクトの原点.</param>
         /// <param name="visible">オブジェクトの表示状態.</param>
         /// <param name="scale">オブジェクトの拡大倍率.</param>
-        internal Object3D(string name, float[,] vertexCoord, int id = -1, Dictionary<string, (Color, string)>? polygonColor = null, float[]? origin = null, bool visible = true, float[]? scale = null, Dictionary<string, int[][]>? polygon = null, Math.Matrix normal = null, Dictionary<string, int[][]>? mtlV = null, float[] vt = null)
+        internal Object3D(string name, float[,] vertexCoord, int id = -1, Dictionary<string, (Color, string)>? polygonColor = null, float[]? origin = null, bool visible = true, float[]? scale = null, Dictionary<string, int[][]>? polygon = null, Math.Matrix normal = null, Dictionary<string, int[][]>? mtlV = null, float[] vt = null, float[] vn = null)
         {
             ID = id;
             Name = name;
@@ -41,7 +41,7 @@ namespace CsGraphics.Asset
                 Magnification = scale;
             }
 
-            Vertex = new(id, vertexCoord, vt);
+            Vertex = new(id, vertexCoord, vt,vn);
 
             if (polygon != null && polygonColor != null)
             {

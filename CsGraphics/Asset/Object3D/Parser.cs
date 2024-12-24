@@ -10,7 +10,7 @@
     /// </summary>
     internal static class Parser
     {
-        internal static (float[,], Dictionary<string, int[][]>, Matrix, Dictionary<string, (Color, string)>, Dictionary<string, int[][]>, float[]) ObjParseVerticesV2(string filePath)
+        internal static (float[,], Dictionary<string, int[][]>, Matrix, Dictionary<string, (Color, string)>, Dictionary<string, int[][]>, float[], float[]) ObjParseVerticesV2(string filePath)
         {
             var vertices = new List<float[]>(); // 動的リストで頂点情報を一時的に格納
             List<float> verticesT = new List<float>(); // 動的リストでテクスチャ座標情報を一時的に格納
@@ -167,7 +167,8 @@
                     kvp => kvp.Key,
                     kvp => kvp.Value.Select(innerList => innerList.ToArray()).ToArray()
                     ),
-                verticesT.ToArray());
+                verticesT.ToArray(),
+                verticesN.ToArray());
         }
 
         private static Dictionary<string, (Color, string)> MtlParserV2(string path)
