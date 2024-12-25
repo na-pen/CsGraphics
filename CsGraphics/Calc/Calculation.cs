@@ -23,7 +23,34 @@
         internal static (Point[], float[], Matrix) Calc(Object3D @object, Matrix matrixCam, float width, float height, bool mode = true, float fov = 60,float scaleParallelProjection = 32)
         {
 */
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
         internal static (Point[], float[], Matrix) Calc(Asset.Object3d.Object3D @object, Matrix matrixCam, float width, float height, bool mode = true, float fov = 60,float scaleParallelProjection = 32)
+        {
+後:
+        internal static (Point[], float[], Matrix) Calc(Object3D @object, Matrix matrixCam, float width, float height, bool mode = true, float fov = 60,float scaleParallelProjection = 32)
+        {
+*/
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
+        internal static (Point[], float[], Matrix) Calc(Object.Object3D.Object3D @object, Matrix matrixCam, float width, float height, bool mode = true, float fov = 60,float scaleParallelProjection = 32)
+        {
+後:
+        internal static (Point[], float[], Matrix) Calc(Object3D @object, Matrix matrixCam, float width, float height, bool mode = true, float fov = 60,float scaleParallelProjection = 32)
+        {
+*/
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
+        internal static (Point[], float[], Matrix) Calc(Object.Asset.Object3D.Object3D @object, Matrix matrixCam, float width, float height, bool mode = true, float fov = 60,float scaleParallelProjection = 32)
+        {
+後:
+        internal static (Point[], float[], Matrix) Calc(Object3D @object, Matrix matrixCam, float width, float height, bool mode = true, float fov = 60,float scaleParallelProjection = 32)
+        {
+*/
+        internal static (Point[], float[], Matrix) Calc(Object.Asset.Model.Model @object, Matrix matrixCam, float width, float height, bool mode = true, float fov = 60,float scaleParallelProjection = 32)
         {
             List<float> depthZ = new List<float>(); // z深度 : 使用しない
 
@@ -94,12 +121,66 @@
             // ポリゴンの法線がz=0の面とどの向きで交差するかどうか確認する
             if (@object.Polygon != null)
             {
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
                 GetPolygonBounds(result, (Asset.Object3d.Polygon)@object.Polygon); // 面ごとの画面上の描画範囲を求める
+            }
+後:
+                GetPolygonBounds(result, (Polygon)@object.Polygon); // 面ごとの画面上の描画範囲を求める
+            }
+*/
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
+                GetPolygonBounds(result, (Object.Object3D.Polygon)@object.Polygon); // 面ごとの画面上の描画範囲を求める
+            }
+後:
+                GetPolygonBounds(result, (Polygon)@object.Polygon); // 面ごとの画面上の描画範囲を求める
+            }
+*/
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
+                GetPolygonBounds(result, (Object.Asset.Object3D.Polygon)@object.Polygon); // 面ごとの画面上の描画範囲を求める
+            }
+後:
+                GetPolygonBounds(result, (Polygon)@object.Polygon); // 面ごとの画面上の描画範囲を求める
+            }
+*/
+                GetPolygonBounds(result, (Object.Asset.Model.Polygon)@object.Polygon); // 面ごとの画面上の描画範囲を求める
             }
 
             return (result.ToArray(), depthZ.ToArray(), coordinate);
         }
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
         private static void GetPolygonBounds(List<Point> points, Asset.Object3d.Polygon polygon)
+        {
+後:
+        private static void GetPolygonBounds(List<Point> points, Polygon polygon)
+        {
+*/
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
+        private static void GetPolygonBounds(List<Point> points, Object.Object3D.Polygon polygon)
+        {
+後:
+        private static void GetPolygonBounds(List<Point> points, Polygon polygon)
+        {
+*/
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
+        private static void GetPolygonBounds(List<Point> points, Object.Asset.Object3D.Polygon polygon)
+        {
+後:
+        private static void GetPolygonBounds(List<Point> points, Polygon polygon)
+        {
+*/
+        private static void GetPolygonBounds(List<Point> points, Object.Asset.Model.Polygon polygon)
         {
             foreach (var kvp in polygon.VertexID)
             {
@@ -144,7 +225,34 @@
         private static Matrix CalcTranslation(Object3D @object)
         {
 */
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
         private static Matrix CalcTranslation(Asset.Object3d.Object3D @object)
+        {
+後:
+        private static Matrix CalcTranslation(Object3D @object)
+        {
+*/
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
+        private static Matrix CalcTranslation(Object.Object3D.Object3D @object)
+        {
+後:
+        private static Matrix CalcTranslation(Object3D @object)
+        {
+*/
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
+        private static Matrix CalcTranslation(Object.Asset.Object3D.Object3D @object)
+        {
+後:
+        private static Matrix CalcTranslation(Object3D @object)
+        {
+*/
+        private static Matrix CalcTranslation(Object.Asset.Model.Model @object)
         {
             Matrix temp = new(4);
             temp.Identity();
@@ -168,7 +276,34 @@
         private static Matrix CalcScale(Object3D @object)
         {
 */
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
         private static Matrix CalcScale(Asset.Object3d.Object3D @object)
+        {
+後:
+        private static Matrix CalcScale(Object3D @object)
+        {
+*/
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
+        private static Matrix CalcScale(Object.Object3D.Object3D @object)
+        {
+後:
+        private static Matrix CalcScale(Object3D @object)
+        {
+*/
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
+        private static Matrix CalcScale(Object.Asset.Object3D.Object3D @object)
+        {
+後:
+        private static Matrix CalcScale(Object3D @object)
+        {
+*/
+        private static Matrix CalcScale(Object.Asset.Model.Model @object)
         {
             Matrix temp = new(4);
             temp.Identity();
@@ -190,7 +325,34 @@
         private static Matrix CalcRotation(Object3D @object)
         {
 */
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
         private static Matrix CalcRotation(Asset.Object3d.Object3D @object)
+        {
+後:
+        private static Matrix CalcRotation(Object3D @object)
+        {
+*/
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
+        private static Matrix CalcRotation(Object.Object3D.Object3D @object)
+        {
+後:
+        private static Matrix CalcRotation(Object3D @object)
+        {
+*/
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
+        private static Matrix CalcRotation(Object.Asset.Object3D.Object3D @object)
+        {
+後:
+        private static Matrix CalcRotation(Object3D @object)
+        {
+*/
+        private static Matrix CalcRotation(Object.Asset.Model.Model @object)
         {
             Matrix xAxis = new(4);
             xAxis.Identity();

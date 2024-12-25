@@ -1,4 +1,4 @@
-﻿namespace CsGraphics.Asset
+﻿namespace CsGraphics.Object
 {
     /// <summary>
     /// オブジェクトの情報の保持や管理を行う.
@@ -15,26 +15,26 @@
         /// <param name="scale">オブジェクトの拡大倍率.</param>
         internal Object(string name, int id = -1, bool visible = true, float[]? origin = null, float[]? scale = null)
         {
-            this.ID = id;
-            this.Name = name;
-            this.IsVisible = visible;
+            ID = id;
+            Name = name;
+            IsVisible = visible;
 
             if (origin == null)
             {
-                this.Origin = new (new float[,] { { 0 }, { 0 }, { 0 } });
+                Origin = new(new float[,] { { 0 }, { 0 }, { 0 } });
             }
             else
             {
-                this.Origin = new (origin);
+                Origin = new(origin);
             }
 
             if (scale == null)
             {
-                this.Scale = new float[] { 20, 20, 20 };
+                Scale = new float[] { 20, 20, 20 };
             }
             else
             {
-                this.Scale = scale;
+                Scale = scale;
             }
         }
 
@@ -81,7 +81,7 @@
         /// <param name="z">z軸の移動量.</param>
         internal void SetTranslation(float x, float y, float z)
         {
-            this.IsUpdated = true;
+            IsUpdated = true;
 
             Math.Matrix temp = new(3, 1);
 
@@ -100,8 +100,8 @@
         /// <param name="z">z軸の拡大率.</param>
         internal void SetScale(float x, float y, float z)
         {
-            this.IsUpdated = true;
-            this.Scale = new float[] { this.Scale[0] * x, this.Scale[1] * y, this.Scale[2] * z };
+            IsUpdated = true;
+            Scale = new float[] { Scale[0] * x, Scale[1] * y, Scale[2] * z };
         }
 
         /// <summary>
@@ -112,8 +112,8 @@
         /// <param name="z">z軸の回転角度.</param>
         internal void SetRotation(float x, float y, float z)
         {
-            this.IsUpdated = true;
-            this.Angle = new float[] { this.Angle[0] + x, this.Angle[1] + y, this.Angle[2] + z };
+            IsUpdated = true;
+            Angle = new float[] { Angle[0] + x, Angle[1] + y, Angle[2] + z };
         }
     }
 }

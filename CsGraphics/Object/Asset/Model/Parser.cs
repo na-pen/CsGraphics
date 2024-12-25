@@ -1,4 +1,4 @@
-﻿namespace CsGraphics.Asset.Object3d
+﻿namespace CsGraphics.Object.Asset.Model
 {
     using CsGraphics.Math;
     using System;
@@ -16,7 +16,7 @@
             List<float> verticesT = new List<float>(); // 動的リストでテクスチャ座標情報を一時的に格納
             Dictionary<string, List<List<int>>> polygon = new Dictionary<string, List<List<int>>>(); // 動的リストで面を構成する頂点のIDを一時的に格納
             Dictionary<string, List<List<int>>> mtlV = new Dictionary<string, List<List<int>>>();
-            Matrix normal = new Matrix(4,0); // 動的リストで面の法線ベクトルを一時的に格納
+            Matrix normal = new Matrix(4, 0); // 動的リストで面の法線ベクトルを一時的に格納
             List<Color> color = new List<Color>(); // ポリゴンカラー
             Dictionary<string, (Color, string)> dic = new Dictionary<string, (Color, string)>();
             string mtlNow = string.Empty;

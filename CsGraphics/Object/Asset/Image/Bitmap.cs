@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace CsGraphics.Asset.Image
+namespace CsGraphics.Object.Asset.Image
 {
     public class Bitmap
     {
@@ -111,7 +111,7 @@ namespace CsGraphics.Asset.Image
             }
         }
 
-        public Bitmap(int width, int height, Byte[] data, int bitCount = 32)
+        public Bitmap(int width, int height, byte[] data, int bitCount = 32)
         {
 
             FileHeader = new();
@@ -177,17 +177,17 @@ namespace CsGraphics.Asset.Image
                 {
                     if (bitCount == 32)
                     {
-                        colors[(width * (y * 4)) + (x * 4) + 2] = pixelData[index++];
-                        colors[(width * (y * 4)) + (x * 4) + 1] = pixelData[index++];
-                        colors[(width * (y * 4)) + (x * 4) + 0] = pixelData[index++];
-                        colors[(width * (y * 4)) + (x * 4) + 3] = pixelData[index++];
+                        colors[width * y * 4 + x * 4 + 2] = pixelData[index++];
+                        colors[width * y * 4 + x * 4 + 1] = pixelData[index++];
+                        colors[width * y * 4 + x * 4 + 0] = pixelData[index++];
+                        colors[width * y * 4 + x * 4 + 3] = pixelData[index++];
                     }
                     else if (bitCount == 24)
                     {
-                        colors[(width * (y * 4)) + (x * 4) + 2] = pixelData[index++];
-                        colors[(width * (y * 4)) + (x * 4) + 1] = pixelData[index++];
-                        colors[(width * (y * 4)) + (x * 4) + 0] = pixelData[index++];
-                        colors[(width * (y * 4)) + (x * 4) + 3] = 255;
+                        colors[width * y * 4 + x * 4 + 2] = pixelData[index++];
+                        colors[width * y * 4 + x * 4 + 1] = pixelData[index++];
+                        colors[width * y * 4 + x * 4 + 0] = pixelData[index++];
+                        colors[width * y * 4 + x * 4 + 3] = 255;
                     }
                 }
 

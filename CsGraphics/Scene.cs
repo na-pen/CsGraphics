@@ -1,9 +1,9 @@
 namespace CsGraphics
 {
     using System.Collections.Generic;
-    using CsGraphics.Asset.Image;
     using CsGraphics.Calc;
     using CsGraphics.Math;
+    using CsGraphics.Object.Asset.Image;
     using Microsoft.Maui.Graphics;
     using Microsoft.Maui.Graphics.Platform;
     using Color = Microsoft.Maui.Graphics.Color;
@@ -29,7 +29,28 @@ namespace CsGraphics
 後:
         internal List<Object3D> Objects;
 */
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
         internal List<Asset.Object3d.Object3D> Objects;
+後:
+        internal List<Object3D> Objects;
+*/
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
+        internal List<Object.Object3D.Object3D> Objects;
+後:
+        internal List<Object3D> Objects;
+*/
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
+        internal List<Object.Asset.Object3D.Object3D> Objects;
+後:
+        internal List<Object3D> Objects;
+*/
+        internal List<Object.Asset.Model.Model> Objects;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Scene"/> class.
@@ -45,7 +66,28 @@ namespace CsGraphics
 後:
             this.Objects = new List<Object3D>(); // 初期化
 */
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
             this.Objects = new List<Asset.Object3d.Object3D>(); // 初期化
+後:
+            this.Objects = new List<Object3D>(); // 初期化
+*/
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
+            this.Objects = new List<Object.Object3D.Object3D>(); // 初期化
+後:
+            this.Objects = new List<Object3D>(); // 初期化
+*/
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
+            this.Objects = new List<Object.Asset.Object3D.Object3D>(); // 初期化
+後:
+            this.Objects = new List<Object3D>(); // 初期化
+*/
+            this.Objects = new List<Object.Asset.Model.Model>(); // 初期化
 
             this.ViewCamTranslation.Identity();
 
@@ -106,7 +148,34 @@ namespace CsGraphics
                 foreach (Object3D @object in this.Objects)
                 {
 */
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
                 foreach (Asset.Object3d.Object3D @object in this.Objects)
+                {
+後:
+                foreach (Object3D @object in this.Objects)
+                {
+*/
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
+                foreach (Object.Object3D.Object3D @object in this.Objects)
+                {
+後:
+                foreach (Object3D @object in this.Objects)
+                {
+*/
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
+                foreach (Object.Asset.Object3D.Object3D @object in this.Objects)
+                {
+後:
+                foreach (Object3D @object in this.Objects)
+                {
+*/
+                foreach (Object.Asset.Model.Model @object in this.Objects)
                 {
                     //if (@object.IsVisible == true)
                     if (true)
@@ -123,7 +192,28 @@ namespace CsGraphics
 後:
                             (points, _, coordinate) = Calculation.Calc((Object3D)@object, ViewCamRotation * ViewCamTranslation, canvasWidth, canvasHeight, IsPerspectiveProjection, scaleParallelProjection: ScaleParallelProjection); // 点や面の計算
 */
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
                             (points, _, coordinate) = Calculation.Calc((Asset.Object3d.Object3D)@object, ViewCamRotation * ViewCamTranslation, canvasWidth, canvasHeight, IsPerspectiveProjection, scaleParallelProjection: ScaleParallelProjection); // 点や面の計算
+後:
+                            (points, _, coordinate) = Calculation.Calc((Object3D)@object, ViewCamRotation * ViewCamTranslation, canvasWidth, canvasHeight, IsPerspectiveProjection, scaleParallelProjection: ScaleParallelProjection); // 点や面の計算
+*/
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
+                            (points, _, coordinate) = Calculation.Calc((Object.Object3D.Object3D)@object, ViewCamRotation * ViewCamTranslation, canvasWidth, canvasHeight, IsPerspectiveProjection, scaleParallelProjection: ScaleParallelProjection); // 点や面の計算
+後:
+                            (points, _, coordinate) = Calculation.Calc((Object3D)@object, ViewCamRotation * ViewCamTranslation, canvasWidth, canvasHeight, IsPerspectiveProjection, scaleParallelProjection: ScaleParallelProjection); // 点や面の計算
+*/
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
+                            (points, _, coordinate) = Calculation.Calc((Object.Asset.Object3D.Object3D)@object, ViewCamRotation * ViewCamTranslation, canvasWidth, canvasHeight, IsPerspectiveProjection, scaleParallelProjection: ScaleParallelProjection); // 点や面の計算
+後:
+                            (points, _, coordinate) = Calculation.Calc((Object3D)@object, ViewCamRotation * ViewCamTranslation, canvasWidth, canvasHeight, IsPerspectiveProjection, scaleParallelProjection: ScaleParallelProjection); // 点や面の計算
+*/
+                            (points, _, coordinate) = Calculation.Calc((Object.Asset.Model.Model)@object, ViewCamRotation * ViewCamTranslation, canvasWidth, canvasHeight, IsPerspectiveProjection, scaleParallelProjection: ScaleParallelProjection); // 点や面の計算
 
                             @object.Points = points;
                             @object.IsUpdated = false;
@@ -136,15 +226,96 @@ namespace CsGraphics
 
                         if (@object.Polygon != null) // ポリゴンが存在する場合のみ描画
                         {
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
                             foreach (var kvp in ((Asset.Object3d.Polygon)@object.Polygon).VertexID)
+                            {
+後:
+                            foreach (var kvp in ((Polygon)@object.Polygon).VertexID)
+                            {
+*/
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
+                            foreach (var kvp in ((Object.Object3D.Polygon)@object.Polygon).VertexID)
+                            {
+後:
+                            foreach (var kvp in ((Polygon)@object.Polygon).VertexID)
+                            {
+*/
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
+                            foreach (var kvp in ((Object.Asset.Object3D.Polygon)@object.Polygon).VertexID)
+                            {
+後:
+                            foreach (var kvp in ((Polygon)@object.Polygon).VertexID)
+                            {
+*/
+                            foreach (var kvp in ((Object.Asset.Model.Polygon)@object.Polygon).VertexID)
                             {
                                 string key = kvp.Key;
                                 int[][] array = kvp.Value;
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
                                 int[][] array2 = ((Asset.Object3d.Polygon)@object.Polygon).MtlVertexID[key];
+                                string key2 = string.Empty;
+後:
+                                int[][] array2 = ((Polygon)@object.Polygon).MtlVertexID[key];
+                                string key2 = string.Empty;
+*/
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
+                                int[][] array2 = ((Object.Object3D.Polygon)@object.Polygon).MtlVertexID[key];
+                                string key2 = string.Empty;
+後:
+                                int[][] array2 = ((Polygon)@object.Polygon).MtlVertexID[key];
+                                string key2 = string.Empty;
+*/
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
+                                int[][] array2 = ((Object.Asset.Object3D.Polygon)@object.Polygon).MtlVertexID[key];
+                                string key2 = string.Empty;
+後:
+                                int[][] array2 = ((Polygon)@object.Polygon).MtlVertexID[key];
+                                string key2 = string.Empty;
+*/
+                                int[][] array2 = ((Object.Asset.Model.Polygon)@object.Polygon).MtlVertexID[key];
                                 string key2 = string.Empty;
                                 if (key != string.Empty)
                                 {
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
                                     key2 = ((Asset.Object3d.Polygon)@object.Polygon).Colors[key].Item2;
+                                }
+後:
+                                    key2 = ((Polygon)@object.Polygon).Colors[key].Item2;
+                                }
+*/
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
+                                    key2 = ((Object.Object3D.Polygon)@object.Polygon).Colors[key].Item2;
+                                }
+後:
+                                    key2 = ((Polygon)@object.Polygon).Colors[key].Item2;
+                                }
+*/
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
+                                    key2 = ((Object.Asset.Object3D.Polygon)@object.Polygon).Colors[key].Item2;
+                                }
+後:
+                                    key2 = ((Polygon)@object.Polygon).Colors[key].Item2;
+                                }
+*/
+                                    key2 = ((Object.Asset.Model.Polygon)@object.Polygon).Colors[key].Item2;
                                 }
 
                                 // 各ポリゴンをチェック
@@ -202,7 +373,34 @@ namespace CsGraphics
                                                     double texVy = (a * vt[0][1]) + (b * vt[1][1]) + (c * vt[2][1]);
                                                     if (@object.Texture != null && @object.Texture.ContainsKey(key2))
                                                     {
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
                                                         (Color cl, _) = ((Asset.Object3d.Polygon)@object.Polygon).Colors[key];
+                                                        int x = (int)((texVx % 1) * @object.Texture[key2].Item2);
+後:
+                                                        (Color cl, _) = ((Polygon)@object.Polygon).Colors[key];
+                                                        int x = (int)((texVx % 1) * @object.Texture[key2].Item2);
+*/
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
+                                                        (Color cl, _) = ((Object.Object3D.Polygon)@object.Polygon).Colors[key];
+                                                        int x = (int)((texVx % 1) * @object.Texture[key2].Item2);
+後:
+                                                        (Color cl, _) = ((Polygon)@object.Polygon).Colors[key];
+                                                        int x = (int)((texVx % 1) * @object.Texture[key2].Item2);
+*/
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
+                                                        (Color cl, _) = ((Object.Asset.Object3D.Polygon)@object.Polygon).Colors[key];
+                                                        int x = (int)((texVx % 1) * @object.Texture[key2].Item2);
+後:
+                                                        (Color cl, _) = ((Polygon)@object.Polygon).Colors[key];
+                                                        int x = (int)((texVx % 1) * @object.Texture[key2].Item2);
+*/
+                                                        (Color cl, _) = ((Object.Asset.Model.Polygon)@object.Polygon).Colors[key];
                                                         int x = (int)((texVx % 1) * @object.Texture[key2].Item2);
                                                         int y = ((int)((texVy % 1) * @object.Texture[key2].Item2));
                                                         pixelcolor = new Color(@object.Texture[key2].Item3[@object.Texture[key2].Item1 * y * 4 + (x * 4) + 0], @object.Texture[key2].Item3[@object.Texture[key2].Item1 * y * 4 + (x * 4) + 1], @object.Texture[key2].Item3[@object.Texture[key2].Item1 * y * 4 + (x * 4) + 2], @object.Texture[key2].Item3[@object.Texture[key2].Item1 * y * 4 + (x * 4) + 3]).MultiplyAlpha(cl.Alpha);
@@ -217,7 +415,34 @@ namespace CsGraphics
                                                     if (pixelcolor == null)
                                                     {
 
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
                                                         (Color cl, _) = ((Asset.Object3d.Polygon)@object.Polygon).Colors[key];
+                                                        pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 0] = (byte)(int)(cl.Blue * 255);
+後:
+                                                        (Color cl, _) = ((Polygon)@object.Polygon).Colors[key];
+                                                        pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 0] = (byte)(int)(cl.Blue * 255);
+*/
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
+                                                        (Color cl, _) = ((Object.Object3D.Polygon)@object.Polygon).Colors[key];
+                                                        pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 0] = (byte)(int)(cl.Blue * 255);
+後:
+                                                        (Color cl, _) = ((Polygon)@object.Polygon).Colors[key];
+                                                        pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 0] = (byte)(int)(cl.Blue * 255);
+*/
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
+                                                        (Color cl, _) = ((Object.Asset.Object3D.Polygon)@object.Polygon).Colors[key];
+                                                        pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 0] = (byte)(int)(cl.Blue * 255);
+後:
+                                                        (Color cl, _) = ((Polygon)@object.Polygon).Colors[key];
+                                                        pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 0] = (byte)(int)(cl.Blue * 255);
+*/
+                                                        (Color cl, _) = ((Object.Asset.Model.Polygon)@object.Polygon).Colors[key];
                                                         pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 0] = (byte)(int)(cl.Blue * 255);
                                                         pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 1] = (byte)(int)(cl.Green * 255);
                                                         pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 2] = (byte)(int)(cl.Red * 255);
@@ -401,7 +626,34 @@ namespace CsGraphics
             Object3D @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon);
             this.Objects.Add(@object);
 */
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
             Asset.Object3d.Object3D @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon);
+            this.Objects.Add(@object);
+後:
+            Object3D @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon);
+            this.Objects.Add(@object);
+*/
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
+            Object.Object3D.Object3D @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon);
+            this.Objects.Add(@object);
+後:
+            Object3D @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon);
+            this.Objects.Add(@object);
+*/
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
+            Object.Asset.Object3D.Object3D @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon);
+            this.Objects.Add(@object);
+後:
+            Object3D @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon);
+            this.Objects.Add(@object);
+*/
+            Object.Asset.Model.Model @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon);
             this.Objects.Add(@object);
 
             this.IsUpdated = true;
@@ -421,7 +673,34 @@ namespace CsGraphics
             Object3D @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon, normal, mtlV, vt,vn);
             this.Objects.Add(@object);
 */
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
             Asset.Object3d.Object3D @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon, normal, mtlV, vt,vn);
+            this.Objects.Add(@object);
+後:
+            Object3D @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon, normal, mtlV, vt,vn);
+            this.Objects.Add(@object);
+*/
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
+            Object.Object3D.Object3D @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon, normal, mtlV, vt,vn);
+            this.Objects.Add(@object);
+後:
+            Object3D @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon, normal, mtlV, vt,vn);
+            this.Objects.Add(@object);
+*/
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
+            Object.Asset.Object3D.Object3D @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon, normal, mtlV, vt,vn);
+            this.Objects.Add(@object);
+後:
+            Object3D @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon, normal, mtlV, vt,vn);
+            this.Objects.Add(@object);
+*/
+            Object.Asset.Model.Model @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon, normal, mtlV, vt,vn);
             this.Objects.Add(@object);
 
             this.IsUpdated = true;
@@ -436,7 +715,34 @@ namespace CsGraphics
         /// <returns>ID.</returns>
         public int AddObjectFromObj(string name, string filePath, string texturePath = null)
         {
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
             (float[,] vertices, Dictionary<string, int[][]> polygon, Math.Matrix normal, Dictionary<string, (Color, string)>? polygonColor, Dictionary<string, int[][]> mtlV, float[] vt, float[] vn) = Asset.Object3d.Parser.ObjParseVerticesV2(filePath);
+            int id = this.Add3dObject(name, vertices, polygon: polygon, normal: normal, polygonColor: polygonColor, mtlV: mtlV, vt: vt,vn: vn);
+後:
+            (float[,] vertices, Dictionary<string, int[][]> polygon, Math.Matrix normal, Dictionary<string, (Color, string)>? polygonColor, Dictionary<string, int[][]> mtlV, float[] vt, float[] vn) = Parser.ObjParseVerticesV2(filePath);
+            int id = this.Add3dObject(name, vertices, polygon: polygon, normal: normal, polygonColor: polygonColor, mtlV: mtlV, vt: vt,vn: vn);
+*/
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
+            (float[,] vertices, Dictionary<string, int[][]> polygon, Math.Matrix normal, Dictionary<string, (Color, string)>? polygonColor, Dictionary<string, int[][]> mtlV, float[] vt, float[] vn) = Object.Object3D.Parser.ObjParseVerticesV2(filePath);
+            int id = this.Add3dObject(name, vertices, polygon: polygon, normal: normal, polygonColor: polygonColor, mtlV: mtlV, vt: vt,vn: vn);
+後:
+            (float[,] vertices, Dictionary<string, int[][]> polygon, Math.Matrix normal, Dictionary<string, (Color, string)>? polygonColor, Dictionary<string, int[][]> mtlV, float[] vt, float[] vn) = Parser.ObjParseVerticesV2(filePath);
+            int id = this.Add3dObject(name, vertices, polygon: polygon, normal: normal, polygonColor: polygonColor, mtlV: mtlV, vt: vt,vn: vn);
+*/
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
+            (float[,] vertices, Dictionary<string, int[][]> polygon, Math.Matrix normal, Dictionary<string, (Color, string)>? polygonColor, Dictionary<string, int[][]> mtlV, float[] vt, float[] vn) = Object.Asset.Object3D.Parser.ObjParseVerticesV2(filePath);
+            int id = this.Add3dObject(name, vertices, polygon: polygon, normal: normal, polygonColor: polygonColor, mtlV: mtlV, vt: vt,vn: vn);
+後:
+            (float[,] vertices, Dictionary<string, int[][]> polygon, Math.Matrix normal, Dictionary<string, (Color, string)>? polygonColor, Dictionary<string, int[][]> mtlV, float[] vt, float[] vn) = Parser.ObjParseVerticesV2(filePath);
+            int id = this.Add3dObject(name, vertices, polygon: polygon, normal: normal, polygonColor: polygonColor, mtlV: mtlV, vt: vt,vn: vn);
+*/
+            (float[,] vertices, Dictionary<string, int[][]> polygon, Math.Matrix normal, Dictionary<string, (Color, string)>? polygonColor, Dictionary<string, int[][]> mtlV, float[] vt, float[] vn) = Object.Asset.Model.Parser.ObjParseVerticesV2(filePath);
             int id = this.Add3dObject(name, vertices, polygon: polygon, normal: normal, polygonColor: polygonColor, mtlV: mtlV, vt: vt,vn: vn);
             foreach (var kvp in polygonColor)
             {
@@ -470,7 +776,28 @@ namespace CsGraphics
 後:
             Object3D @object = this.Objects[id];
 */
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
             Asset.Object3d.Object3D @object = this.Objects[id];
+後:
+            Object3D @object = this.Objects[id];
+*/
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
+            Object.Object3D.Object3D @object = this.Objects[id];
+後:
+            Object3D @object = this.Objects[id];
+*/
+
+/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
+前:
+            Object.Asset.Object3D.Object3D @object = this.Objects[id];
+後:
+            Object3D @object = this.Objects[id];
+*/
+            Object.Asset.Model.Model @object = this.Objects[id];
 
             string result =
                 "ObjectID : " + id + "\n" +

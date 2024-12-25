@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CsGraphics.Asset.Object3d
+namespace CsGraphics.Object
 {
-    internal class Material
+    internal class Camera
     {
     }
 }
