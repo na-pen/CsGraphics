@@ -8,7 +8,8 @@ namespace CsGraphics.Object.Light
 {
     internal class Ambient : Object
     {
-        internal Ambient(string name, int id = -1) : base(name)
+        internal Ambient(string name, int id = -1)
+            : base(name)
         {
 
         }

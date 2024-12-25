@@ -8,7 +8,8 @@ namespace CsGraphics.Object.Camera
 {
     internal class Camera : Object
     {
-        public Camera(string name) : base(name)
+        public Camera(string name)
+            : base(name)
         {
 
         }
