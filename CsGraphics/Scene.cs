@@ -1,9 +1,7 @@
 namespace CsGraphics
 {
     using System.Collections.Generic;
-    using CsGraphics.Asset;
     using CsGraphics.Asset.Image;
-
     using CsGraphics.Calc;
     using CsGraphics.Math;
     using Microsoft.Maui.Graphics;
@@ -24,7 +22,14 @@ namespace CsGraphics
         /// <summary>
         /// シーンに含まれるオブジェクト.
         /// </summary>
+
+/* プロジェクト 'CsGraphics (net9.0-android35.0)' からのマージされていない変更
+前:
         internal List<Asset.Object3D> Objects;
+後:
+        internal List<Object3D> Objects;
+*/
+        internal List<Asset.Object3d.Object3D> Objects;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Scene"/> class.
@@ -33,7 +38,14 @@ namespace CsGraphics
         public Scene(int frameRate)
         {
             this.FrameRate = frameRate;
+
+/* プロジェクト 'CsGraphics (net9.0-android35.0)' からのマージされていない変更
+前:
             this.Objects = new List<Asset.Object3D>(); // 初期化
+後:
+            this.Objects = new List<Object3D>(); // 初期化
+*/
+            this.Objects = new List<Asset.Object3d.Object3D>(); // 初期化
 
             this.ViewCamTranslation.Identity();
 
@@ -85,7 +97,16 @@ namespace CsGraphics
                 double[] zBufferList = Enumerable.Repeat<double>(1, canvasWidth * canvasHeight).ToArray();
 
                 // 各点を指定された色で描画
+
+/* プロジェクト 'CsGraphics (net9.0-android35.0)' からのマージされていない変更
+前:
                 foreach (Asset.Object3D @object in this.Objects)
+                {
+後:
+                foreach (Object3D @object in this.Objects)
+                {
+*/
+                foreach (Asset.Object3d.Object3D @object in this.Objects)
                 {
                     //if (@object.IsVisible == true)
                     if (true)
@@ -95,7 +116,14 @@ namespace CsGraphics
 
                         if (@object.IsUpdated == true || this.IsUpdated) // オブジェクトの情報に更新があれば再計算
                         {
+
+/* プロジェクト 'CsGraphics (net9.0-android35.0)' からのマージされていない変更
+前:
                             (points, _, coordinate) = Calculation.Calc((Asset.Object3D)@object, ViewCamRotation * ViewCamTranslation, canvasWidth, canvasHeight, IsPerspectiveProjection, scaleParallelProjection: ScaleParallelProjection); // 点や面の計算
+後:
+                            (points, _, coordinate) = Calculation.Calc((Object3D)@object, ViewCamRotation * ViewCamTranslation, canvasWidth, canvasHeight, IsPerspectiveProjection, scaleParallelProjection: ScaleParallelProjection); // 点や面の計算
+*/
+                            (points, _, coordinate) = Calculation.Calc((Asset.Object3d.Object3D)@object, ViewCamRotation * ViewCamTranslation, canvasWidth, canvasHeight, IsPerspectiveProjection, scaleParallelProjection: ScaleParallelProjection); // 点や面の計算
 
                             @object.Points = points;
                             @object.IsUpdated = false;
@@ -202,7 +230,6 @@ namespace CsGraphics
                                                         pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 1] = (byte)(int)(t.Green * 255);
                                                         pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 2] = (byte)(int)(t.Red * 255);
                                                         pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 3] = (byte)(int)(t.Alpha * 255);
-
                                                     }
                                                     else
                                                     {
@@ -365,7 +392,16 @@ namespace CsGraphics
         {
             int id = this.Objects.Count;
 
+
+/* プロジェクト 'CsGraphics (net9.0-android35.0)' からのマージされていない変更
+前:
             Asset.Object3D @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon);
+            this.Objects.Add(@object);
+後:
+            Object3D @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon);
+            this.Objects.Add(@object);
+*/
+            Asset.Object3d.Object3D @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon);
             this.Objects.Add(@object);
 
             this.IsUpdated = true;
@@ -376,7 +412,16 @@ namespace CsGraphics
         {
             int id = this.Objects.Count;
 
+
+/* プロジェクト 'CsGraphics (net9.0-android35.0)' からのマージされていない変更
+前:
             Asset.Object3D @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon, normal, mtlV, vt,vn);
+            this.Objects.Add(@object);
+後:
+            Object3D @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon, normal, mtlV, vt,vn);
+            this.Objects.Add(@object);
+*/
+            Asset.Object3d.Object3D @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon, normal, mtlV, vt,vn);
             this.Objects.Add(@object);
 
             this.IsUpdated = true;
@@ -418,14 +463,21 @@ namespace CsGraphics
                 throw new ArgumentOutOfRangeException($"Object ID {id} does not exist in this scene.");
             }
 
+
+/* プロジェクト 'CsGraphics (net9.0-android35.0)' からのマージされていない変更
+前:
             Asset.Object3D @object = this.Objects[id];
+後:
+            Object3D @object = this.Objects[id];
+*/
+            Asset.Object3d.Object3D @object = this.Objects[id];
 
             string result =
                 "ObjectID : " + id + "\n" +
                 "Name : " + @object.Name + "\n" +
                 "Origin : " + @object.Origin.ToString().Replace("\n", ",") + "\n" +
                 "Angle : " + @object.Angle.ToString().Replace("\n", ",") + "\n" +
-                "Scale : " + @object.Magnification.ToString().Replace("\n", ",") + "\n" +
+                "Scale : " + @object.Scale.ToString().Replace("\n", ",") + "\n" +
                 "Visible : " + @object.IsVisible.ToString() + "\n" +
                 "Num of Vertex : " + @object.Vertex.GetLength(1);
 

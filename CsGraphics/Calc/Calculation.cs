@@ -14,7 +14,16 @@
         /// </summary>
         /// <param name="object">オブジェクト.</param>
         /// <returns>スクリーン座標のリスト.</returns>
+
+/* プロジェクト 'CsGraphics (net9.0-android35.0)' からのマージされていない変更
+前:
         internal static (Point[], float[], Matrix) Calc(Asset.Object3D @object, Matrix matrixCam, float width, float height, bool mode = true, float fov = 60,float scaleParallelProjection = 32)
+        {
+後:
+        internal static (Point[], float[], Matrix) Calc(Object3D @object, Matrix matrixCam, float width, float height, bool mode = true, float fov = 60,float scaleParallelProjection = 32)
+        {
+*/
+        internal static (Point[], float[], Matrix) Calc(Asset.Object3d.Object3D @object, Matrix matrixCam, float width, float height, bool mode = true, float fov = 60,float scaleParallelProjection = 32)
         {
             List<float> depthZ = new List<float>(); // z深度 : 使用しない
 
@@ -126,7 +135,16 @@
         /// オブジェクトの移動を計算する.
         /// </summary>
         /// <returns>移動の行列.</returns>
+
+/* プロジェクト 'CsGraphics (net9.0-android35.0)' からのマージされていない変更
+前:
         private static Matrix CalcTranslation(Asset.Object3D @object)
+        {
+後:
+        private static Matrix CalcTranslation(Object3D @object)
+        {
+*/
+        private static Matrix CalcTranslation(Asset.Object3d.Object3D @object)
         {
             Matrix temp = new(4);
             temp.Identity();
@@ -141,11 +159,20 @@
         /// オブジェクトの拡大縮小を計算する.
         /// </summary>
         /// <returns>拡大縮小の行列.</returns>
+
+/* プロジェクト 'CsGraphics (net9.0-android35.0)' からのマージされていない変更
+前:
         private static Matrix CalcScale(Asset.Object3D @object)
+        {
+後:
+        private static Matrix CalcScale(Object3D @object)
+        {
+*/
+        private static Matrix CalcScale(Asset.Object3d.Object3D @object)
         {
             Matrix temp = new(4);
             temp.Identity();
-            Enumerable.Range(0, 3).ToList().ForEach(i => temp[i, i] = @object.Magnification[i]);
+            Enumerable.Range(0, 3).ToList().ForEach(i => temp[i, i] = @object.Scale[i]);
 
             return temp;
         }
@@ -154,7 +181,16 @@
         /// 行列を用いて、YXZの順に回転を計算する.
         /// </summary>
         /// <returns>回転行列.</returns>
+
+/* プロジェクト 'CsGraphics (net9.0-android35.0)' からのマージされていない変更
+前:
         private static Matrix CalcRotation(Asset.Object3D @object)
+        {
+後:
+        private static Matrix CalcRotation(Object3D @object)
+        {
+*/
+        private static Matrix CalcRotation(Asset.Object3d.Object3D @object)
         {
             Matrix xAxis = new(4);
             xAxis.Identity();
