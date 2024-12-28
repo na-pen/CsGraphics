@@ -3,7 +3,7 @@
     /// <summary>
     /// オブジェクトの情報の保持や管理を行う.
     /// </summary>
-    internal class Object
+    public class Object
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Object"/> class.

@@ -3,11 +3,13 @@ namespace CsGraphics
     using System.Collections.Generic;
     using CsGraphics.Calc;
     using CsGraphics.Math;
+    using Asset = CsGraphics.Object.Asset;
     using CsGraphics.Object.Asset.Image;
     using Microsoft.Maui.Graphics;
     using Microsoft.Maui.Graphics.Platform;
     using Color = Microsoft.Maui.Graphics.Color;
     using Point = Microsoft.Maui.Graphics.Point;
+    using System.Runtime.CompilerServices;
 
     /// <summary>
     /// シーン.
@@ -22,35 +24,7 @@ namespace CsGraphics
         /// <summary>
         /// シーンに含まれるオブジェクト.
         /// </summary>
-
-/* プロジェクト 'CsGraphics (net9.0-android35.0)' からのマージされていない変更
-前:
-        internal List<Asset.Object3D> Objects;
-後:
-        internal List<Object3D> Objects;
-*/
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-        internal List<Asset.Object3d.Object3D> Objects;
-後:
-        internal List<Object3D> Objects;
-*/
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-        internal List<Object.Object3D.Object3D> Objects;
-後:
-        internal List<Object3D> Objects;
-*/
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-        internal List<Object.Asset.Object3D.Object3D> Objects;
-後:
-        internal List<Object3D> Objects;
-*/
-        internal List<Object.Asset.Model.Model> Objects;
+        public ObjectManager objectManager = new ObjectManager();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Scene"/> class.
@@ -60,40 +34,12 @@ namespace CsGraphics
         {
             this.FrameRate = frameRate;
 
-/* プロジェクト 'CsGraphics (net9.0-android35.0)' からのマージされていない変更
-前:
-            this.Objects = new List<Asset.Object3D>(); // 初期化
-後:
-            this.Objects = new List<Object3D>(); // 初期化
-*/
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-            this.Objects = new List<Asset.Object3d.Object3D>(); // 初期化
-後:
-            this.Objects = new List<Object3D>(); // 初期化
-*/
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-            this.Objects = new List<Object.Object3D.Object3D>(); // 初期化
-後:
-            this.Objects = new List<Object3D>(); // 初期化
-*/
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-            this.Objects = new List<Object.Asset.Object3D.Object3D>(); // 初期化
-後:
-            this.Objects = new List<Object3D>(); // 初期化
-*/
-            this.Objects = new List<Object.Asset.Model.Model>(); // 初期化
-
             this.ViewCamTranslation.Identity();
 
             this.ViewCamRotation.Identity();
 
             this.SetTranslationViewCam(0, 0, 50);
+
         }
 
         /// <summary>
@@ -138,82 +84,15 @@ namespace CsGraphics
                 byte[] pixelColorsBytes = Enumerable.Repeat<byte>(255, canvasWidth * canvasHeight * 4).ToArray();
                 double[] zBufferList = Enumerable.Repeat<double>(1, canvasWidth * canvasHeight).ToArray();
 
-                // 各点を指定された色で描画
-
-/* プロジェクト 'CsGraphics (net9.0-android35.0)' からのマージされていない変更
-前:
-                foreach (Asset.Object3D @object in this.Objects)
+                foreach (Asset.Model.Model @object in this.objectManager.GetObjectsOfType<Asset.Model.Model>())
                 {
-後:
-                foreach (Object3D @object in this.Objects)
-                {
-*/
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-                foreach (Asset.Object3d.Object3D @object in this.Objects)
-                {
-後:
-                foreach (Object3D @object in this.Objects)
-                {
-*/
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-                foreach (Object.Object3D.Object3D @object in this.Objects)
-                {
-後:
-                foreach (Object3D @object in this.Objects)
-                {
-*/
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-                foreach (Object.Asset.Object3D.Object3D @object in this.Objects)
-                {
-後:
-                foreach (Object3D @object in this.Objects)
-                {
-*/
-                foreach (Object.Asset.Model.Model @object in this.Objects)
-                {
-                    //if (@object.IsVisible == true)
-                    if (true)
-                    {
+                    if(true) {
                         Point[] points = Array.Empty<Point>();
                         Matrix coordinate;
 
                         if (@object.IsUpdated == true || this.IsUpdated) // オブジェクトの情報に更新があれば再計算
                         {
-
-/* プロジェクト 'CsGraphics (net9.0-android35.0)' からのマージされていない変更
-前:
-                            (points, _, coordinate) = Calculation.Calc((Asset.Object3D)@object, ViewCamRotation * ViewCamTranslation, canvasWidth, canvasHeight, IsPerspectiveProjection, scaleParallelProjection: ScaleParallelProjection); // 点や面の計算
-後:
-                            (points, _, coordinate) = Calculation.Calc((Object3D)@object, ViewCamRotation * ViewCamTranslation, canvasWidth, canvasHeight, IsPerspectiveProjection, scaleParallelProjection: ScaleParallelProjection); // 点や面の計算
-*/
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-                            (points, _, coordinate) = Calculation.Calc((Asset.Object3d.Object3D)@object, ViewCamRotation * ViewCamTranslation, canvasWidth, canvasHeight, IsPerspectiveProjection, scaleParallelProjection: ScaleParallelProjection); // 点や面の計算
-後:
-                            (points, _, coordinate) = Calculation.Calc((Object3D)@object, ViewCamRotation * ViewCamTranslation, canvasWidth, canvasHeight, IsPerspectiveProjection, scaleParallelProjection: ScaleParallelProjection); // 点や面の計算
-*/
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-                            (points, _, coordinate) = Calculation.Calc((Object.Object3D.Object3D)@object, ViewCamRotation * ViewCamTranslation, canvasWidth, canvasHeight, IsPerspectiveProjection, scaleParallelProjection: ScaleParallelProjection); // 点や面の計算
-後:
-                            (points, _, coordinate) = Calculation.Calc((Object3D)@object, ViewCamRotation * ViewCamTranslation, canvasWidth, canvasHeight, IsPerspectiveProjection, scaleParallelProjection: ScaleParallelProjection); // 点や面の計算
-*/
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-                            (points, _, coordinate) = Calculation.Calc((Object.Asset.Object3D.Object3D)@object, ViewCamRotation * ViewCamTranslation, canvasWidth, canvasHeight, IsPerspectiveProjection, scaleParallelProjection: ScaleParallelProjection); // 点や面の計算
-後:
-                            (points, _, coordinate) = Calculation.Calc((Object3D)@object, ViewCamRotation * ViewCamTranslation, canvasWidth, canvasHeight, IsPerspectiveProjection, scaleParallelProjection: ScaleParallelProjection); // 点や面の計算
-*/
-                            (points, _, coordinate) = Calculation.Calc((Object.Asset.Model.Model)@object, ViewCamRotation * ViewCamTranslation, canvasWidth, canvasHeight, IsPerspectiveProjection, scaleParallelProjection: ScaleParallelProjection); // 点や面の計算
+                            (points, _, coordinate) = Calculation.Calc((Asset.Model.Model)@object, ViewCamRotation * ViewCamTranslation, canvasWidth, canvasHeight, IsPerspectiveProjection, scaleParallelProjection: ScaleParallelProjection); // 点や面の計算
 
                             @object.Points = points;
                             @object.IsUpdated = false;
@@ -226,96 +105,16 @@ namespace CsGraphics
 
                         if (@object.Polygon != null) // ポリゴンが存在する場合のみ描画
                         {
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-                            foreach (var kvp in ((Asset.Object3d.Polygon)@object.Polygon).VertexID)
-                            {
-後:
-                            foreach (var kvp in ((Polygon)@object.Polygon).VertexID)
-                            {
-*/
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-                            foreach (var kvp in ((Object.Object3D.Polygon)@object.Polygon).VertexID)
-                            {
-後:
-                            foreach (var kvp in ((Polygon)@object.Polygon).VertexID)
-                            {
-*/
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-                            foreach (var kvp in ((Object.Asset.Object3D.Polygon)@object.Polygon).VertexID)
-                            {
-後:
-                            foreach (var kvp in ((Polygon)@object.Polygon).VertexID)
-                            {
-*/
-                            foreach (var kvp in ((Object.Asset.Model.Polygon)@object.Polygon).VertexID)
+                            foreach (var kvp in ((Asset.Model.Polygon)@object.Polygon).VertexID)
                             {
                                 string key = kvp.Key;
                                 int[][] array = kvp.Value;
 
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-                                int[][] array2 = ((Asset.Object3d.Polygon)@object.Polygon).MtlVertexID[key];
-                                string key2 = string.Empty;
-後:
-                                int[][] array2 = ((Polygon)@object.Polygon).MtlVertexID[key];
-                                string key2 = string.Empty;
-*/
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-                                int[][] array2 = ((Object.Object3D.Polygon)@object.Polygon).MtlVertexID[key];
-                                string key2 = string.Empty;
-後:
-                                int[][] array2 = ((Polygon)@object.Polygon).MtlVertexID[key];
-                                string key2 = string.Empty;
-*/
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-                                int[][] array2 = ((Object.Asset.Object3D.Polygon)@object.Polygon).MtlVertexID[key];
-                                string key2 = string.Empty;
-後:
-                                int[][] array2 = ((Polygon)@object.Polygon).MtlVertexID[key];
-                                string key2 = string.Empty;
-*/
-                                int[][] array2 = ((Object.Asset.Model.Polygon)@object.Polygon).MtlVertexID[key];
+                                int[][] array2 = ((Asset.Model.Polygon)@object.Polygon).MtlVertexID[key];
                                 string key2 = string.Empty;
                                 if (key != string.Empty)
                                 {
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-                                    key2 = ((Asset.Object3d.Polygon)@object.Polygon).Colors[key].Item2;
-                                }
-後:
-                                    key2 = ((Polygon)@object.Polygon).Colors[key].Item2;
-                                }
-*/
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-                                    key2 = ((Object.Object3D.Polygon)@object.Polygon).Colors[key].Item2;
-                                }
-後:
-                                    key2 = ((Polygon)@object.Polygon).Colors[key].Item2;
-                                }
-*/
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-                                    key2 = ((Object.Asset.Object3D.Polygon)@object.Polygon).Colors[key].Item2;
-                                }
-後:
-                                    key2 = ((Polygon)@object.Polygon).Colors[key].Item2;
-                                }
-*/
-                                    key2 = ((Object.Asset.Model.Polygon)@object.Polygon).Colors[key].Item2;
+                                    key2 = ((Asset.Model.Polygon)@object.Polygon).Colors[key].Item2;
                                 }
 
                                 // 各ポリゴンをチェック
@@ -373,34 +172,7 @@ namespace CsGraphics
                                                     double texVy = (a * vt[0][1]) + (b * vt[1][1]) + (c * vt[2][1]);
                                                     if (@object.Texture != null && @object.Texture.ContainsKey(key2))
                                                     {
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-                                                        (Color cl, _) = ((Asset.Object3d.Polygon)@object.Polygon).Colors[key];
-                                                        int x = (int)((texVx % 1) * @object.Texture[key2].Item2);
-後:
-                                                        (Color cl, _) = ((Polygon)@object.Polygon).Colors[key];
-                                                        int x = (int)((texVx % 1) * @object.Texture[key2].Item2);
-*/
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-                                                        (Color cl, _) = ((Object.Object3D.Polygon)@object.Polygon).Colors[key];
-                                                        int x = (int)((texVx % 1) * @object.Texture[key2].Item2);
-後:
-                                                        (Color cl, _) = ((Polygon)@object.Polygon).Colors[key];
-                                                        int x = (int)((texVx % 1) * @object.Texture[key2].Item2);
-*/
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-                                                        (Color cl, _) = ((Object.Asset.Object3D.Polygon)@object.Polygon).Colors[key];
-                                                        int x = (int)((texVx % 1) * @object.Texture[key2].Item2);
-後:
-                                                        (Color cl, _) = ((Polygon)@object.Polygon).Colors[key];
-                                                        int x = (int)((texVx % 1) * @object.Texture[key2].Item2);
-*/
-                                                        (Color cl, _) = ((Object.Asset.Model.Polygon)@object.Polygon).Colors[key];
+                                                        (Color cl, _) = ((Asset.Model.Polygon)@object.Polygon).Colors[key];
                                                         int x = (int)((texVx % 1) * @object.Texture[key2].Item2);
                                                         int y = ((int)((texVy % 1) * @object.Texture[key2].Item2));
                                                         pixelcolor = new Color(@object.Texture[key2].Item3[@object.Texture[key2].Item1 * y * 4 + (x * 4) + 0], @object.Texture[key2].Item3[@object.Texture[key2].Item1 * y * 4 + (x * 4) + 1], @object.Texture[key2].Item3[@object.Texture[key2].Item1 * y * 4 + (x * 4) + 2], @object.Texture[key2].Item3[@object.Texture[key2].Item1 * y * 4 + (x * 4) + 3]).MultiplyAlpha(cl.Alpha);
@@ -415,34 +187,7 @@ namespace CsGraphics
                                                     if (pixelcolor == null)
                                                     {
 
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-                                                        (Color cl, _) = ((Asset.Object3d.Polygon)@object.Polygon).Colors[key];
-                                                        pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 0] = (byte)(int)(cl.Blue * 255);
-後:
-                                                        (Color cl, _) = ((Polygon)@object.Polygon).Colors[key];
-                                                        pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 0] = (byte)(int)(cl.Blue * 255);
-*/
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-                                                        (Color cl, _) = ((Object.Object3D.Polygon)@object.Polygon).Colors[key];
-                                                        pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 0] = (byte)(int)(cl.Blue * 255);
-後:
-                                                        (Color cl, _) = ((Polygon)@object.Polygon).Colors[key];
-                                                        pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 0] = (byte)(int)(cl.Blue * 255);
-*/
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-                                                        (Color cl, _) = ((Object.Asset.Object3D.Polygon)@object.Polygon).Colors[key];
-                                                        pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 0] = (byte)(int)(cl.Blue * 255);
-後:
-                                                        (Color cl, _) = ((Polygon)@object.Polygon).Colors[key];
-                                                        pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 0] = (byte)(int)(cl.Blue * 255);
-*/
-                                                        (Color cl, _) = ((Object.Asset.Model.Polygon)@object.Polygon).Colors[key];
+                                                        (Color cl, _) = ((Asset.Model.Polygon)@object.Polygon).Colors[key];
                                                         pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 0] = (byte)(int)(cl.Blue * 255);
                                                         pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 1] = (byte)(int)(cl.Green * 255);
                                                         pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 2] = (byte)(int)(cl.Red * 255);
@@ -615,46 +360,9 @@ namespace CsGraphics
         /// <returns>id.</returns>
         public int Add3dObject(string name, float[,] vertexCoord, Dictionary<string, (Color, string)>? polygonColor = null, float[]? origin = null, bool visible = true, float[]? scale = null, Dictionary<string, int[][]>? polygon = null)
         {
-            int id = this.Objects.Count;
-
-
-/* プロジェクト 'CsGraphics (net9.0-android35.0)' からのマージされていない変更
-前:
-            Asset.Object3D @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon);
-            this.Objects.Add(@object);
-後:
-            Object3D @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon);
-            this.Objects.Add(@object);
-*/
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-            Asset.Object3d.Object3D @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon);
-            this.Objects.Add(@object);
-後:
-            Object3D @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon);
-            this.Objects.Add(@object);
-*/
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-            Object.Object3D.Object3D @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon);
-            this.Objects.Add(@object);
-後:
-            Object3D @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon);
-            this.Objects.Add(@object);
-*/
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-            Object.Asset.Object3D.Object3D @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon);
-            this.Objects.Add(@object);
-後:
-            Object3D @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon);
-            this.Objects.Add(@object);
-*/
-            Object.Asset.Model.Model @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon);
-            this.Objects.Add(@object);
+            
+            Asset.Model.Model @object = new(name, vertexCoord, polygonColor, origin, visible, scale, polygon);
+            int id = this.objectManager.Add(@object);
 
             this.IsUpdated = true;
             return id;
@@ -662,46 +370,8 @@ namespace CsGraphics
 
         private int Add3dObject(string name, float[,] vertexCoord, Dictionary<string, (Color, string)>? polygonColor = null, float[]? origin = null, bool visible = true, float[]? scale = null, Dictionary<string, int[][]>? polygon = null, Math.Matrix? normal = null, Dictionary<string, int[][]>? mtlV = null, float[] vt = null, float[] vn = null)
         {
-            int id = this.Objects.Count;
-
-
-/* プロジェクト 'CsGraphics (net9.0-android35.0)' からのマージされていない変更
-前:
-            Asset.Object3D @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon, normal, mtlV, vt,vn);
-            this.Objects.Add(@object);
-後:
-            Object3D @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon, normal, mtlV, vt,vn);
-            this.Objects.Add(@object);
-*/
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-            Asset.Object3d.Object3D @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon, normal, mtlV, vt,vn);
-            this.Objects.Add(@object);
-後:
-            Object3D @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon, normal, mtlV, vt,vn);
-            this.Objects.Add(@object);
-*/
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-            Object.Object3D.Object3D @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon, normal, mtlV, vt,vn);
-            this.Objects.Add(@object);
-後:
-            Object3D @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon, normal, mtlV, vt,vn);
-            this.Objects.Add(@object);
-*/
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-            Object.Asset.Object3D.Object3D @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon, normal, mtlV, vt,vn);
-            this.Objects.Add(@object);
-後:
-            Object3D @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon, normal, mtlV, vt,vn);
-            this.Objects.Add(@object);
-*/
-            Object.Asset.Model.Model @object = new(name, vertexCoord, id, polygonColor, origin, visible, scale, polygon, normal, mtlV, vt,vn);
-            this.Objects.Add(@object);
+            Asset.Model.Model @object = new(name, vertexCoord, polygonColor, origin, visible, scale, polygon, normal, mtlV, vt,vn);
+            int id = this.objectManager.Add(@object);
 
             this.IsUpdated = true;
             return id;
@@ -715,40 +385,13 @@ namespace CsGraphics
         /// <returns>ID.</returns>
         public int AddObjectFromObj(string name, string filePath, string texturePath = null)
         {
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-            (float[,] vertices, Dictionary<string, int[][]> polygon, Math.Matrix normal, Dictionary<string, (Color, string)>? polygonColor, Dictionary<string, int[][]> mtlV, float[] vt, float[] vn) = Asset.Object3d.Parser.ObjParseVerticesV2(filePath);
-            int id = this.Add3dObject(name, vertices, polygon: polygon, normal: normal, polygonColor: polygonColor, mtlV: mtlV, vt: vt,vn: vn);
-後:
-            (float[,] vertices, Dictionary<string, int[][]> polygon, Math.Matrix normal, Dictionary<string, (Color, string)>? polygonColor, Dictionary<string, int[][]> mtlV, float[] vt, float[] vn) = Parser.ObjParseVerticesV2(filePath);
-            int id = this.Add3dObject(name, vertices, polygon: polygon, normal: normal, polygonColor: polygonColor, mtlV: mtlV, vt: vt,vn: vn);
-*/
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-            (float[,] vertices, Dictionary<string, int[][]> polygon, Math.Matrix normal, Dictionary<string, (Color, string)>? polygonColor, Dictionary<string, int[][]> mtlV, float[] vt, float[] vn) = Object.Object3D.Parser.ObjParseVerticesV2(filePath);
-            int id = this.Add3dObject(name, vertices, polygon: polygon, normal: normal, polygonColor: polygonColor, mtlV: mtlV, vt: vt,vn: vn);
-後:
-            (float[,] vertices, Dictionary<string, int[][]> polygon, Math.Matrix normal, Dictionary<string, (Color, string)>? polygonColor, Dictionary<string, int[][]> mtlV, float[] vt, float[] vn) = Parser.ObjParseVerticesV2(filePath);
-            int id = this.Add3dObject(name, vertices, polygon: polygon, normal: normal, polygonColor: polygonColor, mtlV: mtlV, vt: vt,vn: vn);
-*/
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-            (float[,] vertices, Dictionary<string, int[][]> polygon, Math.Matrix normal, Dictionary<string, (Color, string)>? polygonColor, Dictionary<string, int[][]> mtlV, float[] vt, float[] vn) = Object.Asset.Object3D.Parser.ObjParseVerticesV2(filePath);
-            int id = this.Add3dObject(name, vertices, polygon: polygon, normal: normal, polygonColor: polygonColor, mtlV: mtlV, vt: vt,vn: vn);
-後:
-            (float[,] vertices, Dictionary<string, int[][]> polygon, Math.Matrix normal, Dictionary<string, (Color, string)>? polygonColor, Dictionary<string, int[][]> mtlV, float[] vt, float[] vn) = Parser.ObjParseVerticesV2(filePath);
-            int id = this.Add3dObject(name, vertices, polygon: polygon, normal: normal, polygonColor: polygonColor, mtlV: mtlV, vt: vt,vn: vn);
-*/
-            (float[,] vertices, Dictionary<string, int[][]> polygon, Math.Matrix normal, Dictionary<string, (Color, string)>? polygonColor, Dictionary<string, int[][]> mtlV, float[] vt, float[] vn) = Object.Asset.Model.Parser.ObjParseVerticesV2(filePath);
+            (float[,] vertices, Dictionary<string, int[][]> polygon, Math.Matrix normal, Dictionary<string, (Color, string)>? polygonColor, Dictionary<string, int[][]> mtlV, float[] vt, float[] vn) = Asset.Model.Parser.ObjParseVerticesV2(filePath);
             int id = this.Add3dObject(name, vertices, polygon: polygon, normal: normal, polygonColor: polygonColor, mtlV: mtlV, vt: vt,vn: vn);
             foreach (var kvp in polygonColor)
             {
                 string key = kvp.Key;
                 (Color c, string s) = kvp.Value;
-                this.Objects[id].AddTexture(key, s);
+                this.objectManager.Get<Asset.Model.Model>(id).AddTexture(key, s);
             }
 
             this.IsUpdated = true;
@@ -764,40 +407,12 @@ namespace CsGraphics
         /// <exception cref="ArgumentOutOfRangeException">存在しないオブジェクトを参照することはできません.</exception>
         public string GetObjectInfo(int id, int level = 0)
         {
-            if (id >= this.Objects.Count)
+            if (id >= this.objectManager.Count())
             {
                 throw new ArgumentOutOfRangeException($"Object ID {id} does not exist in this scene.");
             }
 
-
-/* プロジェクト 'CsGraphics (net9.0-android35.0)' からのマージされていない変更
-前:
-            Asset.Object3D @object = this.Objects[id];
-後:
-            Object3D @object = this.Objects[id];
-*/
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-            Asset.Object3d.Object3D @object = this.Objects[id];
-後:
-            Object3D @object = this.Objects[id];
-*/
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-            Object.Object3D.Object3D @object = this.Objects[id];
-後:
-            Object3D @object = this.Objects[id];
-*/
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-            Object.Asset.Object3D.Object3D @object = this.Objects[id];
-後:
-            Object3D @object = this.Objects[id];
-*/
-            Object.Asset.Model.Model @object = this.Objects[id];
+            Asset.Model.Model @object = this.objectManager.Get<Asset.Model.Model>(id);
 
             string result =
                 "ObjectID : " + id + "\n" +
@@ -820,7 +435,7 @@ namespace CsGraphics
         /// <param name="z">z軸移動量.</param>
         public void TranslationObject(int id, float x, float y, float z)
         {
-            this.Objects[id].SetTranslation(x, y, z);
+            this.objectManager[id].SetTranslation(x, y, z);
             this.IsUpdated = true;
         }
 
@@ -833,7 +448,7 @@ namespace CsGraphics
         /// <param name="z">z軸移動量.</param>
         public void ScaleObject(int id, float x, float y, float z)
         {
-            this.Objects[id].SetScale(x, y, z);
+            this.objectManager[id].SetScale(x, y, z);
             this.IsUpdated = true;
         }
 
@@ -846,7 +461,7 @@ namespace CsGraphics
         /// <param name="z">z軸移動量.</param>
         public void RotationObject(int id, float x, float y, float z)
         {
-            this.Objects[id].SetRotation(x, y, z);
+            this.objectManager[id].SetRotation(x, y, z);
             this.IsUpdated = true;
         }
 

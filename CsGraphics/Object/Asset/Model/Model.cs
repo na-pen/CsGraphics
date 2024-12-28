@@ -17,10 +17,10 @@ namespace CsGraphics.Object.Asset.Model
         /// <param name="origin">オブジェクトの原点.</param>
         /// <param name="visible">オブジェクトの表示状態.</param>
         /// <param name="scale">オブジェクトの拡大倍率.</param>
-        internal Model(string name, float[,] vertexCoord, int id = -1, Dictionary<string, (Color, string)>? polygonColor = null, float[]? origin = null, bool visible = true, float[]? scale = null, Dictionary<string, int[][]>? polygon = null, Math.Matrix normal = null, Dictionary<string, int[][]>? mtlV = null, float[] vt = null, float[] vn = null)
-            : base(name, id, visible, origin, scale)
+        internal Model(string name, float[,] vertexCoord, Dictionary<string, (Color, string)>? polygonColor = null, float[]? origin = null, bool visible = true, float[]? scale = null, Dictionary<string, int[][]>? polygon = null, Math.Matrix normal = null, Dictionary<string, int[][]>? mtlV = null, float[] vt = null, float[] vn = null)
+            : base(name, visible: visible, origin: origin, scale: scale)
         {
-            Vertex = new(id, vertexCoord, vt, vn);
+            Vertex = new(this.ID, vertexCoord, vt, vn);
 
             if (polygon != null && polygonColor != null)
             {

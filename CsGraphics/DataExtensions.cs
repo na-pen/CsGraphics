@@ -12,33 +12,6 @@
         /// </summary>
         /// <param name="vertex">頂点情報.</param>
         /// <returns>System.Collections.IEnumerator.</returns>
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-        public static System.Collections.IEnumerator GetEnumerator(this Asset.Object3d.Vertex vertex)
-            =>
-後:
-        public static System.Collections.IEnumerator GetEnumerator(this Vertex vertex)
-            =>
-*/
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-        public static System.Collections.IEnumerator GetEnumerator(this Object.Object3D.Vertex vertex)
-            =>
-後:
-        public static System.Collections.IEnumerator GetEnumerator(this Vertex vertex)
-            =>
-*/
-
-/* プロジェクト 'CsGraphics (net9.0-windows10.0.19041.0)' からのマージされていない変更
-前:
-        public static System.Collections.IEnumerator GetEnumerator(this Object.Asset.Object3D.Vertex vertex)
-            =>
-後:
-        public static System.Collections.IEnumerator GetEnumerator(this Vertex vertex)
-            =>
-*/
         public static System.Collections.IEnumerator GetEnumerator(this Object.Asset.Model.Vertex vertex)
             =>
             Enumerable.Range(0, vertex.GetLength(1))
@@ -56,6 +29,13 @@
             Enumerable.Range(0, matrix.GetLength(1))
             .Select(i =>
                 new Math.Matrix(new float[] { matrix[0, i], matrix[1, i], matrix[2, i], matrix[3, i] }))
+            .GetEnumerator();
+
+        public static System.Collections.IEnumerator GetEnumerator(this ObjectManager objectManager)
+            =>
+            Enumerable.Range(0, objectManager.Count())
+            .Select(i =>
+                objectManager[i])
             .GetEnumerator();
 
     }
