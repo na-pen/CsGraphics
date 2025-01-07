@@ -360,7 +360,6 @@ namespace CsGraphics
         /// <returns>id.</returns>
         public int Add3dObject(string name, float[,] vertexCoord, Dictionary<string, (Color, string)>? polygonColor = null, float[]? origin = null, bool visible = true, float[]? scale = null, Dictionary<string, int[][]>? polygon = null)
         {
-            
             Asset.Model.Model @object = new(name, vertexCoord, polygonColor, origin, visible, scale, polygon);
             int id = this.objectManager.Add(@object);
 
