@@ -15,7 +15,7 @@
         /// <param name="object">オブジェクト.</param>
         /// <returns>スクリーン座標のリスト.</returns>
 
-        internal static (Point[], float[], Matrix) Calc(Object.Asset.Model.Model @object, Matrix matrixCam, float width, float height, bool mode = true, float fov = 60,float scaleParallelProjection = 32)
+        internal static (Point[], float[], Matrix) Calc(Object.Asset.Model.Model @object, Object.Camera.Camera camera, float width, float height, bool mode = true, float fov = 60)
         {
             List<float> depthZ = new List<float>(); // z深度 : 使用しない
 
@@ -27,48 +27,7 @@
 
             Matrix matrix = translate * rotate * scale; // 拡大縮小 → 回転 → 平行移動 をした変換行列を計算
 
-            int far = -5000;
-            float near = -1f;
-            float left = -width / 2;
-            float right = width / 2;
-            float bottom = height / 2;
-            float top = -height / 2;
-            float aspect = width / height;
-            float fovY = float.DegreesToRadians(fov);
-            float f = (float)(1f / System.MathF.Tan(fovY / 2f));
-
-            Matrix cam2view;
-
-            if (mode) // 透視投影のとき
-            {
-                cam2view = new (new float[,]
-                {
-                    { -f / aspect, 0, 0, 0 },
-                    { 0, f, 0, 0 },
-                    { 0, 0, -1f * (far + near) / (far - near), -2f * (far * near) / (far - near) },
-                    { 0, 0, -1f, 0 },
-                });
-            }
-            else // 平行投影のとき
-            {
-                left = -width / scaleParallelProjection;
-                right = width / scaleParallelProjection;
-                bottom = height / scaleParallelProjection;
-                top = -height / scaleParallelProjection;
-
-                cam2view = new (new float[,]
-                {
-                    { 2f / (right - left), 0, 0, -(right + left) / (right - left) },
-                    { 0, 2f / (top - bottom), 0, -(top + bottom) / (top - bottom) },
-                    { 0, 0, -2f / (far - near), -(far + near) / (far - near)},
-                    { 0, 0, 0, 1 },
-                });
-            }
-
-
-
-
-            Matrix vertex = cam2view * matrixCam * matrix * @object.Vertex.Coordinate;
+            Matrix vertex = cam2view * camera.matrixCam * matrix * @object.Vertex.Coordinate;
 
             Matrix coordinate = new Matrix(@object.Vertex.Coordinate.GetLength(0), @object.Vertex.Coordinate.GetLength(1));
             for (int n = 0; n < @object.Vertex.Coordinate.GetLength(1); n++)

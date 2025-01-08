@@ -34,10 +34,6 @@ namespace CsGraphics
         {
             this.FrameRate = frameRate;
 
-            this.ViewCamTranslation.Identity();
-
-            this.ViewCamRotation.Identity();
-
             this.SetTranslationViewCam(0, 0, 50);
 
         }
@@ -52,16 +48,9 @@ namespace CsGraphics
         /// </summary>
         public bool IsUpdated { get; set; } = true;
 
-        internal Math.Matrix ViewCamTranslation { get; set; } = new Matrix(4);
-
-        internal Math.Matrix ViewCamRotation { get; set; } = new Matrix(4);
-
-        private float[] camRotate = new float[3] { 0, 0, 0 };
-
         private int canvasHeight = 0;
         private int canvasWidth = 0;
         public bool IsPerspectiveProjection = true;
-        public float ScaleParallelProjection = 32;
 
         public void Draw(ICanvas canvas, RectF dirtyRect)
         {
@@ -92,7 +81,7 @@ namespace CsGraphics
 
                         if (@object.IsUpdated == true || this.IsUpdated) // オブジェクトの情報に更新があれば再計算
                         {
-                            (points, _, coordinate) = Calculation.Calc((Asset.Model.Model)@object, ViewCamRotation * ViewCamTranslation, canvasWidth, canvasHeight, IsPerspectiveProjection, scaleParallelProjection: ScaleParallelProjection); // 点や面の計算
+                            (points, _, coordinate) = Calculation.Calc((Asset.Model.Model)@object, ViewCamRotation * ViewCamTranslation, canvasWidth, canvasHeight, IsPerspectiveProjection); // 点や面の計算
 
                             @object.Points = points;
                             @object.IsUpdated = false;
@@ -462,43 +451,6 @@ namespace CsGraphics
         {
             this.objectManager[id].SetRotation(x, y, z);
             this.IsUpdated = true;
-        }
-
-        public void SetTranslationViewCam(float x, float y, float z)
-        {
-            IsUpdated = true;
-
-            this.ViewCamTranslation[0, 3] += x;
-            this.ViewCamTranslation[1, 3] += y;
-            this.ViewCamTranslation[2, 3] += z;
-        }
-
-        public void SetRotationViewCam(float x, float y, float z)
-        {
-            this.camRotate = new float[3] { camRotate[0] + x, camRotate[1] + y, camRotate[2] + z };
-            IsUpdated = true;
-            Matrix xAxis = new(4);
-            xAxis.Identity();
-            xAxis[1, 1] = System.MathF.Cos(camRotate[0] * System.MathF.PI / 180f);
-            xAxis[2, 1] = System.MathF.Sin(camRotate[0] * System.MathF.PI / 180f);
-            xAxis[1, 2] = -1 * System.MathF.Sin(camRotate[0] * System.MathF.PI / 180f);
-            xAxis[2, 2] = System.MathF.Cos(camRotate[0] * System.MathF.PI / 180f);
-
-            Matrix yAxis = new(4);
-            yAxis.Identity();
-            yAxis[0, 0] = System.MathF.Cos(camRotate[1] * System.MathF.PI / 180f);
-            yAxis[2, 0] = -1 * System.MathF.Sin(camRotate[1] * System.MathF.PI / 180f);
-            yAxis[0, 2] = System.MathF.Sin(camRotate[1] * System.MathF.PI / 180f);
-            yAxis[2, 2] = System.MathF.Cos(camRotate[1] * System.MathF.PI / 180f);
-
-            Matrix zAxis = new(4);
-            zAxis.Identity();
-            zAxis[0, 0] = System.MathF.Cos(camRotate[2] * System.MathF.PI / 180f);
-            zAxis[0, 1] = -1 * System.MathF.Sin(camRotate[2] * System.MathF.PI / 180f);
-            zAxis[1, 0] = System.MathF.Sin(camRotate[2] * System.MathF.PI / 180f);
-            zAxis[1, 1] = System.MathF.Cos(camRotate[2] * System.MathF.PI / 180f);
-
-            this.ViewCamRotation = yAxis * xAxis * zAxis;
         }
     }
 }

@@ -13,7 +13,6 @@ namespace CsGraphics.Object.Asset.Model
         /// <param name="id">オブジェクトID.</param>
         /// <param name="name">オブジェクト名.</param>
         /// <param name="vertexCoord">頂点座標.</param>
-        /// <param name="vertexColor">頂点色.</param>
         /// <param name="origin">オブジェクトの原点.</param>
         /// <param name="visible">オブジェクトの表示状態.</param>
         /// <param name="scale">オブジェクトの拡大倍率.</param>
@@ -121,7 +120,6 @@ namespace CsGraphics.Object.Asset.Model
 
         internal int GetTextureLength(int dimension)
         {
-
             int result = 0;
             foreach (var kvp in Texture)
             {

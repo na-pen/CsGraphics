@@ -90,7 +90,10 @@
             temp[2, 0] = z;
 
             Origin += temp;
+            TranslationChanged();
         }
+
+        protected virtual void TranslationChanged() { }
 
         /// <summary>
         /// 拡大・縮小(オブジェクトの原点基準).
@@ -114,6 +117,9 @@
         {
             IsUpdated = true;
             Angle = new float[] { Angle[0] + x, Angle[1] + y, Angle[2] + z };
+            RotationChanged();
         }
+
+        protected virtual void RotationChanged() { }
     }
 }
