@@ -2,15 +2,17 @@
 {
     using CsGraphics.Math;
 
-    internal class Camera : Object
+    public class Camera : Object
     {
-        public Camera(string name)
+        public Camera(string name,int height = 1, int width = 1)
             : base(name)
         {
             this.ViewCamTranslation.Identity();
 
             this.ViewCamRotation.Identity();
 
+            this.Width = width;
+            this.Height = height;
         }
 
         private float _fovY = 3.14f;
@@ -31,7 +33,7 @@
         private float[] _vertexCoordinate = { 0, 0, 0, 0 }; // {left, right, top, bottom}
         private float _aspect = 1;
 
-        internal float Width
+        public float Width
         {
             get { return this._width; }
             set
@@ -51,7 +53,7 @@
             }
         }
 
-        internal float Height
+        public float Height
         {
             get { return this._height; }
             set
@@ -59,8 +61,8 @@
                 if (value > 0)
                 {
                     this._height = value;
-                    _vertexCoordinate[3] = -_height / 2;
-                    _vertexCoordinate[4] = _height / 2;
+                    _vertexCoordinate[2] = -_height / 2;
+                    _vertexCoordinate[3] = _height / 2;
                     _aspect = _width / _height;
                     CalcConvertMatrix();
                 }
@@ -76,8 +78,6 @@
         internal Math.Matrix ViewCamTranslation { get; set; } = new Matrix(4);
 
         internal Math.Matrix ViewCamRotation { get; set; } = new Matrix(4);
-
-        private float[] camRotate = new float[3] { 0, 0, 0 };
 
         private const float scaleParallelProjection = 32;
         private int _far = -5000;

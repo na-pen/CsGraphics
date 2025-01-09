@@ -15,7 +15,7 @@
         /// <param name="object">オブジェクト.</param>
         /// <returns>スクリーン座標のリスト.</returns>
 
-        internal static (Point[], float[], Matrix) Calc(Object.Asset.Model.Model @object, Object.Camera.Camera camera, float width, float height, bool mode = true, float fov = 60)
+        internal static (Point[], float[], Matrix) Calc(Object.Asset.Model.Model @object, Object.Camera.Camera camera, float width, float height)
         {
             List<float> depthZ = new List<float>(); // z深度 : 使用しない
 
@@ -27,7 +27,7 @@
 
             Matrix matrix = translate * rotate * scale; // 拡大縮小 → 回転 → 平行移動 をした変換行列を計算
 
-            Matrix vertex = cam2view * camera.matrixCam * matrix * @object.Vertex.Coordinate;
+            Matrix vertex = camera.cam2view * camera.ViewCamTranslation * camera.ViewCamRotation * matrix * @object.Vertex.Coordinate;
 
             Matrix coordinate = new Matrix(@object.Vertex.Coordinate.GetLength(0), @object.Vertex.Coordinate.GetLength(1));
             for (int n = 0; n < @object.Vertex.Coordinate.GetLength(1); n++)

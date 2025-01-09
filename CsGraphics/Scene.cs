@@ -34,7 +34,8 @@ namespace CsGraphics
         {
             this.FrameRate = frameRate;
 
-            this.SetTranslationViewCam(0, 0, 50);
+            objectManager.Add(new Object.Camera.Camera("MainCam"));
+            objectManager.Get("MainCam").SetTranslation(0, 0, 50);
 
         }
 
@@ -81,7 +82,7 @@ namespace CsGraphics
 
                         if (@object.IsUpdated == true || this.IsUpdated) // オブジェクトの情報に更新があれば再計算
                         {
-                            (points, _, coordinate) = Calculation.Calc((Asset.Model.Model)@object, ViewCamRotation * ViewCamTranslation, canvasWidth, canvasHeight, IsPerspectiveProjection); // 点や面の計算
+                            (points, _, coordinate) = Calculation.Calc((Asset.Model.Model)@object, objectManager.Get<Object.Camera.Camera>("MainCam"), canvasWidth, canvasHeight); // 点や面の計算
 
                             @object.Points = points;
                             @object.IsUpdated = false;

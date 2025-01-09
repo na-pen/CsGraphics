@@ -57,19 +57,23 @@ namespace CsGraphics
             return true;
         }
 
-        internal Object.Object Get(int id)
+        public Object.Object Get(int id)
         {
             return this.objectList[this.dictIdIndex[id]];
         }
 
-        internal Object.Object Get(string name)
+        public Object.Object Get(string name)
         {
             return this.Get(this.dictNameId[name]);
         }
 
-        internal T Get<T>(int id) where T : Object.Object
+        public T Get<T>(int id) where T : Object.Object
         {
             return (T)objectList[this.dictIdIndex[id]];
+        }
+        public T Get<T>(string name) where T : Object.Object
+        {
+            return (T)objectList[this.dictIdIndex[this.dictNameId[name]]];
         }
 
         internal Object.Object this[int index]
