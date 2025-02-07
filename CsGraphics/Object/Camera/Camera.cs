@@ -15,7 +15,7 @@
             this.Height = height;
         }
 
-        private float _fovY = 3.14f;
+        private float _fovY = 1.047f;
         internal float FovY
         {
             get { return _fovY; }
@@ -147,9 +147,9 @@
         {
             IsUpdated = true;
 
-            this.ViewCamTranslation[0, 3] += Origin[0, 0];
-            this.ViewCamTranslation[1, 3] += Origin[1, 0];
-            this.ViewCamTranslation[2, 3] += Origin[2, 0];
+            this.ViewCamTranslation[0, 3] = Origin[0, 0];
+            this.ViewCamTranslation[1, 3] = Origin[1, 0];
+            this.ViewCamTranslation[2, 3] = Origin[2, 0];
         }
 
         private void CalcConvertMatrix()

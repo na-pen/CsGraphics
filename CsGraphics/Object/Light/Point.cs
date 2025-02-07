@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace CsGraphics.Object.Light
 {
-    internal class Ambient : Object
+    internal class Point : Object
     {
-        internal Ambient(string name, int id = -1)
+        internal Point(string name, int id = -1)
             : base(name)
         {
         }
 
-        internal float Brightness = 0.4f;
+        internal float Brightness = 1.0f;
     }
 }

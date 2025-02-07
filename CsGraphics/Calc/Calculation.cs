@@ -27,7 +27,7 @@
 
             Matrix matrix = translate * rotate * scale; // 拡大縮小 → 回転 → 平行移動 をした変換行列を計算
 
-            Matrix vertex = camera.cam2view * camera.ViewCamTranslation * camera.ViewCamRotation * matrix * @object.Vertex.Coordinate;
+            Matrix vertex = camera.cam2view * camera.ViewCamRotation * camera.ViewCamTranslation * matrix * @object.Vertex.Coordinate;
 
             Matrix coordinate = new Matrix(@object.Vertex.Coordinate.GetLength(0), @object.Vertex.Coordinate.GetLength(1));
             for (int n = 0; n < @object.Vertex.Coordinate.GetLength(1); n++)

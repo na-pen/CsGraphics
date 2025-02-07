@@ -81,10 +81,10 @@ namespace CsGraphics
             get { return this.objectList[index]; }
         }
 
-        internal IEnumerable<T> GetObjectsOfType<T>()
+        internal T[] GetObjectsOfType<T>()
             where T : Object.Object
         {
-            return this.objectList.OfType<T>();
+            return this.objectList.OfType<T>().ToArray();
         }
 
         internal int Count()

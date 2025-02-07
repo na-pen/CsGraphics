@@ -10,6 +10,7 @@ namespace CsGraphics
     using Color = Microsoft.Maui.Graphics.Color;
     using Point = Microsoft.Maui.Graphics.Point;
     using System.Runtime.CompilerServices;
+    using CsGraphics.Object.Light;
 
     /// <summary>
     /// シーン.
@@ -33,6 +34,11 @@ namespace CsGraphics
         public Scene(int frameRate)
         {
             this.FrameRate = frameRate;
+
+            objectManager.Add(new Object.Light.Ambient("Ambient"));
+
+            objectManager.Add(new Object.Light.Point("Point"));
+            objectManager.Get("Point").SetTranslation(0, 100, 0);
 
             objectManager.Add(new Object.Camera.Camera("MainCam"));
             objectManager.Get("MainCam").SetTranslation(0, 0, 50);
@@ -104,8 +110,13 @@ namespace CsGraphics
                                 string key2 = string.Empty;
                                 if (key != string.Empty)
                                 {
-                                    key2 = ((Asset.Model.Polygon)@object.Polygon).Colors[key].Item2;
+                                    key2 = ((Asset.Model.Material)@object.Material).Colors[key].Item1;
                                 }
+
+                                int[][] array3 = ((Asset.Model.Polygon)@object.Polygon).NormalID[key];
+
+                                // 環境光の強さ
+                                float iA = this.objectManager.Get<Object.Light.Ambient>("Ambient").Brightness;
 
                                 // 各ポリゴンをチェック
                                 for (int i = 0; i < array.GetLength(0); i++)
@@ -124,6 +135,13 @@ namespace CsGraphics
                                         vt = new float[3][] { new float[] { @object.Vertex.Vt[(vTId[0] - 1) * 2 + 0], @object.Vertex.Vt[(vTId[0] - 1) * 2 + 1] }, new float[] { @object.Vertex.Vt[(vTId[1] - 1) * 2 + 0], @object.Vertex.Vt[(vTId[1] - 1) * 2 + 1] }, new float[] { @object.Vertex.Vt[(vTId[2] - 1) * 2 + 0], @object.Vertex.Vt[(vTId[2] - 1) * 2 + 1] }, };
                                         //vt = vTId.Select(p => @object.Vertex.Vt[p - 1]).ToArray();
                                     }
+
+
+                                    //頂点の法線ベクトルを取得
+                                    int[] vNId = array3[i];
+                                    float[] n1 = new float[] { @object.Vertex.Vn[(vNId[0] - 1) * 2 + 0], @object.Vertex.Vn[(vNId[0] - 1) * 2 + 1], @object.Vertex.Vn[(vNId[0] - 1) * 2 + 2] };
+                                    float[] n2 = new float[] { @object.Vertex.Vn[(vNId[1] - 1) * 2 + 0], @object.Vertex.Vn[(vNId[1] - 1) * 2 + 1], @object.Vertex.Vn[(vNId[1] - 1) * 2 + 2] };
+                                    float[] n3 = new float[] { @object.Vertex.Vn[(vNId[2] - 1) * 2 + 0], @object.Vertex.Vn[(vNId[2] - 1) * 2 + 1], @object.Vertex.Vn[(vNId[2] - 1) * 2 + 2] };
 
                                     // 面を描く
                                     float[] polygonPointA = new float[3] { coordinate[0, polygon[0] - 1], coordinate[1, polygon[0] - 1], coordinate[2, polygon[0] - 1] }; // ポリゴンの頂点
@@ -155,6 +173,37 @@ namespace CsGraphics
                                                 // Z深度を計算
                                                 (double depth, double a, double b, double c) = Calc.ZDepth.ZDepsParallel(pixel, polygonPointA, polygonPointB, polygonPointC, 1500, 0);
 
+                                                // 描画点の3次元上の座標
+                                                double[] P = new double[3] { a * polygonPointA[0] + b * polygonPointB[0] + c * polygonPointC[0], a * polygonPointA[1] + b * polygonPointB[1] + c * polygonPointC[1], a * polygonPointA[2] + b * polygonPointB[2] + c * polygonPointC[2] };
+
+
+                                                // 補間された法線ベクトルを計算
+                                                double nx = a * n1[0] + b * n2[0] + c * n3[0];
+                                                double ny = a * n1[1] + b * n2[1] + c * n3[1];
+                                                double nz = a * n1[2] + b * n2[2] + c * n3[2];
+                                                double magnitude = System.Math.Sqrt(nx * nx + ny * ny + nz * nz);
+
+                                                double[] normal = new double[] { 0, 0, 0 }; // 長さ0の場合、ゼロベクトルを返す
+                                                if (magnitude != 0) // 違えば
+                                                {
+                                                    normal = new double[] { nx / magnitude, ny / magnitude, nz / magnitude };
+                                                }
+
+                                                //拡散反射の計算
+                                                Color tempDiffuse = ((Asset.Model.Material)@object.Material).Colors[key].Item4;
+                                                float[] iDiffuse = new float[] { 0.4f, 0.4f, 0.4f,1};
+                                                if (this.objectManager.GetObjectsOfType<Object.Light.Point>().Length > 0)
+                                                {
+                                                    // float temp = this.CalculateDiffuseCoefficient(this.objectManager.GetObjectsOfType<Object.Light.Point>()[0].Origin, P, normal);
+                                                    // iDiffuse = new float[]{ tempDiffuse.Red* temp, tempDiffuse.Green* temp, tempDiffuse.Blue* temp,tempDiffuse.Alpha};
+                                                }
+
+                                                //環境光の計算
+                                                Color tempAmbient = ((Asset.Model.Material)@object.Material).Colors[key].Item6;
+                                                float[] iAmbient = new float[] { tempAmbient.Red * iA, tempAmbient.Green * iA, tempAmbient.Blue * iA };
+
+                                                float[] iPixel = new float[] { iDiffuse[0] + iAmbient[0], iDiffuse[1] + iAmbient[1], iDiffuse[2] + iAmbient[2], iDiffuse[3] }; //反射係数
+
                                                 // テクスチャ中の座標を計算
                                                 if (vt != null)
                                                 {
@@ -162,10 +211,10 @@ namespace CsGraphics
                                                     double texVy = (a * vt[0][1]) + (b * vt[1][1]) + (c * vt[2][1]);
                                                     if (@object.Texture != null && @object.Texture.ContainsKey(key2))
                                                     {
-                                                        (Color cl, _) = ((Asset.Model.Polygon)@object.Polygon).Colors[key];
+                                                        ( _, _, _,Color cl, _, _) = ((Asset.Model.Material)@object.Material).Colors[key];
                                                         int x = (int)((texVx % 1) * @object.Texture[key2].Item2);
                                                         int y = ((int)((texVy % 1) * @object.Texture[key2].Item2));
-                                                        pixelcolor = new Color(@object.Texture[key2].Item3[@object.Texture[key2].Item1 * y * 4 + (x * 4) + 0], @object.Texture[key2].Item3[@object.Texture[key2].Item1 * y * 4 + (x * 4) + 1], @object.Texture[key2].Item3[@object.Texture[key2].Item1 * y * 4 + (x * 4) + 2], @object.Texture[key2].Item3[@object.Texture[key2].Item1 * y * 4 + (x * 4) + 3]).MultiplyAlpha(cl.Alpha);
+                                                        pixelcolor = new Color((int)((int)@object.Texture[key2].Item3[@object.Texture[key2].Item1 * y * 4 + (x * 4) + 0] * iPixel[0]), (int)((int)@object.Texture[key2].Item3[@object.Texture[key2].Item1 * y * 4 + (x * 4) + 1] * iPixel[1]), (int)((int)@object.Texture[key2].Item3[@object.Texture[key2].Item1 * y * 4 + (x * 4) + 2] * iPixel[2]), (int)@object.Texture[key2].Item3[@object.Texture[key2].Item1 * y * 4 + (x * 4) + 3]).MultiplyAlpha(cl.Alpha);
                                                     }
                                                 }
                                                 // Zバッファを更新 (近いものだけ描画)
@@ -177,7 +226,7 @@ namespace CsGraphics
                                                     if (pixelcolor == null)
                                                     {
 
-                                                        (Color cl, _) = ((Asset.Model.Polygon)@object.Polygon).Colors[key];
+                                                        (_, _, _,Color cl, _, _) = ((Asset.Model.Material)@object.Material).Colors[key];
                                                         pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 0] = (byte)(int)(cl.Blue * 255);
                                                         pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 1] = (byte)(int)(cl.Green * 255);
                                                         pixelColorsBytes[canvasWidth * (int)p.Y * 4 + ((int)p.X * 4) + 2] = (byte)(int)(cl.Red * 255);
@@ -348,7 +397,7 @@ namespace CsGraphics
         /// <param name="scale">拡大率.</param>
         /// <param name="polygon">面を構成する点の情報.</param>
         /// <returns>id.</returns>
-        public int Add3dObject(string name, float[,] vertexCoord, Dictionary<string, (Color, string)>? polygonColor = null, float[]? origin = null, bool visible = true, float[]? scale = null, Dictionary<string, int[][]>? polygon = null)
+        public int Add3dObject(string name, float[,] vertexCoord, Dictionary<string, (string, byte, ushort, Color, Color, Color)>? polygonColor = null, float[]? origin = null, bool visible = true, float[]? scale = null, Dictionary<string, int[][]>? polygon = null)
         {
             Asset.Model.Model @object = new(name, vertexCoord, polygonColor, origin, visible, scale, polygon);
             int id = this.objectManager.Add(@object);
@@ -357,9 +406,9 @@ namespace CsGraphics
             return id;
         }
 
-        private int Add3dObject(string name, float[,] vertexCoord, Dictionary<string, (Color, string)>? polygonColor = null, float[]? origin = null, bool visible = true, float[]? scale = null, Dictionary<string, int[][]>? polygon = null, Math.Matrix? normal = null, Dictionary<string, int[][]>? mtlV = null, float[] vt = null, float[] vn = null)
+        private int Add3dObject(string name, float[,] vertexCoord, Dictionary<string, (string, byte, ushort, Color, Color, Color)>? polygonColor = null, float[]? origin = null, bool visible = true, float[]? scale = null, Dictionary<string, int[][]>? polygon = null, Math.Matrix? normal = null, Dictionary<string, int[][]>? mtlV = null, Dictionary<string, int[][]>? normalId = null, float[] vt = null, float[] vn = null)
         {
-            Asset.Model.Model @object = new(name, vertexCoord, polygonColor, origin, visible, scale, polygon, normal, mtlV, vt,vn);
+            Asset.Model.Model @object = new(name, vertexCoord, polygonColor, origin, visible, scale, polygon, normal, mtlV,normalId, vt,vn);
             int id = this.objectManager.Add(@object);
 
             this.IsUpdated = true;
@@ -374,12 +423,12 @@ namespace CsGraphics
         /// <returns>ID.</returns>
         public int AddObjectFromObj(string name, string filePath, string texturePath = null)
         {
-            (float[,] vertices, Dictionary<string, int[][]> polygon, Math.Matrix normal, Dictionary<string, (Color, string)>? polygonColor, Dictionary<string, int[][]> mtlV, float[] vt, float[] vn) = Asset.Model.Parser.ObjParseVerticesV2(filePath);
-            int id = this.Add3dObject(name, vertices, polygon: polygon, normal: normal, polygonColor: polygonColor, mtlV: mtlV, vt: vt,vn: vn);
+            (float[,] vertices, Dictionary<string, int[][]> polygon, Math.Matrix normal, Dictionary<string, (string, byte, ushort, Color, Color, Color)>? polygonColor, Dictionary<string, int[][]> mtlV, Dictionary<string, int[][]> normalId, float[] vt, float[] vn) = Asset.Model.Parser.ObjParseVerticesV2(filePath);
+            int id = this.Add3dObject(name, vertices, polygon: polygon, normal: normal, polygonColor: polygonColor, mtlV: mtlV,normalId: normalId, vt: vt,vn: vn);
             foreach (var kvp in polygonColor)
             {
                 string key = kvp.Key;
-                (Color c, string s) = kvp.Value;
+                (string s, _, _, Color c, _, _) = kvp.Value;
                 this.objectManager.Get<Asset.Model.Model>(id).AddTexture(key, s);
             }
 
@@ -452,6 +501,39 @@ namespace CsGraphics
         {
             this.objectManager[id].SetRotation(x, y, z);
             this.IsUpdated = true;
+        }
+
+
+        /* ---------------- ここからライティング関係 ---------------- */
+        /// <summary>
+        /// 点光源と法線ベクトルから拡散反射係数を計算する関数
+        /// </summary>
+        /// <param name="lightPosition"></param>
+        /// <param name="pointPosition"></param>
+        /// <param name="normal"></param>
+        /// <returns></returns>
+        private float CalculateDiffuseCoefficient(Matrix lightPosition, double[] pointPosition, double[] normal)
+        {
+            // 光源方向ベクトルを計算
+            double[] lightDir = new double[3];
+            for (int i = 0; i < 3; i++)
+            {
+                lightDir[i] = lightPosition[i,0] - pointPosition[i];  // 点から光源へのベクトル
+            }
+
+            // ベクトルの長さ（光源から点への距離）を計算し、正規化
+            double length = System.Math.Sqrt(lightDir[0] * lightDir[0] + lightDir[1] * lightDir[1] + lightDir[2] * lightDir[2]);
+            if (length == 0) return 0; // 光源と点が同じ位置にある場合は影響なし
+            for (int i = 0; i < 3; i++)
+            {
+                lightDir[i] /= length; // 正規化
+            }
+
+            // 法線ベクトルと光源方向ベクトルの内積を計算
+            double dotProduct = normal[0] * lightDir[0] + normal[1] * lightDir[1] + normal[2] * lightDir[2];
+
+            // 内積が0未満の場合は0にする（光が逆方向から来る場合）
+            return System.MathF.Max(0, (float)dotProduct);
         }
     }
 }

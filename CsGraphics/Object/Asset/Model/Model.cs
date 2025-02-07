@@ -16,14 +16,18 @@ namespace CsGraphics.Object.Asset.Model
         /// <param name="origin">オブジェクトの原点.</param>
         /// <param name="visible">オブジェクトの表示状態.</param>
         /// <param name="scale">オブジェクトの拡大倍率.</param>
-        internal Model(string name, float[,] vertexCoord, Dictionary<string, (Color, string)>? polygonColor = null, float[]? origin = null, bool visible = true, float[]? scale = null, Dictionary<string, int[][]>? polygon = null, Math.Matrix normal = null, Dictionary<string, int[][]>? mtlV = null, float[] vt = null, float[] vn = null)
+        internal Model(string name, float[,] vertexCoord, Dictionary<string, (string, byte, ushort, Color, Color, Color)>? polygonColor = null, float[]? origin = null, bool visible = true, float[]? scale = null, Dictionary<string, int[][]>? polygon = null, Math.Matrix normal = null, Dictionary<string, int[][]>? mtlV = null, Dictionary<string, int[][]>? normalId = null, float[] vt = null, float[] vn = null)
             : base(name, visible: visible, origin: origin, scale: scale)
         {
             Vertex = new(this.ID, vertexCoord, vt, vn);
 
             if (polygon != null && polygonColor != null)
             {
-                Polygon = new Polygon(ID, polygon, normal, polygonColor, mtlV);
+                Polygon = new Polygon(ID, polygon, normal, mtlV, normalId);
+            }
+            if(polygonColor!= null)
+            {
+                Material = new(polygonColor);
             }
         }
 
@@ -63,6 +67,8 @@ namespace CsGraphics.Object.Asset.Model
         /// Gets or sets 多角形面の情報.
         /// </summary>
         internal Polygon? Polygon { get; set; } = null;
+
+        internal Material? Material { get; set; } = null;
 
         internal Dictionary<string, (int, int, byte[])>? Texture { get; set; } = null;
 
