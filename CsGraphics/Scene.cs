@@ -150,7 +150,6 @@ namespace CsGraphics
 
                                     if (((0 < polygonPointA[0] && polygonPointA[0] < canvasWidth) && (0 < polygonPointA[1] && polygonPointA[1] < canvasHeight)) || ((0 < polygonPointB[0] && polygonPointB[0] < canvasWidth) && (0 < polygonPointB[1] && polygonPointB[1] < canvasHeight)) || ((0 < polygonPointC[0] && polygonPointC[0] < canvasWidth) && (0 < polygonPointC[1] && polygonPointC[1] < canvasHeight)))
                                     // if (((-1 < polygonPointA[0] && polygonPointA[0] < 1) && (-1 < polygonPointA[1] && polygonPointA[1] < 1)) || ((-1 < polygonPointB[0] && polygonPointB[0] < 1) && (-1 < polygonPointB[1] && polygonPointB[1] < 1)) || ((-1 < polygonPointC[0] && polygonPointC[0] < 1) && (-1 < polygonPointC[1] && polygonPointC[1] < 1)))
-
                                     {
 
                                         Point[] pixels = RasterizeTriangle(vertex); // 描画するPixelの一覧
@@ -299,7 +298,7 @@ namespace CsGraphics
             double ymin = System.Math.Min(pt[0].Y, System.Math.Min(pt[1].Y, pt[2].Y));
             double ymax = System.Math.Max(pt[0].Y, System.Math.Max(pt[1].Y, pt[2].Y));
 
-            List<Point> pixels = new();
+            List<Point> pixels = new ();
 
             // 境界ボックス内のピクセルを調べる
             for (int x = (int)System.Math.Floor(xmin); x <= System.Math.Ceiling(xmax); x++)
