@@ -1,13 +1,15 @@
 ﻿namespace CsGraphics.Math
 {
     using System;
+    using System.Data.Common;
+    using static System.Runtime.InteropServices.JavaScript.JSType;
 
     /// <summary>
     /// 行列の定義.
     /// </summary>
     internal class Matrix : ICloneable
     {
-        private float[,] data; // 行列データ
+        private float[] data; // 行列データ
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Matrix"/> class.
@@ -16,21 +18,21 @@
         /// </summary>
         /// <param name="rows">行数.</param>
         /// <param name="columns">列数.</param>
-        internal Matrix(int rows, int columns = 0)
+        internal Matrix(int rows, int columns = -1)
         {
-            if (columns == 0)
+            if (columns == -1)
             {
                 columns = rows;
             }
 
-            if (rows <= 0 || columns <= 0)
+            if (rows < 0 || columns < 0)
             {
-                throw new ArgumentException("Rows and columns must be positive integers.");
+                throw new ArgumentException("Rows and columns must be zero or positive integers.");
             }
 
             this.Rows = rows;
             this.Columns = columns;
-            this.data = new float[rows, columns];
+            this.data = new float[rows * columns];
         }
 
         /// <summary>
@@ -50,7 +52,7 @@
 
             this.Rows = array.Length;
             this.Columns = 1;
-            this.data = new float[this.Rows, this.Columns];
+            this.data = new float[this.Rows * this.Columns];
 
             this.Initialize(result);
         }
@@ -64,7 +66,7 @@
         {
             this.Rows = array.GetLength(0);
             this.Columns = array.GetLength(1);
-            this.data = new float[this.Rows, this.Columns];
+            this.data = new float[this.Rows * this.Columns];
 
             this.Initialize(array);
         }
@@ -78,7 +80,7 @@
         /// <param name="columns">列数.</param>
         private Matrix(float[,] data, int rows, int columns)
         {
-            this.data = data;
+            this.data = data.Cast<float>().ToArray();
             this.Rows = rows;
             this.Columns = columns;
         }
@@ -111,7 +113,7 @@
                     throw new IndexOutOfRangeException("Invalid index.");
                 }
 
-                return this.data[row, column];
+                return this.data[row * this.Columns + column];
             }
 
             set
@@ -121,7 +123,7 @@
                     throw new IndexOutOfRangeException("Invalid index.");
                 }
 
-                this.data[row, column] = value;
+                this.data[row * this.Columns + column] = value;
             }
         }
 
@@ -282,7 +284,7 @@
             {
                 for (int j = 0; j < this.Columns; j++)
                 {
-                    result += $"{this.data[i, j]:0.##}\t";
+                    result += $"{this.data[i * this.Columns+ j]:0.##}\t";
                 }
 
                 result += "\n";
@@ -313,7 +315,7 @@
             {
                 for (int j = 0; j < this.Columns; j++)
                 {
-                    this.data[i, j] = initializer(i, j);
+                    this.data[i * this.Columns+ j] = initializer(i, j);
                 }
             }
         }
@@ -328,7 +330,7 @@
             {
                 for (int j = 0; j < this.Columns; j++)
                 {
-                    this.data[i, j] = array[i, j];
+                    this.data[i * this.Columns+ j] = array[i, j];
                 }
             }
         }
@@ -492,7 +494,7 @@
                 {
                     if (i < this.Rows && j < this.Columns)
                     {
-                        result[i, j] = this.data[i, j];
+                        result[i, j] = this.data[i * this.Columns+ j];
                     }
                     else
                     {
@@ -511,6 +513,20 @@
             this.data = result.data;
         }
 
+        internal void Append(Matrix matrix)
+        {
+            if (this.Rows != matrix.Rows)
+            {
+                throw new ArgumentException("The source and destination matrices must each have the same number of rows");
+            }
+
+            this.Columns = this.Columns + matrix.Columns;
+            float[] temp = new float[this.data.Length + matrix.data.Length];
+            this.data.CopyTo(temp, 0);
+            matrix.data.CopyTo(temp, this.data.Length);
+            this.data = temp;
+        }
+
         /// <summary>
         /// 指定した方向の長さを取得する.
         /// </summary>
@@ -518,7 +534,17 @@
         /// <returns>長さ.</returns>
         internal int GetLength(int dimension)
         {
-            return this.data.GetLength(dimension);
+            switch(dimension)
+            {
+                case 0:
+                    return this.Rows;
+
+                case 1:
+                    return this.Columns;
+
+                default:
+                    return -1;
+            }
         }
     }
 }

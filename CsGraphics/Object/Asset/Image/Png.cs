@@ -1,4 +1,4 @@
-﻿namespace CsGraphics.Asset.Image
+﻿namespace CsGraphics.Object.Asset.Image
 {
     using Microsoft.Maui.Graphics.Platform;
     using Microsoft.Maui.Graphics;
@@ -6,6 +6,8 @@
     using System.Collections.Generic;
     using System.IO.Compression;
     using System.Reflection;
+    using CsGraphics.Object.Asset.Image;
+    using CsGraphics.Object;
 
     internal class Png
     {
@@ -86,14 +88,14 @@
             }
         }
 
-        private static (int,int,byte[]) GetPixelsFromDecompressedData(byte[] data, int width, int height)
+        private static (int, int, byte[]) GetPixelsFromDecompressedData(byte[] data, int width, int height)
         {
             int bytesPerPixel = 4; // RGBA
             int rowLength = width * bytesPerPixel; // 1行あたりのバイト数
             //Color[,] pixels = new Color[width, height];
             int dataIndex = 0;
 
-            byte[] bytes = new byte[width* height * 4];
+            byte[] bytes = new byte[width * height * 4];
 
             // データは1行ずつ処理される
             for (int y = 0; y < height; y++)
@@ -117,10 +119,10 @@
                         byte a = data[dataIndex++];
 
                         //pixels[x, height - y - 1] = new Color(r, g, b, a);
-                        bytes[(width * (height - y - 1)*4) + (x * 4) + 0] = r;
-                        bytes[(width * (height - y - 1) * 4) + (x * 4) + 1] = g;
-                        bytes[(width * (height - y - 1) * 4) + (x * 4) + 2] = b;
-                        bytes[(width * (height - y - 1) * 4) + (x * 4) + 3] = a;
+                        bytes[width * (height - y - 1) * 4 + x * 4 + 0] = r;
+                        bytes[width * (height - y - 1) * 4 + x * 4 + 1] = g;
+                        bytes[width * (height - y - 1) * 4 + x * 4 + 2] = b;
+                        bytes[width * (height - y - 1) * 4 + x * 4 + 3] = a;
 
                     }
                 }
@@ -140,10 +142,10 @@
                         a += previousA;
 
                         //pixels[x, height - y - 1] = new Color(r, g, b, a);
-                        bytes[(width * (height - y - 1) * 4) + (x * 4) + 0] = r;
-                        bytes[(width * (height - y - 1) * 4) + (x * 4) + 1] = g;
-                        bytes[(width * (height - y - 1) * 4) + (x * 4) + 2] = b;
-                        bytes[(width * (height - y - 1) * 4) + (x * 4) + 3] = a;
+                        bytes[width * (height - y - 1) * 4 + x * 4 + 0] = r;
+                        bytes[width * (height - y - 1) * 4 + x * 4 + 1] = g;
+                        bytes[width * (height - y - 1) * 4 + x * 4 + 2] = b;
+                        bytes[width * (height - y - 1) * 4 + x * 4 + 3] = a;
 
                         previousR = r;
                         previousG = g;
@@ -161,11 +163,10 @@
                         byte b = data[dataIndex++];
                         byte a = data[dataIndex++];
 
-                        
-                        r += (byte)(int)(bytes[(width * (height - y) * 4) + (x * 4) + 0]);
-                        g += (byte)(int)(bytes[(width * (height - y) * 4) + (x * 4) + 1]);
-                        b += (byte)(int)(bytes[(width * (height - y) * 4) + (x * 4) + 2]);
-                        a += (byte)(int)(bytes[(width * (height - y) * 4) + (x * 4) + 3]);
+                        r += (byte)(int)bytes[width * (height - y) * 4 + x * 4 + 0];
+                        g += (byte)(int)bytes[width * (height - y) * 4 + x * 4 + 1];
+                        b += (byte)(int)bytes[width * (height - y) * 4 + x * 4 + 2];
+                        a += (byte)(int)bytes[width * (height - y) * 4 + x * 4 + 3];
                         /*
                         r += (byte)(int)(pixels[x, height - y].Red * 255);
                         g += (byte)(int)(pixels[x, height - y].Green * 255);
@@ -174,10 +175,10 @@
                         */
 
                         //pixels[x, height - y - 1] = new Color(r, g, b, a);
-                        bytes[(width * (height - y - 1) * 4) + (x * 4) + 0] = r;
-                        bytes[(width * (height - y - 1) * 4) + (x * 4) + 1] = g;
-                        bytes[(width * (height - y - 1) * 4) + (x * 4) + 2] = b;
-                        bytes[(width * (height - y - 1) * 4) + (x * 4) + 3] = a;
+                        bytes[width * (height - y - 1) * 4 + x * 4 + 0] = r;
+                        bytes[width * (height - y - 1) * 4 + x * 4 + 1] = g;
+                        bytes[width * (height - y - 1) * 4 + x * 4 + 2] = b;
+                        bytes[width * (height - y - 1) * 4 + x * 4 + 3] = a;
 
                     }
                 }
@@ -190,11 +191,11 @@
                         byte g = data[dataIndex++];
                         byte b = data[dataIndex++];
                         byte a = data[dataIndex++];
-                        
-                        byte avgR = (byte)((previousR + (byte)(int)(bytes[(width * (height - y) * 4) + (x * 4) + 0])) / 2);
-                        byte avgG = (byte)((previousG + (byte)(int)(bytes[(width * (height - y) * 4) + (x * 4) + 1])) / 2);
-                        byte avgB = (byte)((previousB + (byte)(int)(bytes[(width * (height - y) * 4) + (x * 4) + 2])) / 2);
-                        byte avgA = (byte)((previousA + (byte)(int)(bytes[(width * (height - y) * 4) + (x * 4) + 3])) / 2);
+
+                        byte avgR = (byte)((previousR + (byte)(int)bytes[width * (height - y) * 4 + x * 4 + 0]) / 2);
+                        byte avgG = (byte)((previousG + (byte)(int)bytes[width * (height - y) * 4 + x * 4 + 1]) / 2);
+                        byte avgB = (byte)((previousB + (byte)(int)bytes[width * (height - y) * 4 + x * 4 + 2]) / 2);
+                        byte avgA = (byte)((previousA + (byte)(int)bytes[width * (height - y) * 4 + x * 4 + 3]) / 2);
                         /*
                         byte avgR = (byte)((previousR + (byte)(int)(pixels[x, height - y].Red * 255)) / 2);
                         byte avgG = (byte)((previousG + (byte)(int)(pixels[x, height - y].Green * 255)) / 2);
@@ -208,10 +209,10 @@
                         a += avgA;
 
                         //pixels[x, height - y - 1] = new Color(r, g, b, a);
-                        bytes[(width * (height - y - 1) * 4) + (x * 4) + 0] = r;
-                        bytes[(width * (height - y - 1) * 4) + (x * 4) + 1] = g;
-                        bytes[(width * (height - y - 1) * 4) + (x * 4) + 2] = b;
-                        bytes[(width * (height - y - 1) * 4) + (x * 4) + 3] = a;
+                        bytes[width * (height - y - 1) * 4 + x * 4 + 0] = r;
+                        bytes[width * (height - y - 1) * 4 + x * 4 + 1] = g;
+                        bytes[width * (height - y - 1) * 4 + x * 4 + 2] = b;
+                        bytes[width * (height - y - 1) * 4 + x * 4 + 3] = a;
 
                         previousR = r;
                         previousG = g;
@@ -237,11 +238,11 @@
 
                         if (x != 0)
                         {
-                            
-                            pr = PaethPredictor(previousR, (byte)(int)(bytes[(width * (height - y) * 4) + (x * 4) + 0]), (byte)(int)(bytes[(width * (height - y) * 4) + ((x -1) * 4) + 0])); // Red
-                            pg = PaethPredictor(previousG, (byte)(int)(bytes[(width * (height - y) * 4) + (x * 4) + 1]), (byte)(int)(bytes[(width * (height - y) * 4) + ((x - 1) * 4) + 1])); // Green
-                            pb = PaethPredictor(previousB, (byte)(int)(bytes[(width * (height - y) * 4) + (x * 4) + 2]), (byte)(int)(bytes[(width * (height - y) * 4) + ((x - 1) * 4) + 2])); // Blue
-                            pa = PaethPredictor(previousA, (byte)(int)(bytes[(width * (height - y) * 4) + (x * 4) + 3]), (byte)(int)(bytes[(width * (height - y) * 4) + ((x - 1) * 4) + 3])); // Alpha
+
+                            pr = PaethPredictor(previousR, (byte)(int)bytes[width * (height - y) * 4 + x * 4 + 0], (byte)(int)bytes[width * (height - y) * 4 + (x - 1) * 4 + 0]); // Red
+                            pg = PaethPredictor(previousG, (byte)(int)bytes[width * (height - y) * 4 + x * 4 + 1], (byte)(int)bytes[width * (height - y) * 4 + (x - 1) * 4 + 1]); // Green
+                            pb = PaethPredictor(previousB, (byte)(int)bytes[width * (height - y) * 4 + x * 4 + 2], (byte)(int)bytes[width * (height - y) * 4 + (x - 1) * 4 + 2]); // Blue
+                            pa = PaethPredictor(previousA, (byte)(int)bytes[width * (height - y) * 4 + x * 4 + 3], (byte)(int)bytes[width * (height - y) * 4 + (x - 1) * 4 + 3]); // Alpha
                             /*
                             pr = PaethPredictor(previousR, (byte)(int)(pixels[x, height - y].Red * 255), (byte)(int)(pixels[x - 1, height - y].Red * 255)); // Red
                             pg = PaethPredictor(previousG, (byte)(int)(pixels[x, height - y].Green * 255), (byte)(int)(pixels[x - 1, height - y].Green * 255)); // Green
@@ -251,11 +252,11 @@
                         }
                         else
                         {
-                            
-                            pr = PaethPredictor(previousR, (byte)(int)(bytes[(width * (height - y) * 4) + (x * 4) + 0]), 0); // Red
-                            pg = PaethPredictor(previousG, (byte)(int)(bytes[(width * (height - y) * 4) + (x * 4) + 1]),0); // Green
-                            pb = PaethPredictor(previousB, (byte)(int)(bytes[(width * (height - y) * 4) + (x * 4) + 2]), 0); // Blue
-                            pa = PaethPredictor(previousA, (byte)(int)(bytes[(width * (height - y) * 4) + (x * 4) + 3]), 0); // Alpha
+
+                            pr = PaethPredictor(previousR, (byte)(int)bytes[width * (height - y) * 4 + x * 4 + 0], 0); // Red
+                            pg = PaethPredictor(previousG, (byte)(int)bytes[width * (height - y) * 4 + x * 4 + 1], 0); // Green
+                            pb = PaethPredictor(previousB, (byte)(int)bytes[width * (height - y) * 4 + x * 4 + 2], 0); // Blue
+                            pa = PaethPredictor(previousA, (byte)(int)bytes[width * (height - y) * 4 + x * 4 + 3], 0); // Alpha
                             /*
                             pr = PaethPredictor(previousR, (byte)(int)(pixels[x, height - y].Red * 255), 0); // Red
                             pg = PaethPredictor(previousG, (byte)(int)(pixels[x, height - y].Green * 255), 0); // Green
@@ -272,10 +273,10 @@
 
                         // ピクセルを配列に格納
                         //pixels[x, height - y - 1] = new Color(r, g, b, a);
-                        bytes[(width * (height - y - 1) * 4) + (x * 4) + 0] = r;
-                        bytes[(width * (height - y - 1) * 4) + (x * 4) + 1] = g;
-                        bytes[(width * (height - y - 1) * 4) + (x * 4) + 2] = b;
-                        bytes[(width * (height - y - 1) * 4) + (x * 4) + 3] = a;
+                        bytes[width * (height - y - 1) * 4 + x * 4 + 0] = r;
+                        bytes[width * (height - y - 1) * 4 + x * 4 + 1] = g;
+                        bytes[width * (height - y - 1) * 4 + x * 4 + 2] = b;
+                        bytes[width * (height - y - 1) * 4 + x * 4 + 3] = a;
 
                         // 前のピクセルとして現在の値を保存
                         previousR = r;
@@ -389,7 +390,7 @@
             BitDepth = data[8];
             ColorType = data[9];
             CompressionMethod = data[10];
-            if (this.CompressionMethod != 0)
+            if (CompressionMethod != 0)
             {
                 throw new Exception("その圧縮方式には対応していません");
             }

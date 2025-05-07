@@ -1,6 +1,5 @@
 ﻿namespace CsGraphics.Calc
 {
-    using CsGraphics.Asset;
     using CsGraphics.Math;
     using System.Collections.Generic;
 
@@ -15,7 +14,8 @@
         /// </summary>
         /// <param name="object">オブジェクト.</param>
         /// <returns>スクリーン座標のリスト.</returns>
-        internal static (Point[], float[], Matrix) Calc(CsGraphics.Asset.Object @object, Matrix matrixCam, float width, float height, bool mode = true, float fov = 60,float scaleParallelProjection = 32)
+
+        internal static (Point[], float[], Matrix) Calc(Object.Asset.Model.Model @object, Object.Camera.Camera camera, float width, float height)
         {
             List<float> depthZ = new List<float>(); // z深度 : 使用しない
 
@@ -27,48 +27,7 @@
 
             Matrix matrix = translate * rotate * scale; // 拡大縮小 → 回転 → 平行移動 をした変換行列を計算
 
-            int far = -5000;
-            float near = -1f;
-            float left = -width / 2;
-            float right = width / 2;
-            float bottom = height / 2;
-            float top = -height / 2;
-            float aspect = width / height;
-            float fovY = float.DegreesToRadians(fov);
-            float f = (float)(1f / System.MathF.Tan(fovY / 2f));
-
-            Matrix cam2view;
-
-            if (mode) // 透視投影のとき
-            {
-                cam2view = new (new float[,]
-                {
-                    { -f / aspect, 0, 0, 0 },
-                    { 0, f, 0, 0 },
-                    { 0, 0, -1f * (far + near) / (far - near), -2f * (far * near) / (far - near) },
-                    { 0, 0, -1f, 0 },
-                });
-            }
-            else // 平行投影のとき
-            {
-                left = -width / scaleParallelProjection;
-                right = width / scaleParallelProjection;
-                bottom = height / scaleParallelProjection;
-                top = -height / scaleParallelProjection;
-
-                cam2view = new (new float[,]
-                {
-                    { 2f / (right - left), 0, 0, -(right + left) / (right - left) },
-                    { 0, 2f / (top - bottom), 0, -(top + bottom) / (top - bottom) },
-                    { 0, 0, -2f / (far - near), -(far + near) / (far - near)},
-                    { 0, 0, 0, 1 },
-                });
-            }
-
-
-
-
-            Matrix vertex = cam2view * matrixCam * matrix * @object.Vertex.Coordinate;
+            Matrix vertex = camera.cam2view * camera.ViewCamRotation * camera.ViewCamTranslation * matrix * @object.Vertex.Coordinate;
 
             Matrix coordinate = new Matrix(@object.Vertex.Coordinate.GetLength(0), @object.Vertex.Coordinate.GetLength(1));
             for (int n = 0; n < @object.Vertex.Coordinate.GetLength(1); n++)
@@ -86,13 +45,12 @@
             // ポリゴンの法線がz=0の面とどの向きで交差するかどうか確認する
             if (@object.Polygon != null)
             {
-                GetPolygonBounds(result, (Asset.Polygon)@object.Polygon); // 面ごとの画面上の描画範囲を求める
+                GetPolygonBounds(result, (Object.Asset.Model.Polygon)@object.Polygon); // 面ごとの画面上の描画範囲を求める
             }
 
             return (result.ToArray(), depthZ.ToArray(), coordinate);
         }
-
-        private static void GetPolygonBounds(List<Point> points, Asset.Polygon polygon)
+        private static void GetPolygonBounds(List<Point> points, Object.Asset.Model.Polygon polygon)
         {
             foreach (var kvp in polygon.VertexID)
             {
@@ -128,7 +86,7 @@
         /// オブジェクトの移動を計算する.
         /// </summary>
         /// <returns>移動の行列.</returns>
-        private static Matrix CalcTranslation(CsGraphics.Asset.Object @object)
+        private static Matrix CalcTranslation(Object.Asset.Model.Model @object)
         {
             Matrix temp = new(4);
             temp.Identity();
@@ -143,11 +101,11 @@
         /// オブジェクトの拡大縮小を計算する.
         /// </summary>
         /// <returns>拡大縮小の行列.</returns>
-        private static Matrix CalcScale(CsGraphics.Asset.Object @object)
+        private static Matrix CalcScale(Object.Asset.Model.Model @object)
         {
             Matrix temp = new(4);
             temp.Identity();
-            Enumerable.Range(0, 3).ToList().ForEach(i => temp[i, i] = @object.Magnification[i]);
+            Enumerable.Range(0, 3).ToList().ForEach(i => temp[i, i] = @object.Scale[i]);
 
             return temp;
         }
@@ -156,7 +114,7 @@
         /// 行列を用いて、YXZの順に回転を計算する.
         /// </summary>
         /// <returns>回転行列.</returns>
-        private static Matrix CalcRotation(CsGraphics.Asset.Object @object)
+        private static Matrix CalcRotation(Object.Asset.Model.Model @object)
         {
             Matrix xAxis = new(4);
             xAxis.Identity();

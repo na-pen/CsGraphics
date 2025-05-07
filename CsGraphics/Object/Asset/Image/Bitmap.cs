@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace CsGraphics.Asset.Image
+namespace CsGraphics.Object.Asset.Image
 {
     public class Bitmap
     {
@@ -111,6 +111,21 @@ namespace CsGraphics.Asset.Image
             }
         }
 
+        public Bitmap(int width, int height, byte[] data, int bitCount = 32)
+        {
+
+            FileHeader = new();
+
+            int rowSize = width * 4; // 4バイト境界に揃える
+            int bufferSize = rowSize * height; // 全体のバッファサイズ
+
+            InfoHeader = new BITMAPINFOHEADER(rowSize / 4, height, bitCount = 32);
+
+            FileHeader.bfSize = (uint)(bufferSize / 4 * bitCount / 8) + FileHeader.bfOffBits;
+
+            img = data;
+        }
+
         public static (int, int, byte[]) LoadFromFile(string filePath)
         {
             using FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
@@ -162,17 +177,17 @@ namespace CsGraphics.Asset.Image
                 {
                     if (bitCount == 32)
                     {
-                        colors[(width * (y * 4)) + (x * 4) + 2] = pixelData[index++];
-                        colors[(width * (y * 4)) + (x * 4) + 1] = pixelData[index++];
-                        colors[(width * (y * 4)) + (x * 4) + 0] = pixelData[index++];
-                        colors[(width * (y * 4)) + (x * 4) + 3] = pixelData[index++];
+                        colors[width * y * 4 + x * 4 + 2] = pixelData[index++];
+                        colors[width * y * 4 + x * 4 + 1] = pixelData[index++];
+                        colors[width * y * 4 + x * 4 + 0] = pixelData[index++];
+                        colors[width * y * 4 + x * 4 + 3] = pixelData[index++];
                     }
                     else if (bitCount == 24)
                     {
-                        colors[(width * (y * 4)) + (x * 4) + 2] = pixelData[index++];
-                        colors[(width * (y * 4)) + (x * 4) + 1] = pixelData[index++];
-                        colors[(width * (y * 4)) + (x * 4) + 0] = pixelData[index++];
-                        colors[(width * (y * 4)) + (x * 4) + 3] = 255;
+                        colors[width * y * 4 + x * 4 + 2] = pixelData[index++];
+                        colors[width * y * 4 + x * 4 + 1] = pixelData[index++];
+                        colors[width * y * 4 + x * 4 + 0] = pixelData[index++];
+                        colors[width * y * 4 + x * 4 + 3] = 255;
                     }
                 }
 

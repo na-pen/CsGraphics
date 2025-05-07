@@ -6,7 +6,6 @@
     using System;
     using System.Diagnostics;
     using System.Text.RegularExpressions;
-    using CsGraphics.Asset.Image;
 
     /// <summary>
     /// アプリケーションのメインページ.
@@ -37,6 +36,7 @@
             this.BindingContext = this;
             this.Scene = this.scene;  // Drawable に設定
 
+            initCam();
             this.UpdateLoop();
         }
 
@@ -46,7 +46,9 @@
             // レイアウトが変更された後、すべての要素が描画されたタイミングで実行される処理
             if (graphicsView.Width != -1)
             {
-                Scene.SetTranslationViewCam((int)graphicsView.Width / 2, (int)graphicsView.Height / 5, 0);
+                //Scene.objectManager.Get<CsGraphics.Object.Camera.Camera>("MainCam").SetTranslation((int)graphicsView.Width / 2, (int)graphicsView.Height / 5, 0);
+                Scene.objectManager.Get<CsGraphics.Object.Camera.Camera>("MainCam").Height = (int)graphicsView.Height;
+                Scene.objectManager.Get<CsGraphics.Object.Camera.Camera>("MainCam").Width = (int)graphicsView.Width;
             }
             else
             {
@@ -208,7 +210,8 @@
             {
                 this.isPointerLongPressing = false;
                 var t = (PointF)e.GetPosition(this.graphicsView) - this.PointerPressed;
-                Scene.SetTranslationViewCam(t.Width / 20f, -1 * t.Height / 20f, 0);
+                Scene.objectManager.Get<CsGraphics.Object.Camera.Camera>("MainCam").SetTranslation(t.Width / 20f, -1 * t.Height / 20f, 0);
+                Scene.IsUpdated = true;
                 //float x =  * 180) * Math.PI / 180f;
                 //Scene.SetRotationViewCam(t.Height / graphicsView.Height * 360, t.Width / graphicsView.Width * 360, 0);
             }
@@ -216,16 +219,16 @@
 
         private void EnlargementCam(object sender, EventArgs e)
         {
+            Scene.objectManager.Get<CsGraphics.Object.Camera.Camera>("MainCam").SetTranslation(0, 0, -10);
             Scene.IsUpdated = true;
-            Scene.SetTranslationViewCam(0, 0, -10);
-            Scene.ScaleParallelProjection *= 1.25f;
+            //Scene.ScaleParallelProjection *= 1.25f;
         }
 
         private void ReductionCam(object sender, EventArgs e)
         {
+            Scene.objectManager.Get<CsGraphics.Object.Camera.Camera>("MainCam").SetTranslation(0, 0, 10);
             Scene.IsUpdated = true;
-            Scene.SetTranslationViewCam(0, 0, 10);
-            Scene.ScaleParallelProjection *= 0.8f;
+            //Scene.ScaleParallelProjection *= 0.8f;
         }
     }
 }

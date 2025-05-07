@@ -1,4 +1,4 @@
-﻿namespace CsGraphics.Asset
+﻿namespace CsGraphics.Object.Asset.Model
 {
     using CsGraphics.Math;
     using Microsoft.Maui.Graphics;
@@ -6,7 +6,7 @@
     /// <summary>
     /// オブジェクトのすべての頂点の情報の保持や管理を行う.
     /// </summary>
-    internal struct Vertex : ICloneable
+    internal struct Vertex // : ICloneable
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Vertex"/> struct.
@@ -14,16 +14,17 @@
         /// <param name="objectId">オブジェクトID.</param>
         /// <param name="coordinate">3次元空間上の座標(オブジェクト基準).</param>
         /// <exception cref="ArgumentException">頂点の色を指定する場合は、すべての頂点に対して指定する必要があります.</exception>
-        internal Vertex(int objectId, float[,] coordinate,  float[][]? vt)
+        internal Vertex(int objectId, float[,] coordinate, float[]? vt, float[]? vn)
         {
             // 初期値の適用
             ObjectId = objectId;
             Coordinate = ConvertMatriix2Calcable(new Matrix(coordinate));
 
             Vt = vt;
+            Vn = vn;
         }
 
-        private Vertex(int objectId, Matrix coordinate,  float[][] vt)
+        private Vertex(int objectId, Matrix coordinate, float[] vt)
         {
             ObjectId = objectId;
             Coordinate = coordinate;
@@ -40,7 +41,9 @@
         /// </summary>
         internal Matrix Coordinate { get; set; }
 
-        internal float[][]? Vt { get; set; }
+        internal float[]? Vt { get; set; }
+
+        internal float[]? Vn { get; set; }
 
         /// <summary>
         /// 頂点情報をStringにする.
@@ -68,13 +71,14 @@
         /// Cloneをするための実装.
         /// </summary>
         /// <returns>object.</returns>
+        /*
         public object Clone()
         {
             return new Vertex(
                 ObjectId,
                 (Matrix)Coordinate.Clone(),
                 Vt);
-        }
+        }*/
 
         /// <summary>
         /// 頂点の行列長を取得.
@@ -94,7 +98,7 @@
         /// <exception cref="ArgumentException">データの次元数が誤っています.</exception>
         private Matrix ConvertMatriix2Calcable(Matrix matrix)
         {
-            switch (matrix.GetLength(0))
+            switch (matrix.Rows)
             {
                 case 2:
                     matrix.Resize(4, value: new float[] { 0, 1 });

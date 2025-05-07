@@ -1,4 +1,4 @@
-﻿namespace CsGraphics.Asset
+﻿namespace CsGraphics.Object.Asset.Model
 {
     using CsGraphics.Math;
     using System.Collections.Generic;
@@ -14,14 +14,14 @@
         /// <param name="objectId">オブジェクトID.</param>
         /// <param name="vertexID">多角形面の頂点ID.</param>
         /// <param name="normal">法線ベクトル.</param>
-        internal Polygon(int objectId, Dictionary<string, int[][]> vertexID, Matrix[] normal, Dictionary<string, (Color, string)> color, Dictionary<string, int[][]> mtlVertexID)
+        internal Polygon(int objectId, Dictionary<string, int[][]> vertexID, Matrix normal, Dictionary<string, int[][]> mtlVertexID, Dictionary<string, int[][]>? normalId = null)
         {
             ObjectId = objectId;
             VertexID = vertexID;
             Normal = normal;
             Bounds = new Dictionary<string, double[,]>();
-            Colors = color;
             MtlVertexID = mtlVertexID;
+            NormalID = normalId;
         }
 
         /// <summary>
@@ -37,7 +37,7 @@
         /// <summary>
         /// Gets or sets 法線ベクトル.
         /// </summary>
-        internal Matrix[] Normal { get; set; }
+        internal Matrix Normal { get; set; }
 
         /// <summary>
         /// Gets or sets 各面ごとのScreen座標上のバウンディングボックス.
@@ -45,14 +45,11 @@
         internal Dictionary<string, double[,]> Bounds { get; set; }
 
         /// <summary>
-        /// Get or sets 各ポリゴンの色.
-        /// </summary>
-        internal Dictionary<string, (Color, string)> Colors { get; set; }
-
-        /// <summary>
         /// 各頂点のマテリアル座標のIDを取得.
         /// </summary>
         internal Dictionary<string, int[][]> MtlVertexID { get; set; }
+
+        internal Dictionary<string, int[][]> NormalID { get; set; }
 
 
         /// <summary>
